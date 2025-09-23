@@ -14,7 +14,7 @@ export default async function Navbar() {
   if (!navbar) return null
 
   return (
-    <nav className="absolute top-0 left-0 w-full p-4 px-20  flex justify-between items-center z-20 text-white bebas bg-transparent">
+    <nav className="absolute top-0 left-0 w-full p-4 px-20  flex justify-between items-center z-20 text-white bebas text-xl tracking-wide bg-transparent">
       <div>
         <Image
           src={navbar.logo.url}
@@ -23,7 +23,7 @@ export default async function Navbar() {
           height={27}
         />
       </div>
-      <ul className="flex space-x-8">
+      <ul className="flex gap-12">
         {navbar.navLinks.map((link: any) => (
           <li key={link.id}>
             <Link href={link.href}>{link.title}</Link>

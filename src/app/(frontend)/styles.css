@@ -10,3 +10,13 @@
 .bebas {
   font-family: 'Bebas Neue', sans-serif;
 }
+
+@font-face {
+  font-family: 'Dahlia';
+  src: url('/fonts/dahlia-regular.otf') format('opentype');
+  font-style: normal;
+}
+
+.dahlia-medium {
+  font-family: 'Dahlia', sans-serif;
+}
