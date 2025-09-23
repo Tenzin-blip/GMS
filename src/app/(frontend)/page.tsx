@@ -33,7 +33,10 @@ return (
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
           <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
-          <p className="text-xl max-w-2xl">{heroSection.subtitle}</p>
+          <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
+        </div>
+        <div className="flex flex-col items-center justify-center mt-8">
+          <h1 className="text-5xl bebas">About <span className="text-[#f80a0a]">Us</span></h1>
         </div>
       </section>
     )}

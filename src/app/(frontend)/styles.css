@@ -20,3 +20,13 @@
 .dahlia-medium {
   font-family: 'Dahlia', sans-serif;
 }
+
+@font-face {
+  font-family: 'Sansation';
+  src: url('/fonts/Sansation-Regular.ttf') format('truetype');
+  font-style: normal;
+}
+
+.Sansation-regular {
+  font-family: 'Sansation', sans-serif;
+}

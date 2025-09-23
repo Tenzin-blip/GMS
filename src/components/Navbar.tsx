@@ -7,7 +7,7 @@ export default async function Navbar() {
 
   const res = await fetch(
     `${baseUrl}/api/globals/navbar?depth=2&draft=false&locale=undefined&trash=false`,
-    { cache: 'no-store' }
+    { cache: 'no-store' },
   )
   const navbar = await res.json()
 
@@ -16,24 +16,24 @@ export default async function Navbar() {
   return (
     <nav className="absolute top-0 left-0 w-full p-4 px-20  flex justify-between items-center z-20 text-white bebas text-xl tracking-wide bg-transparent">
       <div>
-        <Image
-          src={navbar.logo.url}
-          alt={navbar.logo.alt || 'Logo'}
-          width={142}
-          height={27}
-        />
+        <Image src={navbar.logo.url} alt={navbar.logo.alt || 'Logo'} width={142} height={27} />
       </div>
       <ul className="flex gap-12">
         {navbar.navLinks.map((link: any) => (
           <li key={link.id}>
-            <Link href={link.href}>{link.title}</Link>
+            <Link
+              className="relative hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:w-0 after:h-0.5 after:bg-[#696970] after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
+              href={link.href}
+            >
+              {link.title}
+            </Link>
           </li>
         ))}
       </ul>
       <div>
         <Link
           href={navbar.ctaButton.href}
-          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-[#f80a0a] px-4 py-1 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out font-medium text-"
         >
           {navbar.ctaButton.text}
         </Link>
