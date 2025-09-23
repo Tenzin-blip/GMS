@@ -1,28 +1,36 @@
 import type { GlobalConfig } from 'payload'
 
 export const Home: GlobalConfig = {
-  slug: 'home', // how you query it in API
+  slug: 'home',
+  label: 'home',
+  access: {
+    read: () => true, // make it public
+  },
   fields: [
     {
-      name: 'heroTitle',
-      type: 'text',
-      label: 'Hero Title',
-    },
-    {
-      name: 'heroSubtitle',
-      type: 'text',
-      label: 'Hero Subtitle',
-    },
-    {
-      name: 'heroImage',
-      type: 'upload',
-      relationTo: 'media', // uses your Media collection
-      label: 'Hero Image',
-    },
-    {
-      name: 'aboutSection',
-      type: 'textarea',
-      label: 'About Section',
+      name: 'heroSection',
+      label: 'Hero Section',
+      type: 'group',
+      fields: [
+        {
+          name: 'backgroundImage',
+          label: 'Background Image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'title',
+          label: 'Main Title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'subtitle',
+          label: 'Subtitle',
+          type: 'text',
+        },
+      ],
     },
   ],
 }

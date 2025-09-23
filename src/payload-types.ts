@@ -86,9 +86,11 @@ export interface Config {
   };
   globals: {
     home: Home;
+    navbar: Navbar;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
+    navbar: NavbarSelect<false> | NavbarSelect<true>;
   };
   locale: null;
   user: User & {
@@ -295,10 +297,32 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Home {
   id: string;
-  heroTitle?: string | null;
-  heroSubtitle?: string | null;
-  heroImage?: (string | null) | Media;
-  aboutSection?: string | null;
+  heroSection: {
+    backgroundImage: string | Media;
+    title: string;
+    subtitle?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar".
+ */
+export interface Navbar {
+  id: string;
+  logo: string | Media;
+  navLinks?:
+    | {
+        title: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  ctaButton: {
+    text: string;
+    href: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -307,10 +331,36 @@ export interface Home {
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
-  heroTitle?: T;
-  heroSubtitle?: T;
-  heroImage?: T;
-  aboutSection?: T;
+  heroSection?:
+    | T
+    | {
+        backgroundImage?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navbar_select".
+ */
+export interface NavbarSelect<T extends boolean = true> {
+  logo?: T;
+  navLinks?:
+    | T
+    | {
+        title?: T;
+        href?: T;
+        id?: T;
+      };
+  ctaButton?:
+    | T
+    | {
+        text?: T;
+        href?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
