@@ -13,34 +13,52 @@ export default async function HomePage() {
   const heroSection = homeData?.heroSection
   console.log({ user, homeData })
 
+  return (
+    <div className="home">
+      {heroSection && (
+        <section className="relative w-full h-screen">
+          {/* Background Image */}
+          <Image
+            src={heroSection.backgroundImage?.url}
+            alt={heroSection.backgroundImage?.alt || 'Hero image'}
+            fill
+            priority
+            className="object-cover"
+          />
 
-return (
-  <div className="home">
-    {heroSection && (
-      <section className="relative w-full h-screen">
-        {/* Background Image */}
-        <Image
-          src={heroSection.backgroundImage?.url}
-          alt={heroSection.backgroundImage?.alt || "Hero image"}
-          fill
-          priority
-          className="object-cover"
-        />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-black/40" />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40" />
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
-          <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
-          <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
-        </div>
-        <div className="flex flex-col items-center justify-center mt-8">
-          <h1 className="text-5xl bebas">About <span className="text-[#f80a0a]">Us</span></h1>
-        </div>
-      </section>
-    )}
-  </div>
-)
-
+          {/* Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+            <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
+            <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
+          </div>
+          <div className = "bg-[#060425] my-15 mx-20 h-50 rounded-4xl flex flex-row items-center justify-center gap-50 text-white Sansation-regular ">
+            <div>
+              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
+              <p ><b>Happy Members</b></p>
+              <p className="text-gray ">Our community is growing fast</p>
+            </div>
+            <div>
+              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
+              <p ><b>Happy Members</b></p>
+              <p className="text-gray ">Our community is growing fast</p>
+            </div>
+            <div>
+              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
+              <p ><b>Happy Members</b></p>
+              <p className="text-gray ">Our community is growing fast</p>
+            </div>
+            
+          </div>
+          <div className="flex flex-col items-center justify-center mt-8">
+            <h1 className="text-5xl bebas">
+              About <span className="text-[#f80a0a]">Us</span>
+            </h1>
+          </div>
+        </section>
+      )}
+    </div>
+  )
 }
