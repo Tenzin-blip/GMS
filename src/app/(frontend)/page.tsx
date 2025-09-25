@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -30,35 +31,52 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-black/40" />
 
           {/* Content */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white">
+          <div className="relative z-10 flex flex-col items-start justify-center h-full text-left text-white px-20 gap-6">
             <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
             <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
-          </div>
-          <div className = "bg-[#060425] my-15 mx-20 h-50 rounded-4xl flex flex-row items-center justify-center gap-50 text-white Sansation-regular ">
-            <div>
-              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
-              <p ><b>Happy Members</b></p>
-              <p className="text-gray ">Our community is growing fast</p>
-            </div>
-            <div>
-              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
-              <p ><b>Happy Members</b></p>
-              <p className="text-gray ">Our community is growing fast</p>
-            </div>
-            <div>
-              <h1 className="text-5xl mb-2 Sansation-regular">400<span className="text-[#f80a0a]">+</span></h1>
-              <p ><b>Happy Members</b></p>
-              <p className="text-gray ">Our community is growing fast</p>
-            </div>
-            
-          </div>
-          <div className="flex flex-col items-center justify-center mt-8">
-            <h1 className="text-5xl bebas">
-              About <span className="text-[#f80a0a]">Us</span>
-            </h1>
+            <Link
+          href={homeData.ctaButton.href}
+          className="bg-[#f80a0a] p-4 px-7 py-2 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-2xl"
+        >
+          {homeData.ctaButton.text}
+        </Link>
           </div>
         </section>
       )}
+      <div className="bg-[#030122] my-15 mx-20 h-50 rounded-4xl flex flex-row items-center justify-center gap-50 text-white Sansation-regular ">
+        <div>
+          <h1 className="text-5xl mb-2 Sansation-regular">
+            400<span className="text-[#f80a0a]">+</span>
+          </h1>
+          <p>
+            <b>Happy Members</b>
+          </p>
+          <p className="text-gray ">Our community is growing fast</p>
+        </div>
+        <div>
+          <h1 className="text-5xl mb-2 Sansation-regular">
+            90<span className="text-[#f80a0a]">%</span>
+          </h1>
+          <p>
+            <b>Success Stories</b>
+          </p>
+          <p className="text-gray ">Our community is growing fast</p>
+        </div>
+        <div>
+          <h1 className="text-5xl mb-2 Sansation-regular">
+            7<span className="text-[#f80a0a]">+</span>
+          </h1>
+          <p>
+            <b>Certified Trainers</b>
+          </p>
+          <p className="text-gray ">Our community is growing fast</p>
+        </div>
+      </div>
+      <div className="flex flex-col items-center justify-center mt-8">
+        <h1 className="text-5xl bebas">
+          About <span className="text-[#f80a0a]">Us</span>
+        </h1>
+      </div>
     </div>
   )
 }

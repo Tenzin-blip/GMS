@@ -302,6 +302,10 @@ export interface Home {
     title: string;
     subtitle?: string | null;
   };
+  ctaButton: {
+    text: string;
+    href: string;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -337,6 +341,12 @@ export interface HomeSelect<T extends boolean = true> {
         backgroundImage?: T;
         title?: T;
         subtitle?: T;
+      };
+  ctaButton?:
+    | T
+    | {
+        text?: T;
+        href?: T;
       };
   updatedAt?: T;
   createdAt?: T;
