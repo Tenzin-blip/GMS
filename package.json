@@ -45,6 +45,7 @@
     "@types/react-anchor-link-smooth-scroll": "^1.0.2",
     "@types/react-dom": "19.1.6",
     "@vitejs/plugin-react": "4.5.2",
+    "daisyui": "^5.1.18",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.4.4",
     "jsdom": "26.1.0",

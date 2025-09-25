@@ -35,43 +35,79 @@ export default async function HomePage() {
             <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
             <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
             <Link
-          href={homeData.ctaButton.href}
-          className="bg-[#f80a0a] p-4 px-7 py-2 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-2xl"
-        >
-          {homeData.ctaButton.text}
-        </Link>
+              href={homeData.ctaButton.href}
+              className=" btn bg-[#f80a0a] p-4 px-7 py-2 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-2xl"
+            >
+              {homeData.ctaButton.text}
+            </Link>
           </div>
         </section>
       )}
-      <div className="bg-[#030122] my-15 mx-20 h-50 rounded-4xl flex flex-row items-center justify-center gap-50 text-white Sansation-regular ">
-        <div>
-          <h1 className="text-5xl mb-2 Sansation-regular">
-            400<span className="text-[#f80a0a]">+</span>
-          </h1>
-          <p>
-            <b>Happy Members</b>
-          </p>
-          <p className="text-gray ">Our community is growing fast</p>
+      <div className="stats text-black w-full mx-auto ">
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-8 w-8 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div className="stat-title">Downloads</div>
+          <div className="stat-value">31K</div>
+          <div className="stat-desc">Jan 1st - Feb 1st</div>
         </div>
-        <div>
-          <h1 className="text-5xl mb-2 Sansation-regular">
-            90<span className="text-[#f80a0a]">%</span>
-          </h1>
-          <p>
-            <b>Success Stories</b>
-          </p>
-          <p className="text-gray ">Our community is growing fast</p>
+
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-8 w-8 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+              ></path>
+            </svg>
+          </div>
+          <div className="stat-title">New Users</div>
+          <div className="stat-value">4,200</div>
+          <div className="stat-desc">↗︎ 400 (22%)</div>
         </div>
-        <div>
-          <h1 className="text-5xl mb-2 Sansation-regular">
-            7<span className="text-[#f80a0a]">+</span>
-          </h1>
-          <p>
-            <b>Certified Trainers</b>
-          </p>
-          <p className="text-gray ">Our community is growing fast</p>
+
+        <div className="stat">
+          <div className="stat-figure text-secondary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-8 w-8 stroke-current"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              ></path>
+            </svg>
+          </div>
+          <div className="stat-title">New Registers</div>
+          <div className="stat-value">1,200</div>
+          <div className="stat-desc">↘︎ 90 (14%)</div>
         </div>
       </div>
+
       <div className="flex flex-col items-center justify-center mt-8">
         <h1 className="text-5xl bebas">
           About <span className="text-[#f80a0a]">Us</span>
