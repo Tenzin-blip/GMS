@@ -4,7 +4,8 @@ import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import React from 'react'
 import config from '@/payload.config'
-import './styles.css'
+import './css/styles.css'
+
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
@@ -15,7 +16,8 @@ export default async function HomePage() {
   console.log({ user, homeData })
 
   return (
-    <div className="home">
+    <main className="flex flex-col w-full">
+      {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
         <section className="relative w-full h-screen">
           {/* Background Image */}
@@ -30,13 +32,17 @@ export default async function HomePage() {
           {/* Overlay */}
           <div className="absolute inset-0 bg-black/40" />
 
-          {/* Content */}
-          <div className="relative z-10 flex flex-col items-start justify-center h-full text-left text-white px-20 gap-6">
-            <h1 className="text-8xl mb-4 dahlia-medium">{heroSection.title}</h1>
-            <p className="text-xl max-w-2xl Sansation-regular">{heroSection.subtitle}</p>
+          {/* Hero Content */}
+          <div className="relative z-10 flex flex-col items-start justify-center h-full text-left text-white px-6 sm:px-12 lg:px-24 gap-6 max-w-7xl ">
+            <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-4 dahlia-medium">
+              {heroSection.title}
+            </h1>
+            <p className="text-lg md:text-xl max-w-2xl leading-relaxed Sansation-regular">
+              {heroSection.subtitle}
+            </p>
             <Link
               href={homeData.ctaButton.href}
-              className=" btn bg-[#f80a0a] p-4 px-7 py-2 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-2xl"
+              className="btn bg-[#f80a0a] px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl"
             >
               {homeData.ctaButton.text}
             </Link>
@@ -44,13 +50,68 @@ export default async function HomePage() {
         </section>
       )}
 
-      <div className="flex flex-col items-left mt-8 px-[3rem] text-black">
-        <h1 className="text-5xl Sansation-regular">
-          About <span className="text-[#f80a0a]">Us</span>
-        </h1>
-        <h2 className="bebas text-7xl">Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here</h2>
-        <p className="sansation-regular text-gray-700">At Level Up, we believe fitness is more than just exercise - it's a lifestyle transformation. Our state-of-the-art facility combines cutting-edge equipment with personalized training to help you achieve your goals.</p>
-      </div>
-    </div>
+      {/* ABOUT SECTION (with standard container) */}
+      <section className="py-24 bg-white text-black w-full">
+        <div className=" px-[6~24] flex flex-col gap-5">
+          {/* Heading */}
+          <div>
+            <h1 className="text-3xl font-semibold Sansation-regular mb-3 uppercase">
+              About <span className="text-[#f80a0a]">Us</span>
+            </h1>
+            <h2 className="bebas text-[5xl~7xl] leading-none">
+              Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here
+            </h2>
+          </div>
+
+          {/* Description */}
+          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+            At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
+            more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
+            combines cutting-edge equipment with personalized training to help you achieve your
+            goals.
+          </p>
+
+          {/* Stats Section */}
+          <div className="stats stats-vertical lg:stats-horizontal Sansation-regular w-full ">
+            <div className="stat !border-none">
+              <div className="stat-value">
+                12<span className="text-[#f80a0a]">+</span>
+              </div>
+              <div className="stat-desc text-gray-700">Years of experience</div>
+            </div>
+
+            <div className="stat !border-none">
+              <div className="stat-value">
+                2K<span className="text-[#f80a0a]">+</span>
+              </div>
+              <div className="stat-desc text-gray-700">Members</div>
+            </div>
+
+            <div className="stat !border-none ">
+              <div className="stat-value">
+                24/<span className="text-[#f80a0a]">7</span>
+              </div>
+              <div className="stat-desc text-gray-700">Open</div>
+            </div>
+
+            <div className="stat !border-none">
+              <div className="stat-value">
+                15<span className="text-[#f80a0a]">+</span>
+              </div>
+              <div className="stat-desc text-gray-700">Expert trainers</div>
+            </div>
+          </div>
+          <div className="h-[450px] relative">
+            <Image
+              src="/api/media/file/risen-wang-20jX9b35r_M-unsplash.jpg"
+              alt="About image"
+              width={1440}
+              height={1200}
+              className="object-cover w-full h-full brightness-69"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }

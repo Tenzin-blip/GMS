@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin './betweeny.ts';
 
 
 @plugin "daisyui/theme" {
