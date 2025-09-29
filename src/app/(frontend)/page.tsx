@@ -6,6 +6,8 @@ import React from 'react'
 import config from '@/payload.config'
 import './css/styles.css'
 import TrainerCard from '@/components/Card'
+import Plans from '@/components/Plans'
+
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -52,11 +54,11 @@ export default async function HomePage() {
       )}
 
       {/* ABOUT SECTION (with standard container) */}
-      <section className="py-24 bg-white text-black w-full">
+      <section className="py-15 bg-white text-black w-full">
         <div className=" px-[6~24] flex flex-col">
           {/* Heading */}
           <div>
-            <h1 className="text-3xl font-semibold Sansation-regular mb-3 uppercase">
+            <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
               About <span className="text-[#f80a0a]">Us</span>
             </h1>
             <h2 className="bebas text-[5xl~7xl] leading-none">
@@ -115,11 +117,11 @@ export default async function HomePage() {
       </section>
 
       {/* TRAINERS SECTION (with standard container) */}
-      <section className="py-24 bg-white text-black w-full">
+      <section className="py-10 bg-white text-black w-full">
         <div className=" px-[6~24] flex flex-col">
           {/* Heading */}
           <div>
-            <h1 className="text-3xl font-semibold Sansation-regular mb-3 uppercase">
+            <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
               Our <span className="text-[#f80a0a]">Trainers</span>
             </h1>
             <h2 className="bebas text-[5xl~7xl] leading-none">
@@ -134,9 +136,9 @@ export default async function HomePage() {
           </p>
 
           {/* Card Section */}
-          <div className="stats stats-vertical lg:stats-horizontal  w-full mt-10">
+          <div className="stats stats-vertical lg:stats-horizontal  w-full mt-10 justify-center items-center gap-40">
             <TrainerCard
-              name="SWOYAM POKHAREL"
+              name="DAYJEN JIGME"
               category="Strength & Conditioning"
               experience="8 Years experience"
               description="Former NFL athlete specializing in functional strength training and performance optimization."
@@ -144,7 +146,43 @@ export default async function HomePage() {
               instagramUrl="https://instagram.com/username"
               email="trainer@example.com"
             />
+            <TrainerCard
+              name="KUNSANG GURUNG"
+              category="Yoga and Stretching"
+              experience="10 Years experience"
+              description="Mindfulness coach combining traditional yoga practices with modern stretching training methods."
+              imageUrl="/api/media/file/pexels-koolshooters-6246587.jpg"
+              instagramUrl="https://instagram.com/username"
+              email="trainer@example.com"
+            />
+            <TrainerCard
+              name="CHIME CHOENZOM"
+              category="Pilates & Flexibility"
+              experience="6 Years experience"
+              description="Blending mindful movement with modern flexibility techniques for a balanced body and calm mind."
+              imageUrl="/api/media/file/pexels-airamdphoto-13106577.jpg"
+              instagramUrl="https://instagram.com/username"
+              email="trainer@example.com"
+            />
           </div>
+        </div>
+      </section>
+      {/* PLAN SECTION (with standard container) */}
+      <section className="py-15 bg-white text-black w-full ">
+        <div className=" px-[6~24] flex flex-col justify-center items-center">
+          {/* Heading */}
+          <div>
+            <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase text-[#f80a0a]">
+              Plans
+            </h1>
+
+          </div>
+
+          {/* Description */}
+          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl text-center">
+            Flexible membership options designed to fit your lifestyle and fitness goals. Start your transformation today with our comprehensive training packages.
+          </p>
+          <Plans />
         </div>
       </section>
     </main>
