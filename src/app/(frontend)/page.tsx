@@ -5,6 +5,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 import config from '@/payload.config'
 import './css/styles.css'
+import TrainerCard from '@/components/Card'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -52,7 +53,7 @@ export default async function HomePage() {
 
       {/* ABOUT SECTION (with standard container) */}
       <section className="py-24 bg-white text-black w-full">
-        <div className=" px-[6~24] flex flex-col gap-5">
+        <div className=" px-[6~24] flex flex-col">
           {/* Heading */}
           <div>
             <h1 className="text-3xl font-semibold Sansation-regular mb-3 uppercase">
@@ -72,33 +73,33 @@ export default async function HomePage() {
           </p>
 
           {/* Stats Section */}
-          <div className="stats stats-vertical lg:stats-horizontal Sansation-regular w-full ">
+          <div className="stats stats-vertical lg:stats-horizontal  w-full">
             <div className="stat !border-none">
-              <div className="stat-value">
+              <div className="stat-value Sansation-bold">
                 12<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="stat-desc text-gray-700">Years of experience</div>
+              <div className="stat-desc text-gray-700 Sansation-regular">Years of experience</div>
             </div>
 
             <div className="stat !border-none">
-              <div className="stat-value">
+              <div className="stat-value Sansation-bold">
                 2K<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="stat-desc text-gray-700">Members</div>
+              <div className="stat-desc text-gray-700 Sansation-regular">Members</div>
             </div>
 
             <div className="stat !border-none ">
-              <div className="stat-value">
+              <div className="stat-value Sansation-bold">
                 24/<span className="text-[#f80a0a]">7</span>
               </div>
-              <div className="stat-desc text-gray-700">Open</div>
+              <div className="stat-desc text-gray-700 Sansation-regular">Open</div>
             </div>
 
             <div className="stat !border-none">
-              <div className="stat-value">
+              <div className="stat-value Sansation-bold">
                 15<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="stat-desc text-gray-700">Expert trainers</div>
+              <div className="stat-desc text-gray-700 Sansation-regular">Expert trainers</div>
             </div>
           </div>
           <div className="h-[450px] relative">
@@ -108,6 +109,40 @@ export default async function HomePage() {
               width={1440}
               height={1200}
               className="object-cover w-full h-full brightness-69"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* TRAINERS SECTION (with standard container) */}
+      <section className="py-24 bg-white text-black w-full">
+        <div className=" px-[6~24] flex flex-col">
+          {/* Heading */}
+          <div>
+            <h1 className="text-3xl font-semibold Sansation-regular mb-3 uppercase">
+              Our <span className="text-[#f80a0a]">Trainers</span>
+            </h1>
+            <h2 className="bebas text-[5xl~7xl] leading-none">
+              Meet <span className="text-[#f80a0a]">Our</span> Trainers
+            </h2>
+          </div>
+
+          {/* Description */}
+          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+            Train with certified professionals who are passionate about helping you achieve your
+            fitness goals through personalized guidance and proven methodologies.
+          </p>
+
+          {/* Card Section */}
+          <div className="stats stats-vertical lg:stats-horizontal  w-full mt-10">
+            <TrainerCard
+              name="SWOYAM POKHAREL"
+              category="Strength & Conditioning"
+              experience="8 Years experience"
+              description="Former NFL athlete specializing in functional strength training and performance optimization."
+              imageUrl="/api/media/file/pexels-assomyron-32695888.jpg"
+              instagramUrl="https://instagram.com/username"
+              email="trainer@example.com"
             />
           </div>
         </div>

@@ -69,3 +69,13 @@
 .Sansation-regular {
   font-family: 'Sansation', sans-serif;
 }
+
+@font-face {
+  font-family: 'Sansation';
+  src: url('/fonts/Sansation-Bold.ttf') format('truetype');
+  font-style: normal;
+}
+
+.Sansation-bold {
+  font-family: 'Sansation', sans-serif;
+}
