@@ -8,7 +8,6 @@ import './css/styles.css'
 import TrainerCard from '@/components/Card'
 import Plans from '@/components/Plans'
 
-
 export default async function HomePage() {
   const headers = await getHeaders()
   const payloadConfig = await config
@@ -175,13 +174,13 @@ export default async function HomePage() {
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase text-[#f80a0a]">
               Plans
             </h1>
-
           </div>
 
           {/* Description */}
           <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl text-center">
-            Flexible membership options designed to fit your lifestyle and fitness goals. Start your transformation today with our comprehensive training packages.
-          </p>
+            Flexible membership options designed to fit your lifestyle and fitness goals. Start your
+            transformation today with our comprehensive training packages.
+          </p> 
           <Plans />
         </div>
       </section>

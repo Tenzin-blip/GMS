@@ -54,7 +54,7 @@ export default function TrainerCard({
             </a>
           </div>
         </div>
-        <div className="text-[#ff6b00] text-sm font-bold mb-2 font-['Sansation']">{category}</div>
+        <div className="text-[#f80a0a] text-sm font-bold mb-2 font-['Sansation']">{category}</div>
         <div className="text-xs text-gray-600 mb-3 Sansation-regular">{experience}</div>
         <p className="text-[13px] leading-relaxed text-gray-800 font-['Sansation']">
           {description}
