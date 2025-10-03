@@ -180,8 +180,31 @@ export default async function HomePage() {
           <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl text-center">
             Flexible membership options designed to fit your lifestyle and fitness goals. Start your
             transformation today with our comprehensive training packages.
-          </p> 
+          </p>
           <Plans />
+        </div>
+      </section>
+
+      {/* SERVICES SECTION (with standard container) */}
+      <section className="py-10 bg-white text-black w-full">
+        <div className=" px-[6~24] flex flex-col">
+          {/* Heading */}
+          <div>
+            <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
+              Our <span className="text-[#f80a0a]">Services</span>
+            </h1>
+            <h2 className="bebas text-[5xl~7xl] leading-none">
+              Premium <span className="text-[#f80a0a]">Fitness</span> Services Tailored for{' '}
+              <span className="text-[#f80a0a]">You</span>
+            </h2>
+          </div>
+
+          {/* Description */}
+          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+            At Level Up Gym, we offer personalized fitness services to help you reach your goals.
+            From one-on-one training to high-energy classes and recovery sessions, we provide
+            everything you need to succeed in your fitness journey.
+          </p>
         </div>
       </section>
     </main>

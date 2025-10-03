@@ -77,11 +77,8 @@ export default function Plans() {
                       isMiddle ? 'bg-orange-100' : 'bg-orange-50'
                     }`}
                   >
-                    <Icon
-                      className={`w-7 h-7 ${isMiddle ? 'text-[#f80a0a]' : 'text-[#f80a0a]'}`}
-                    />
+                    <Icon className={`w-7 h-7 ${isMiddle ? 'text-[#f80a0a]' : 'text-[#f80a0a]'}`} />
                   </div>
-
 
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                   <p className="text-gray-600 text-sm mb-6 min-h-[40px]">{plan.description}</p>
@@ -94,8 +91,8 @@ export default function Plans() {
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                          <Dumbbell className="w-4 h-4 text-[#f80a0a] mt-0.5" />
-            
+                        <Dumbbell className="w-4 h-4 text-[#f80a0a] mt-0.5" />
+
                         <span className="text-gray-700 text-sm">{feature}</span>
                       </li>
                     ))}
