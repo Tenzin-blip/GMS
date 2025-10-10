@@ -1,3 +1,6 @@
+import React from 'react'
+import '../../css/styles.css'
+
 export default function SignUpLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
