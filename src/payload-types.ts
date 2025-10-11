@@ -130,7 +130,7 @@ export interface User {
   phoneNumber?: string | null;
   gender?: ('male' | 'female' | 'other') | null;
   role: 'admin' | 'trainer' | 'user';
-  plan: 'monthly' | 'quarterly' | 'yearly';
+  plan: 'essential' | 'premium' | 'elite';
   OTP?: string | null;
   updatedAt: string;
   createdAt: string;

@@ -127,9 +127,9 @@ export const Users: CollectionConfig = {
       type: 'select',
       label: 'Payment Plan',
       options: [
-        { label: 'Monthly', value: 'monthly' },
-        { label: 'Quarterly', value: 'quarterly' },
-        { label: 'Yearly', value: 'yearly' },
+        { label: 'Essential', value: 'essential' },
+        { label: 'Premium', value: 'premium' },
+        { label: 'Elite', value: 'elite' },
       ],
       defaultValue: 'monthly',
       required: true,
@@ -151,7 +151,7 @@ export const Users: CollectionConfig = {
       required: false,
       // Allow system to clear OTP during verification (unauthenticated)
       access: {
-        read: ({ req: { user } }) => user?.role === 'admin',
+        read: () => true,
         update: () => true, // Allow OTP clearing during signup
       },
     },
