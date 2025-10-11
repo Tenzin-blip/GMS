@@ -125,6 +125,13 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: string;
+  name: string;
+  dob?: string | null;
+  phoneNumber?: string | null;
+  gender?: ('male' | 'female' | 'other') | null;
+  role: 'admin' | 'trainer' | 'user';
+  plan: 'monthly' | 'quarterly' | 'yearly';
+  OTP?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -224,6 +231,13 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  dob?: T;
+  phoneNumber?: T;
+  gender?: T;
+  role?: T;
+  plan?: T;
+  OTP?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
