@@ -12,9 +12,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="en">
-      
-      <body className="min-h-screen bg-gray-100 ">
-        <Navbar/>
+      <Navbar/>
+      <body className="min-h-screen bg-slate-200 p-[10px]">   
         <main>{children}</main>
       </body>
     </html>

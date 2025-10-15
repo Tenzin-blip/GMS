@@ -14,10 +14,11 @@ export default async function Navbar() {
   if (!navbar) return null
 
   return (
-    <nav className="absolute top-0 left-0 w-full p-4 px-20  flex justify-between items-center z-20 text-white bebas text-xl tracking-wide bg-transparent">
+    <nav className="w-full top-0 p-4 px-[24px] mb-[10px] flex justify-between items-center text-white bebas text-xl tracking-wide bg-neutral-800 rounded-2xl">
       <div>
         <Image src={navbar.logo.url} alt={navbar.logo.alt || 'Logo'} width={142} height={27} />
       </div>
+      <div className="flex flex-row gap-12">
       <ul className="flex gap-12">
         {navbar.navLinks.map((link: any) => (
           <li key={link.id}>
@@ -37,6 +38,7 @@ export default async function Navbar() {
         >
           {navbar.ctaButton.text}
         </Link>
+      </div>
       </div>
     </nav>
   )

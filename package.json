@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=6000\" next build",
-   "build_nocheck": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=6000\" SKIP_TYPE_CHECK=true SKIP_ENV_VALIDATION=true TSC_COMPILE_ON_ERROR=true next build --no-lint",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "build_nocheck": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=6000\" SKIP_TYPE_CHECK=true SKIP_ENV_VALIDATION=true TSC_COMPILE_ON_ERROR=true next build --no-lint",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --turbo",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",

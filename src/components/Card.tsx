@@ -22,7 +22,7 @@ export default function TrainerCard({
   email,
 }: TrainerCardProps) {
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md max-w-[280px] w-full">
+    <div className="bg-white rounded-xl overflow-hidden shadow-md  w-full">
       <div className="w-full h-[280px] relative overflow-hidden">
         <Image
           src={imageUrl}

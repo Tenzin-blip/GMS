@@ -7,6 +7,7 @@ import config from '@/payload.config'
 import '../css/styles.css'
 import TrainerCard from '@/components/Card'
 import Plans from '@/components/Plans'
+import Toast from '@/components/toast'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -18,39 +19,49 @@ export default async function HomePage() {
   console.log({ user, homeData })
 
   return (
-    <main className="flex flex-col w-full">
+    <main className="flex flex-col gap-[10px] w-full">
+    
       {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
-        <section className="relative w-full h-screen">
+        <section className="relative w-full h-[88vh] ">
           {/* Background Image */}
           <Image
             src={heroSection.backgroundImage?.url}
             alt={heroSection.backgroundImage?.alt || 'Hero image'}
             fill
             priority
-            className="object-cover"
+            className="object-cover rounded-2xl"
           />
 
           {/* Overlay */}
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-black/40 rounded-2xl" />
 
           {/* Hero Content */}
-          <div className="relative z-10 flex flex-col items-start justify-center h-full text-left text-white px-6 sm:px-12 lg:px-24 gap-6 max-w-7xl ">
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-4 dahlia-medium">
+          <div className="relative z-10 flex flex-col items-center justify-center h-full text-left text-white px-6 sm:px-12 lg:px-24 gap-[32px] w-full ">
+            <h1 className="text-6xl md:text-7xl font-bold leading-tight bebas">
               {heroSection.title}
             </h1>
-            <p className="text-lg md:text-xl max-w-2xl leading-relaxed Sansation-regular">
+            <p className="text-base md:text-xl max-w-2xl leading-relaxed font-geist text-center ">
               {heroSection.subtitle}
             </p>
+            <div className="flex flex-row gap-[1rem]">
             <Link
-              href={homeData.ctaButton.href}
+              href={homeData.ctaButton1.href}
               className="btn bg-[#f80a0a] px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl"
             >
-              {homeData.ctaButton.text}
+              {homeData.ctaButton1.text}
             </Link>
+            <Link
+              href={homeData.ctaButton2.href}
+              className="btn bg-slate-200 px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl !text-black"
+            >
+              {homeData.ctaButton2.text}
+            </Link>
+            </div>
           </div>
         </section>
       )}
+      <Toast title="Hello" message="World!"/>
 
       {/* ABOUT SECTION (with standard container) */}
       <section className="py-15 bg-white text-black w-full">
@@ -135,7 +146,7 @@ export default async function HomePage() {
           </p>
 
           {/* Card Section */}
-          <div className="stats stats-vertical lg:stats-horizontal  w-full mt-10 justify-center items-center gap-40">
+          <div className="stats stats-vertical lg:stats-horizontal  w-full py-10 justify-center items-center gap-10">
             <TrainerCard
               name="DAYJEN JIGME"
               category="Strength & Conditioning"

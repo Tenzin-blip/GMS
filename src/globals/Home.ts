@@ -33,7 +33,26 @@ export const Home: GlobalConfig = {
       ],
     },
     {
-      name: 'ctaButton',
+      name: 'ctaButton1',
+      label: 'CTA Button',
+      type: 'group', // group is perfect for multiple sub-fields
+      fields: [
+        {
+          name: 'text',
+          label: 'Button Text',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'href',
+          label: 'Button Link',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'ctaButton2',
       label: 'CTA Button',
       type: 'group', // group is perfect for multiple sub-fields
       fields: [
