@@ -64,25 +64,24 @@ export default async function HomePage() {
       <Toast title="Hello" message="World!"/>
 
       {/* ABOUT SECTION (with standard container) */}
-      <section className="py-15 bg-white text-black w-full">
-        <div className=" px-[6~24] flex flex-col">
+      <section className=" text-white w-full">
           {/* Heading */}
-          <div>
+          <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#292929] rounded-2xl w-full text-center justify-center items-center">
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
               About <span className="text-[#f80a0a]">Us</span>
             </h1>
             <h2 className="bebas text-[5xl~7xl] leading-none">
               Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here
             </h2>
+          {/* Description */}
+            <p className="sansation-regular text-white-700 text-lg leading-[1.5] text-center max-w-4xl">
+              At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
+              more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
+              combines cutting-edge equipment with personalized training to help you achieve your
+              goals.
+            </p>
           </div>
 
-          {/* Description */}
-          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
-            At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
-            more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
-            combines cutting-edge equipment with personalized training to help you achieve your
-            goals.
-          </p>
 
           {/* Stats Section */}
           <div className="stats stats-vertical lg:stats-horizontal  w-full">
@@ -123,7 +122,6 @@ export default async function HomePage() {
               className="object-cover w-full h-full brightness-69"
             />
           </div>
-        </div>
       </section>
 
       {/* TRAINERS SECTION (with standard container) */}
