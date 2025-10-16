@@ -20,7 +20,6 @@ export default async function HomePage() {
 
   return (
     <main className="flex flex-col gap-[10px] w-full">
-    
       {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
         <section className="relative w-full h-[88vh] ">
@@ -45,83 +44,86 @@ export default async function HomePage() {
               {heroSection.subtitle}
             </p>
             <div className="flex flex-row gap-[1rem]">
-            <Link
-              href={homeData.ctaButton1.href}
-              className="btn bg-[#f80a0a] px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl"
-            >
-              {homeData.ctaButton1.text}
-            </Link>
-            <Link
-              href={homeData.ctaButton2.href}
-              className="btn bg-slate-200 px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl !text-black"
-            >
-              {homeData.ctaButton2.text}
-            </Link>
+              <Link
+                href={homeData.ctaButton1.href}
+                className="btn bg-[#f80a0a] px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl"
+              >
+                {homeData.ctaButton1.text}
+              </Link>
+              <Link
+                href={homeData.ctaButton2.href}
+                className="btn bg-slate-200 px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl !text-black"
+              >
+                {homeData.ctaButton2.text}
+              </Link>
             </div>
           </div>
         </section>
       )}
-      <Toast title="Hello" message="World!"/>
+      <Toast title="Hello" message="World!" />
 
       {/* ABOUT SECTION (with standard container) */}
-      <section className=" text-white w-full">
-          {/* Heading */}
-          <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#292929] rounded-2xl w-full text-center justify-center items-center">
-            <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
-              About <span className="text-[#f80a0a]">Us</span>
-            </h1>
-            <h2 className="bebas text-[5xl~7xl] leading-none">
-              Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here
-            </h2>
+      <section className=" text-white w-full flex flex-col gap-[10px]">
+        {/* Heading */}
+        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#292929] rounded-2xl w-full text-center justify-center items-center">
+          <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
+            About <span className="text-[#f80a0a]">Us</span>
+          </h1>
+          <h2 className="bebas text-[5xl~7xl] leading-none">
+            Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here
+          </h2>
           {/* Description */}
-            <p className="sansation-regular text-white-700 text-lg leading-[1.5] text-center max-w-4xl">
-              At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
-              more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
-              combines cutting-edge equipment with personalized training to help you achieve your
-              goals.
-            </p>
-          </div>
+          <p className="sansation-regular text-white-700 text-lg leading-[1.5] text-center max-w-4xl">
+            At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
+            more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
+            combines cutting-edge equipment with personalized training to help you achieve your
+            goals.
+          </p>
+        </div>
 
-
-          {/* Stats Section */}
-          <div className="stats stats-vertical lg:stats-horizontal  w-full">
-            <div className="stat !border-none">
-              <div className="stat-value Sansation-bold">
+        {/* Stats Section */}
+        <div className="flex flex-row gap-[10px] w-full">
+          <div className=" flex flex-col gap-30 w-[50vh] bg-[#292929] rounded-l-2xl justify-center items-center">
+            <div>
+              <div className=" text-center Sansation-bold text-5xl">
                 12<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="stat-desc text-gray-700 Sansation-regular">Years of experience</div>
+              <div className="text-white Sansation-regular">Years of experience</div>
             </div>
 
-            <div className="stat !border-none">
-              <div className="stat-value Sansation-bold">
-                2K<span className="text-[#f80a0a]">+</span>
-              </div>
-              <div className="stat-desc text-gray-700 Sansation-regular">Members</div>
+            <div>
+            <div className="text-center text-5xl Sansation-bold">
+              2K<span className="text-[#f80a0a]">+</span>
             </div>
-
-            <div className="stat !border-none ">
-              <div className="stat-value Sansation-bold">
-                24/<span className="text-[#f80a0a]">7</span>
-              </div>
-              <div className="stat-desc text-gray-700 Sansation-regular">Open</div>
-            </div>
-
-            <div className="stat !border-none">
-              <div className="stat-value Sansation-bold">
-                15<span className="text-[#f80a0a]">+</span>
-              </div>
-              <div className="stat-desc text-gray-700 Sansation-regular">Expert trainers</div>
+            <div className="text-white Sansation-regular">Members</div>
             </div>
           </div>
-          <div className="h-[450px] relative">
+
+          <div className="h-[450px] relative w-full">
             <Image
               src="/api/media/file/risen-wang-20jX9b35r_M-unsplash.jpg"
               alt="About image"
-              width={1440}
+              width={1400}
               height={1200}
               className="object-cover w-full h-full brightness-69"
             />
           </div>
+
+          <div className=" flex flex-col gap-30 w-[50vh] bg-[#292929] rounded-r-2xl justify-center items-center">
+            <div>
+              <div className=" text-center Sansation-bold text-5xl">
+                24/<span className="text-[#f80a0a]">7</span>
+              </div>
+              <div className="text-white Sansation-regular text-center">Open</div>
+            </div>
+            <div>
+              <div className="text-center text-5xl Sansation-bold">
+                10<span className="text-[#f80a0a]">+</span>
+              </div>
+              <div className=" text-white Sansation-regular">Expert trainers</div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* TRAINERS SECTION (with standard container) */}
