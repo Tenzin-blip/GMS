@@ -92,10 +92,10 @@ export default async function HomePage() {
             </div>
 
             <div>
-            <div className="text-center text-5xl Sansation-bold">
-              2K<span className="text-[#f80a0a]">+</span>
-            </div>
-            <div className="text-white Sansation-regular">Members</div>
+              <div className="text-center text-5xl Sansation-bold">
+                2K<span className="text-[#f80a0a]">+</span>
+              </div>
+              <div className="text-white Sansation-regular">Members</div>
             </div>
           </div>
 
@@ -127,26 +127,26 @@ export default async function HomePage() {
       </section>
 
       {/* TRAINERS SECTION (with standard container) */}
-      <section className="py-10 bg-white text-black w-full">
+      <section className="text-black w-full">
         <div className=" px-[6~24] flex flex-col">
           {/* Heading */}
-          <div>
+
+          <div className="flex flex-col items-center justify-center text-center gap-[10px] h-[40vh]">
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
               Our <span className="text-[#f80a0a]">Trainers</span>
             </h1>
             <h2 className="bebas text-[5xl~7xl] leading-none">
               Meet <span className="text-[#f80a0a]">Our</span> Trainers
             </h2>
+            {/* Description */}
+            <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+              Train with certified professionals who are passionate about helping you achieve your
+              fitness goals through personalized guidance and proven methodologies.
+            </p>
           </div>
 
-          {/* Description */}
-          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
-            Train with certified professionals who are passionate about helping you achieve your
-            fitness goals through personalized guidance and proven methodologies.
-          </p>
-
           {/* Card Section */}
-          <div className="stats stats-vertical lg:stats-horizontal  w-full py-10 justify-center items-center gap-10">
+          <div className="stats stats-vertical lg:stats-horizontal  w-full mb-[3rem] justify-center items-center gap-10">
             <TrainerCard
               name="DAYJEN JIGME"
               category="Strength & Conditioning"
@@ -178,7 +178,7 @@ export default async function HomePage() {
         </div>
       </section>
       {/* PLAN SECTION (with standard container) */}
-      <section className="py-15 bg-white text-black w-full ">
+      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
         <div className=" px-[6~24] flex flex-col justify-center items-center">
           {/* Heading */}
           <div>
@@ -188,16 +188,19 @@ export default async function HomePage() {
           </div>
 
           {/* Description */}
-          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl text-center">
+          <p className="sansation-regular text-white text-lg leading-[1.5] max-w-3xl text-center">
             Flexible membership options designed to fit your lifestyle and fitness goals. Start your
             transformation today with our comprehensive training packages.
           </p>
           <Plans />
+          <p className="sansation-regular text-slate-200 pb-[10px]">All plan include access to our system and basic amenities. No setup fees</p>
         </div>
+        <svg className="!bg-slate-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#292929" fill-opacity="1" d="M0,96L48,106.7C96,117,192,139,288,170.7C384,203,480,245,576,240C672,235,768,181,864,154.7C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
       </section>
+      
 
       {/* SERVICES SECTION (with standard container) */}
-      <section className="py-10 bg-white text-black w-full">
+      <section className="text-black w-full">
         <div className=" px-[6~24] flex flex-col">
           {/* Heading */}
           <div>

@@ -49,7 +49,7 @@ export default function Plans() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 w-full py-16 px-4">
+    <div className="min-h-screen w-full py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-center gap-10">
           {plans.map((plan, index) => {
@@ -59,11 +59,11 @@ export default function Plans() {
             return (
               <div
                 key={plan.name}
-                className={`relative bg-white rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
+                className={`relative rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
                   isMiddle
                     ? 'border-orange-500 shadow-2xl scale-105 z-10'
-                    : 'border-gray-200 shadow-lg'
-                } ${isMiddle ? 'w-96' : 'w-80'}`}
+                    : 'border-slate-200 shadow-lg'
+                } ${isMiddle ? 'w-100' : 'w-95'}`}
               >
                 {isMiddle && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#f80a0a] text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
@@ -80,12 +80,12 @@ export default function Plans() {
                     <Icon className={`w-7 h-7 ${isMiddle ? 'text-[#f80a0a]' : 'text-[#f80a0a]'}`} />
                   </div>
 
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-                  <p className="text-gray-600 text-sm mb-6 min-h-[40px]">{plan.description}</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                  <p className="text-slate-200 text-sm mb-6 min-h-[40px]">{plan.description}</p>
 
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
+                    <span className="text-4xl font-bold text-white">{plan.price}</span>
+                    <span className="text-slate-200">{plan.period}</span>
                   </div>
 
                   <ul className="space-y-3 mb-8">
@@ -93,7 +93,7 @@ export default function Plans() {
                       <li key={idx} className="flex items-start gap-3">
                         <Dumbbell className="w-4 h-4 text-[#f80a0a] mt-0.5" />
 
-                        <span className="text-gray-700 text-sm">{feature}</span>
+                        <span className="text-white text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -102,7 +102,7 @@ export default function Plans() {
                     className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
                       isMiddle
                         ? 'bg-[#f80a0a] text-white hover:bg-orange-600 shadow-lg hover:shadow-xl'
-                        : 'bg-white text-[#f80a0a] border-2 border-[#f80a0a] hover:bg-orange-50'
+                        : 'text-white border-2 border-[#f80a0a] hover:bg-orange-50 hover:text-[#f80a0a] hover:border-orange-300'
                     }`}
                   >
                     Choose Plan
