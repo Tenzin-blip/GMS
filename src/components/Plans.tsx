@@ -49,7 +49,7 @@ export default function Plans() {
   ]
 
   return (
-    <div className="min-h-screen w-full py-16 px-4">
+    <div className="h-fit w-full pt-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-center gap-10">
           {plans.map((plan, index) => {

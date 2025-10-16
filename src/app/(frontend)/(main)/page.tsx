@@ -19,10 +19,10 @@ export default async function HomePage() {
   console.log({ user, homeData })
 
   return (
-    <main className="flex flex-col gap-[10px] w-full">
+    <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
       {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
-        <section className="relative w-full h-[88vh] ">
+        <section className="relative w-full h-[88vh] snap-center">
           {/* Background Image */}
           <Image
             src={heroSection.backgroundImage?.url}
@@ -63,9 +63,9 @@ export default async function HomePage() {
       <Toast title="Hello" message="World!" />
 
       {/* ABOUT SECTION (with standard container) */}
-      <section className=" text-white w-full flex flex-col gap-[10px]">
+      <section className=" text-white w-full flex flex-col gap-[10px] ">
         {/* Heading */}
-        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#292929] rounded-2xl w-full text-center justify-center items-center">
+        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#262626] rounded-2xl w-full text-center justify-center items-center">
           <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
             About <span className="text-[#f80a0a]">Us</span>
           </h1>
@@ -83,7 +83,7 @@ export default async function HomePage() {
 
         {/* Stats Section */}
         <div className="flex flex-row gap-[10px] w-full">
-          <div className=" flex flex-col gap-30 w-[50vh] bg-[#292929] rounded-l-2xl justify-center items-center">
+          <div className=" flex flex-col gap-30 w-[50vh] bg-[#262626] rounded-l-2xl justify-center items-center">
             <div>
               <div className=" text-center Sansation-bold text-5xl">
                 12<span className="text-[#f80a0a]">+</span>
@@ -109,7 +109,7 @@ export default async function HomePage() {
             />
           </div>
 
-          <div className=" flex flex-col gap-30 w-[50vh] bg-[#292929] rounded-r-2xl justify-center items-center">
+          <div className=" flex flex-col gap-30 w-[50vh] bg-[#262626] rounded-r-2xl justify-center items-center">
             <div>
               <div className=" text-center Sansation-bold text-5xl">
                 24/<span className="text-[#f80a0a]">7</span>
@@ -139,7 +139,7 @@ export default async function HomePage() {
               Meet <span className="text-[#f80a0a]">Our</span> Trainers
             </h2>
             {/* Description */}
-            <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+            <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-4xl">
               Train with certified professionals who are passionate about helping you achieve your
               fitness goals through personalized guidance and proven methodologies.
             </p>
@@ -178,8 +178,8 @@ export default async function HomePage() {
         </div>
       </section>
       {/* PLAN SECTION (with standard container) */}
-      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
-        <div className=" px-[6~24] flex flex-col justify-center items-center">
+      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full">
+        <div className=" px-[6~24] flex flex-col justify-between items-center">
           {/* Heading */}
           <div>
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase text-[#f80a0a]">
@@ -193,9 +193,9 @@ export default async function HomePage() {
             transformation today with our comprehensive training packages.
           </p>
           <Plans />
-          <p className="sansation-regular text-slate-200 pb-[10px]">All plan include access to our system and basic amenities. No setup fees</p>
+          <p className="sansation-regular text-slate-200 pt-12">All plan include access to our system and basic amenities. No setup fees</p>
         </div>
-        <svg className="!bg-slate-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#292929" fill-opacity="1" d="M0,96L48,106.7C96,117,192,139,288,170.7C384,203,480,245,576,240C672,235,768,181,864,154.7C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+        <svg className="!bg-slate-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#262626" fill-opacity="1" d="M0,96L48,106.7C96,117,192,139,288,170.7C384,203,480,245,576,240C672,235,768,181,864,154.7C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
       </section>
       
 
@@ -214,7 +214,7 @@ export default async function HomePage() {
           </div>
 
           {/* Description */}
-          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-3xl">
+          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-5xl">
             At Level Up Gym, we offer personalized fitness services to help you reach your goals.
             From one-on-one training to high-energy classes and recovery sessions, we provide
             everything you need to succeed in your fitness journey.
