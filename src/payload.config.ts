@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Home } from './globals/Home'
 import { Navbar } from './globals/Navbar'
+import { Reviews } from './globals/Reviews'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +24,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media],
-  globals: [Home, Navbar],
+  globals: [Home, Navbar, Reviews],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

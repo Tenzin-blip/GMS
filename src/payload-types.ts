@@ -87,10 +87,12 @@ export interface Config {
   globals: {
     home: Home;
     navbar: Navbar;
+    reviews: Review;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
     navbar: NavbarSelect<false> | NavbarSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -356,6 +358,24 @@ export interface Navbar {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: string;
+  reviews?:
+    | {
+        name: string;
+        email: string;
+        message: string;
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
@@ -406,6 +426,24 @@ export interface NavbarSelect<T extends boolean = true> {
     | {
         text?: T;
         href?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  reviews?:
+    | T
+    | {
+        name?: T;
+        email?: T;
+        message?: T;
+        image?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

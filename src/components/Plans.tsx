@@ -51,7 +51,7 @@ export default function Plans() {
   return (
     <div className="h-fit w-full pt-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-center gap-10">
+        <div className="flex items-center justify-center gap-10 ">
           {plans.map((plan, index) => {
             const Icon = plan.icon
             const isMiddle = plan.popular
@@ -59,7 +59,7 @@ export default function Plans() {
             return (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl border-2 transition-all duration-300 hover:shadow-xl ${
+                className={`relative rounded-2xl bg-neutral-700 transition-all duration-300 hover:shadow-xl ${
                   isMiddle
                     ? 'border-orange-500 shadow-2xl scale-105 z-10'
                     : 'border-slate-200 shadow-lg'
@@ -79,9 +79,9 @@ export default function Plans() {
                   </div>
 
                   <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                  <p className="text-slate-200 text-sm mb-6 min-h-[40px]">{plan.description}</p>
+                  <p className="text-slate-200 text-sm mb-2 min-h-[20px]">{plan.description}</p>
 
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <span className="text-4xl font-bold text-white">{plan.price}</span>
                     <span className="text-slate-200">{plan.period}</span>
                   </div>
@@ -97,7 +97,7 @@ export default function Plans() {
                   </ul>
 
                   <button
-                    className={`w-full py-3 rounded-xl font-semibold transition-all duration-200 ${
+                    className={`w-full py-3 rounded-xl bebas text-xl transition-all duration-200 ${
                       isMiddle
                         ? 'bg-[#f80a0a] text-white hover:bg-orange-600 shadow-lg hover:shadow-xl'
                         : 'text-white border-2 border-[#f80a0a] hover:bg-orange-50 hover:text-[#f80a0a] hover:border-orange-300'

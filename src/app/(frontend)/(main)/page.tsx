@@ -9,6 +9,7 @@ import TrainerCard from '@/components/Card'
 import Plans from '@/components/Plans'
 import Toast from '@/components/toast'
 import MasonryGrid from '@/components/Masonry-Grid'
+import Reviews from '@/components/Reviews'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -25,7 +26,7 @@ export default async function HomePage() {
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
       {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
-        <section className="relative w-full h-[88vh] snap-center">
+        <section className="relative w-full h-[88vh]">
           {/* Background Image */}
           <Image
             src={heroSection.backgroundImage?.url}
@@ -63,7 +64,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      <Toast message="Hello World!" />
+      {/* <Toast message="Hello World!" /> */}
 
       {/* ABOUT SECTION (with standard container) */}
       <section className=" text-white w-full flex flex-col gap-[10px] ">
@@ -227,6 +228,9 @@ export default async function HomePage() {
         {/*Services grid*/ }
         <MasonryGrid />
       </section>
+
+      {/*Review Section*/ }
+      <Reviews/>
     </main>
   )
 }

@@ -14,7 +14,7 @@ interface HomeData {
 }
 
 export default function Gallery() {
-  const [images, setImages] = useState<string[]>([])
+  const [galleryData, setGalleryData] = useState<GalleryImage[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -30,9 +30,7 @@ export default function Gallery() {
         }
 
         const data: HomeData = await response.json()
-
-        const imageUrls = data.galleryImages.map((item) => item.image.url)
-        setImages(imageUrls)
+        setGalleryData(data.galleryImages)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
@@ -63,80 +61,68 @@ export default function Gallery() {
     )
   }
 
-  // Column 1: 2 images (large)
-  // Column 2: 3 images (medium, medium, large)
-  // Column 3: 2 images (medium, medium) - but positioned differently
-  const col1 = images.slice(0, 2)
-  const col2 = images.slice(2, 5)
-  const col3 = images.slice(5, 7)
+  const col1 = galleryData.slice(0, 2)
+  const col2 = galleryData.slice(2, 5)
+  const col3 = galleryData.slice(5, 7)
+
+  const ImageCard = ({
+    item,
+    height,
+    rounded,
+  }: {
+    item: GalleryImage
+    height: string
+    rounded?: string
+  }) => (
+    <div className={`relative overflow-hidden group ${height} ${rounded || ''}`}>
+      <Image
+        src={item.image.url}
+        alt={item.image.alt || 'Gallery image'}
+        fill
+        className="object-cover group-hover:blur-xl transition-all duration-300"
+      />
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <p className="text-white/0 text-4xl bebas text-center translate-y-20 group-hover:translate-y-0 transition-transform duration-500 group-hover:text-white">
+          {item.image.alt || 'Gallery'}
+        </p>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="w-full p-[6~24]">
-      <div className=" mx-auto">
-        <div className="grid grid-cols-3 gap-4">
+    <div className="w-full px-[6~24] mt-8 min-h-screen">
+      <div className="mx-auto ">
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 h-screen ">
           {/* Column 1: 2 large images */}
           <div className="grid gap-4">
-            {col1.map((src, idx) => (
-              <div
+            {col1.map((item, idx) => (
+              <ImageCard
                 key={idx}
-                className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-72"
-              >
-                <Image
-                  src={src}
-                  alt={`Gallery image ${idx + 1}`}
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </div>
+                item={item}
+                height="h-fill"
+                rounded={idx === 0 ? 'rounded-tl-2xl' : idx === 1 ? 'rounded-bl-2xl' : ''}
+              />
             ))}
           </div>
 
           {/* Column 2: 3 images (2 medium, 1 large) */}
           <div className="grid gap-4">
-            <div className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-36">
-              <Image
-                src={col2[0]}
-                alt="Gallery image 3"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-80">
-              <Image
-                src={col2[1]}
-                alt="Gallery image 4"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-32">
-              <Image
-                src={col2[2]}
-                alt="Gallery image 5"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+            <ImageCard item={col2[0]} height="h-fill" rounded='' />
+            <ImageCard item={col2[1]} height="h-fill" />
+            <ImageCard item={col2[2]} height="h-fill" />
           </div>
 
           {/* Column 3: 2 images (1 medium, 1 large) */}
           <div className="grid gap-4">
-            <div className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-48">
-              <Image
-                src={col3[0]}
-                alt="Gallery image 6"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
+            {col3.map((item, idx) => (
+              <ImageCard
+                key={idx}
+                item={item}
+                height="h-fill"
+                rounded={idx === 0 ? 'rounded-tr-2xl' : idx === 1 ? 'rounded-br-2xl' : ''}
               />
-            </div>
-            <div className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow relative w-full h-56">
-              <Image
-                src={col3[1]}
-                alt="Gallery image 7"
-                fill
-                className="object-cover hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+            ))}
           </div>
         </div>
       </div>
