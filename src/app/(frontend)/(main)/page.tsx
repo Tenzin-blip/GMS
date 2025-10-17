@@ -8,6 +8,7 @@ import '../css/styles.css'
 import TrainerCard from '@/components/Card'
 import Plans from '@/components/Plans'
 import Toast from '@/components/toast'
+import MasonryGrid from '@/components/Masonry-Grid'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -17,6 +18,8 @@ export default async function HomePage() {
   const homeData = await payload.findGlobal({ slug: 'home' })
   const heroSection = homeData?.heroSection
   console.log({ user, homeData })
+
+  
 
   return (
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
@@ -60,7 +63,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      <Toast title="Hello" message="World!" />
+      <Toast message="Hello World!" />
 
       {/* ABOUT SECTION (with standard container) */}
       <section className=" text-white w-full flex flex-col gap-[10px] ">
@@ -216,10 +219,13 @@ export default async function HomePage() {
           {/* Description */}
           <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-5xl">
             At Level Up Gym, we offer personalized fitness services to help you reach your goals.
-            From one-on-one training to high-energy classes and recovery sessions, we provide
+            From one-on-one training to high-energy classNamees and recovery sessions, we provide
             everything you need to succeed in your fitness journey.
           </p>
         </div>
+
+        {/*Services grid*/ }
+        <MasonryGrid />
       </section>
     </main>
   )

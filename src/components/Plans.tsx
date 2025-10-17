@@ -73,9 +73,7 @@ export default function Plans() {
 
                 <div className="p-5 md:p-8 flex flex-col items-center text-center">
                   <div
-                    className={`inline-flex items-center justify-center w-14 h-14 rounded-xl mb-4 ${
-                      isMiddle ? 'bg-orange-100' : 'bg-orange-50'
-                    }`}
+                    className="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-4"
                   >
                     <Icon className={`w-7 h-7 ${isMiddle ? 'text-[#f80a0a]' : 'text-[#f80a0a]'}`} />
                   </div>

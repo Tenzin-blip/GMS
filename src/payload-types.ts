@@ -324,6 +324,12 @@ export interface Home {
     text: string;
     href: string;
   };
+  galleryImages?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -371,6 +377,12 @@ export interface HomeSelect<T extends boolean = true> {
     | {
         text?: T;
         href?: T;
+      };
+  galleryImages?:
+    | T
+    | {
+        image?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

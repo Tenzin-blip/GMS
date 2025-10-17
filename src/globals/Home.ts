@@ -70,5 +70,20 @@ export const Home: GlobalConfig = {
         },
       ],
     },
+    {
+      name: 'galleryImages',
+      label: 'Gallery Images',
+      type: 'array',
+      fields: [
+        {
+          name: 'image',
+          label: 'Image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
+    },
+
   ],
 }
