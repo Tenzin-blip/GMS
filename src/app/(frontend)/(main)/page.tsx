@@ -70,7 +70,7 @@ export default async function HomePage() {
       {/* ABOUT SECTION (with standard container) */}
       <section className=" text-white w-full flex flex-col gap-[10px] ">
         {/* Heading */}
-        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-[#262626] rounded-2xl w-full text-center justify-center items-center">
+        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-neutral-800 rounded-2xl w-full text-center justify-center items-center">
           <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
             About <span className="text-[#f80a0a]">Us</span>
           </h1>
@@ -88,7 +88,7 @@ export default async function HomePage() {
 
         {/* Stats Section */}
         <div className="flex flex-row gap-[10px] w-full">
-          <div className=" flex flex-col gap-30 w-[50vh] bg-[#262626] rounded-l-2xl justify-center items-center">
+          <div className=" flex flex-col gap-30 w-[50vh] bg-neutral-800 rounded-l-2xl justify-center items-center">
             <div>
               <div className=" text-center Sansation-bold text-5xl">
                 12<span className="text-[#f80a0a]">+</span>
@@ -114,7 +114,7 @@ export default async function HomePage() {
             />
           </div>
 
-          <div className=" flex flex-col gap-30 w-[50vh] bg-[#262626] rounded-r-2xl justify-center items-center">
+          <div className=" flex flex-col gap-30 w-[50vh] bg-neutral-800 rounded-r-2xl justify-center items-center">
             <div>
               <div className=" text-center Sansation-bold text-5xl">
                 24/<span className="text-[#f80a0a]">7</span>

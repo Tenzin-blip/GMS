@@ -19,26 +19,26 @@ export default async function Navbar() {
         <Image src={navbar.logo.url} alt={navbar.logo.alt || 'Logo'} width={142} height={27} />
       </div>
       <div className="flex flex-row gap-12">
-      <ul className="flex gap-12">
-        {navbar.navLinks.map((link: any) => (
-          <li key={link.id}>
-            <Link
-              className="relative hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:w-0 after:h-0.5 after:bg-[#696970] after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
-              href={link.href}
-            >
-              {link.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <div>
-        <Link
-          href={navbar.ctaButton.href}
-          className="bg-[#f80a0a] px-4 py-1 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out font-medium text-"
-        >
-          {navbar.ctaButton.text}
-        </Link>
-      </div>
+        <ul className="flex gap-12">
+          {navbar.navLinks.map((link: any) => (
+            <li key={link.id}>
+              <Link
+                className="relative hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:w-0 after:h-0.5 after:bg-[#696970] after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full"
+                href={link.href}
+              >
+                {link.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div>
+          <Link
+            href={navbar.ctaButton.href}
+            className="ml-6 px-6 py-1 bg-[#F80A0A] hover:bg-[#e00606] rounded-2xl text-white font-semibold transition-colors duration-300"
+          >
+            {navbar.ctaButton.text}
+          </Link>
+        </div>
       </div>
     </nav>
   )

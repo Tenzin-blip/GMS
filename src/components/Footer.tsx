@@ -28,11 +28,11 @@ const Footer: React.FC = () => {
   return (
     <>
       <footer className="relative w-full bg-neutral-800 text-white overflow-hidden rounded-l-2xl ">
-        <div className="flex items-stretch min-h-96">
+        <div className="flex items-stretch min-h-80 ">
           {/* Main content */}
-          <div className="flex-1 pl-4  flex flex-col justify-between">
+          <div className="flex-1 pl-8  flex flex-col">
             {/* Links section */}
-            <div className="flex gap-20 pt-10 pl-40">
+            <div className="flex gap-20 pt-16">
               {/* Socials */}
               <div>
                 <h3 className="text-xl text-geist-regular mb-2 tracking-widest">SOCIALS</h3>
@@ -102,25 +102,25 @@ const Footer: React.FC = () => {
 
             {/* Logo */}
             <div>
-              <h2 className="text-[256px] bebas">
+              <h2 className="text-[256px] bebas leading-[0.8] pt-28">
                 LEVEL UP<span className="text-lg align-super">™</span>
               </h2>
             </div>
           </div>
 
           {/* Diagonal right section - Bookmark triangle */}
-          <div className="relative w-32 bg-gray-200" style={{ clipPath: 'polygon(100% 0, 0 50%, 100% 100%)' }}>
+          <div className="relative w-80 bg-slate-200" style={{ clipPath: 'polygon(100% 0, 0 50%, 100% 100%)' }}>
 
             {/* Scroll to top button */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-end ">
               {showScrollButton && (
                 <button
                   onClick={scrollToTop}
-                  className="group flex flex-col items-center gap-3 text-neutral-900 hover:scale-110 transition-transform duration-300"
+                  className="group flex flex-col items-center gap-16 text-neutral-900 hover:scale-110 transition-transform duration-300"
                   aria-label="Scroll to top"
                 >
                   <ArrowUp size={24} className="group-hover:animate-bounce" />
-                  <span className="text-xs font-bold writing-mode-vertical-rl transform -rotate-180 whitespace-nowrap">
+                  <span className="text-md Sansation-regular font-bold writing-mode-vertical-rl transform -rotate-90 whitespace-nowrap">
                     SCROLL TO TOP
                   </span>
                 </button>
