@@ -1,5 +1,5 @@
-"use client"
-import React, { useEffect, useState } from 'react'
+'use client'
+import React, { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 
 type Review = {
@@ -13,8 +13,11 @@ type Review = {
 
 const Reviews: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([])
+  const [displayReviews, setDisplayReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isHovering, setIsHovering] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -26,8 +29,10 @@ const Reviews: React.FC = () => {
         if (!res.ok) throw new Error('Failed to fetch reviews')
         const data = await res.json()
 
-        if (data?.reviews) setReviews(data.reviews)
-        else setError('No reviews found.')
+        if (data?.reviews) {
+          setReviews(data.reviews)
+          setDisplayReviews([...data.reviews, ...data.reviews])
+        } else setError('No reviews found.')
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -38,20 +43,43 @@ const Reviews: React.FC = () => {
     fetchReviews()
   }, [])
 
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer || isHovering || reviews.length === 0) return
+
+    const scroll = () => {
+      scrollContainer.scrollLeft += 1
+
+      const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth
+      const singleSetWidth = scrollContainer.scrollWidth / 2
+
+      if (scrollContainer.scrollLeft >= singleSetWidth) {
+        scrollContainer.scrollLeft = 0
+      }
+    }
+
+    const interval = setInterval(scroll, 30)
+    return () => clearInterval(interval)
+  }, [isHovering, reviews.length])
+
   if (loading)
     return <div className="w-full flex justify-center py-10 text-gray-500">Loading reviews...</div>
 
   if (error) return <div className="w-full flex justify-center py-10 text-red-500">{error}</div>
 
   return (
-    <section className="w-full flex flex-col items-center justify-center dark:bg-gray-900 py-10">
-      <h2 className="text-3xl bebas mb-10 dark:text-white">
-        What Our Clients Say
-      </h2>
+    <section className="w-full flex flex-col items-center justify-center pt-15">
+      <h1 className="text-3xl Sansation-bold mb-10 text-black">What Our <span className="text-[#F80A0A]">Clients</span> Say</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-6 max-w-6xl">
-        {reviews.map((review, i) => (
-          <div key={i} className="bg-gray-800 text-white rounded-xl p-5 flex flex-col shadow-lg">
+      <div 
+        ref={scrollContainerRef}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        className="w-full flex overflow-x-auto gap-6 px-6 py-4 scroll-smooth"
+        style={{ scrollBehavior: 'smooth' }}
+      >
+        {displayReviews.map((review, i) => (
+          <div key={i} className="flex-shrink-0 w-88 bg-neutral-800 text-white rounded-xl p-5 flex flex-col shadow-lg">
             <div className="flex items-center mb-4">
               {review.image?.url ? (
                 <Image

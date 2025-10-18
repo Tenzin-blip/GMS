@@ -32,7 +32,7 @@ export default function TrainerCard({
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="p-5">
+      <div className="p-5 bg-[#F1F5F9]">
         <div className="flex justify-between items-center mb-1">
           <h2 className="font-['Bebas_Neue'] text-xl tracking-wide text-black">{name}</h2>
           <div className="flex gap-2.5">

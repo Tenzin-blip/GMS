@@ -10,6 +10,7 @@ import Plans from '@/components/Plans'
 import Toast from '@/components/toast'
 import MasonryGrid from '@/components/Masonry-Grid'
 import Reviews from '@/components/Reviews'
+import Footer from '@/components/Footer'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -150,7 +151,7 @@ export default async function HomePage() {
           </div>
 
           {/* Card Section */}
-          <div className="stats stats-vertical lg:stats-horizontal  w-full mb-[3rem] justify-center items-center gap-10">
+          <div className="stats stats-vertical lg:stats-horizontal  w-full mb-[3rem] justify-center items-center gap-10 ">
             <TrainerCard
               name="DAYJEN JIGME"
               category="Strength & Conditioning"
@@ -231,6 +232,9 @@ export default async function HomePage() {
 
       {/*Review Section*/ }
       <Reviews/>
+
+      {/* Footer Section */ }
+      <Footer/>
     </main>
   )
 }
