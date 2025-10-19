@@ -1,45 +1,50 @@
-"use client"
-import React, { useState } from 'react';
-import { Eye, EyeOff, Dumbbell, Mail, Lock, Loader2 } from 'lucide-react';
+'use client'
+import React, { useState } from 'react'
+import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
+import Image from 'next/image'
+
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('login')
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
-  });
-  const [errors, setErrors] = useState({});
+  })
+  const [errors, setErrors] = useState({})
 
   const handleInputChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData({ ...formData, [field]: value })
     if (errors[field]) {
-      setErrors({ ...errors, [field]: '' });
+      setErrors({ ...errors, [field]: '' })
     }
-  };
+  }
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors = {}
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email address';
+      newErrors.email = 'Invalid email address'
     }
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Password is required'
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = 'Password must be at least 8 characters'
     }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async () => {
-    if (!validateForm()) return;
+    if (!validateForm()) return
 
-    setIsLoading(true);
-    setErrors({});
+    setIsLoading(true)
+    setErrors({})
 
     try {
       const response = await fetch('/api/users/login', {
@@ -51,59 +56,150 @@ export default function LoginPage() {
           email: formData.email,
           password: formData.password,
         }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
-        // Login successful
-        console.log('Login successful:', data);
-        
-        // Store token if needed
+        console.log('Login successful:', data)
         if (data.token) {
           if (formData.rememberMe) {
-            localStorage.setItem('token', data.token);
+            sessionStorage.setItem('token', data.token)
           } else {
-            sessionStorage.setItem('token', data.token);
+            sessionStorage.setItem('token', data.token)
           }
         }
-
-        // Redirect to dashboard
-        window.location.href = '/dashboard';
+        window.location.href = '/dashboard'
       } else {
-        // Login failed
         setErrors({
           general: data.message || 'Invalid email or password. Please try again.',
-        });
+        })
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error:', error)
       setErrors({
         general: 'An error occurred. Please try again later.',
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !isLoading) {
-      handleSubmit();
+      handleSubmit()
     }
-  };
+  }
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <button
+            onClick={() => setShowForgotPassword(false)}
+            className="mb-6 text-orange-500 hover:text-orange-400 flex items-center gap-2 text-sm"
+          >
+            ← Back to Login
+          </button>
+          <div className="bg-white rounded-2xl shadow-2xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
+            <p className="text-gray-600 text-sm mb-6">
+              Enter your email address and we'll send you instructions to reset your password.
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="email"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+              </div>
+
+              <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all shadow-lg">
+                Send Reset Link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (showTerms) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center px-4">
+        <div className="w-full max-w-2xl">
+          <button
+            onClick={() => setShowTerms(false)}
+            className="mb-6 text-orange-500 hover:text-orange-400 flex items-center gap-2 text-sm"
+          >
+            ← Back
+          </button>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-h-[80vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Terms of Service & Privacy Policy
+            </h2>
+
+            <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-2">Terms of Service</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              By using this fitness platform, you agree to comply with all applicable laws and
+              regulations. You are responsible for maintaining the confidentiality of your account
+              credentials and for all activities under your account. We reserve the right to suspend
+              or terminate access for violations of these terms.
+            </p>
+
+            <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-2">Privacy Policy</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              We collect personal information to provide and improve our services. Your data is
+              protected with industry-standard security measures. We do not share your personal
+              information with third parties without your consent, except as required by law. You
+              have the right to access, modify, or delete your personal data at any time.
+            </p>
+
+            <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-2">Data Protection</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Your fitness data, including workout history and personal metrics, is stored securely
+              and encrypted. We use cookies and similar technologies to enhance your experience. You
+              can manage your preferences in your account settings.
+            </p>
+
+            <button
+              onClick={() => setShowTerms(false)}
+              className="mt-6 w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all"
+            >
+              I Agree & Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 overflow-hidden">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl mb-4 shadow-lg">
-            <Dumbbell className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-slate-200 flex w-screen p-1 items-center justify-center">
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-2xl">
+        {/* Left Side - Login Form */}
+        <div className="bg-white p-8 md:p-10 flex flex-col justify-center">
+          <div className="mb-8">
+            <div className="flex items-center justify-center gap-2 mb-6">
+                <Image
+                  src={'/api/media/file/Logo-Dark.png'}
+                  alt={'Logo'}
+                  width={142}
+                  height={27}
+                />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <p className="text-gray-600 text-sm">Please enter your Login information.</p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to continue your fitness journey</p>
-        </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           {errors.general && (
             <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl">
               <p className="text-red-600 text-sm text-center">{errors.general}</p>
@@ -111,36 +207,55 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-5">
+            <div className="flex gap-3 mb-6">
+              <button
+                onClick={() => setActiveTab('login')}
+                className={`flex-1 py-2 font-semibold rounded-lg transition-all ${
+                  activeTab === 'login'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Login
+              </button>
+              <button
+                onClick={() => setActiveTab('signup')}
+                className={`flex-1 py-2 font-semibold rounded-lg transition-all ${
+                  activeTab === 'signup'
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Sign up
+              </button>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  disabled={isLoading}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  } ${isLoading ? 'bg-gray-50 cursor-not-allowed' : ''}`}
-                  placeholder="your.email@example.com"
-                />
-              </div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={isLoading}
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                } ${isLoading ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                placeholder="your@email.com"
+              />
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   onKeyPress={handleKeyPress}
                   disabled={isLoading}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all pr-10 ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   } ${isLoading ? 'bg-gray-50 cursor-not-allowed' : ''}`}
                   placeholder="Enter your password"
@@ -157,31 +272,11 @@ export default function LoginPage() {
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-                  disabled={isLoading}
-                  className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Remember me</span>
-              </label>
-              <button 
-                type="button" 
-                disabled={isLoading}
-                className="text-sm text-orange-500 hover:text-orange-600 font-medium disabled:opacity-50"
-              >
-                Forgot Password?
-              </button>
-            </div>
-
             <button
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-green-700 to-green-600 text-white py-3 rounded-lg font-semibold hover:from-green-800 hover:to-green-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -189,29 +284,58 @@ export default function LoginPage() {
                   Signing in...
                 </>
               ) : (
-                'Sign In'
+                'Login'
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowForgotPassword(true)}
+              disabled={isLoading}
+              className="w-full text-center text-orange-500 hover:text-orange-600 text-sm font-medium disabled:opacity-50"
+            >
+              Forgot Password?
             </button>
           </div>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Don't have an account?{' '}
-            <button 
-              type="button" 
-              disabled={isLoading}
-              className="text-orange-500 hover:text-orange-600 font-semibold disabled:opacity-50"
-            >
-              Sign up now
+          <p className="text-center text-xs text-gray-500 mt-6">
+            By signing in, you agree to our{' '}
+            <button onClick={() => setShowTerms(true)} className="text-orange-500 hover:underline">
+              Terms of Service
+            </button>{' '}
+            and{' '}
+            <button onClick={() => setShowTerms(true)} className="text-orange-500 hover:underline">
+              Privacy Policy
             </button>
           </p>
         </div>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
-          By signing in, you agree to our{' '}
-          <button className="text-orange-500 hover:underline">Terms of Service</button> and{' '}
-          <button className="text-orange-500 hover:underline">Privacy Policy</button>
-        </p>
+        {/* Right Side - Image */}
+        {/* <div className="hidden md:block bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-32 h-32 bg-gradient-to-br from-orange-500 to-red-500 rounded-full opacity-20 blur-3xl mx-auto mb-8"></div>
+              <p className="text-white text-lg font-semibold">Build Your Strength</p>
+              <p className="text-gray-400 text-sm mt-2">Transform Your Body</p>
+            </div>
+          </div>
+          
+        </div> */}
+        <div
+          className="hidden md:block bg-cover bg-center bg-no-repeat relative overflow-hidden"
+          style={{
+            backgroundImage: 'url(/api/media/file/individual-doing-sport-healthy-lifestyle.jpg)',
+          }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-white text-4xl font-semibold bebas">Build Your Strength</p>
+              <p className="text-white/90 text-2xl mt-2 bebas">Transform Your Body</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }
