@@ -83,7 +83,7 @@ export default function Gallery() {
       />
       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div className="absolute inset-0 flex items-center justify-center">
-        <p className="text-white/0 text-4xl bebas text-center translate-y-20 group-hover:translate-y-0 transition-transform duration-500 group-hover:text-white">
+        <p className="text-white/0 text-2xl sm:text-3xl md:text-4xl bebas text-center translate-y-20 group-hover:translate-y-0 transition-transform duration-500 group-hover:text-white">
           {item.image.alt || 'Gallery'}
         </p>
       </div>
@@ -91,35 +91,48 @@ export default function Gallery() {
   )
 
   return (
-    <div className="w-full px-[6~24] mt-8 min-h-screen">
-      <div className="mx-auto ">
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 h-screen ">
-          {/* Column 1: 2 large images */}
-          <div className="grid gap-4">
+    <div className="w-full px-2 sm:px-6 md:px-[24px] mt-4 sm:mt-6 md:mt-8 min-h-screen">
+      <div className="mx-auto">
+        {/* Mobile: stacked single column */}
+        <div className="flex flex-col md:hidden gap-3 sm:gap-4">
+          {galleryData.map((item, idx) => (
+            <ImageCard key={idx} item={item} height="h-40 sm:h-48" rounded="rounded-lg sm:rounded-xl" />
+          ))}
+        </div>
+
+        {/* Desktop: 3 column masonry */}
+        <div className="hidden md:flex md:flex-row gap-4 h-screen">
+          {/* Column 1: 2 images */}
+          <div className="grid gap-4 flex-1">
             {col1.map((item, idx) => (
               <ImageCard
                 key={idx}
                 item={item}
-                height="h-fill"
+                height="h-full"
                 rounded={idx === 0 ? 'rounded-tl-2xl' : idx === 1 ? 'rounded-bl-2xl' : ''}
               />
             ))}
           </div>
 
-          {/* Column 2: 3 images (2 medium, 1 large) */}
-          <div className="grid gap-4">
-            <ImageCard item={col2[0]} height="h-fill" rounded='' />
-            <ImageCard item={col2[1]} height="h-fill" />
-            <ImageCard item={col2[2]} height="h-fill" />
+          {/* Column 2: 3 images */}
+          <div className="grid gap-4 flex-1">
+            {col2.map((item, idx) => (
+              <ImageCard
+                key={idx}
+                item={item}
+                height="h-full"
+                rounded=""
+              />
+            ))}
           </div>
 
-          {/* Column 3: 2 images (1 medium, 1 large) */}
-          <div className="grid gap-4">
+          {/* Column 3: 2 images */}
+          <div className="grid gap-4 flex-1">
             {col3.map((item, idx) => (
               <ImageCard
                 key={idx}
                 item={item}
-                height="h-fill"
+                height="h-full"
                 rounded={idx === 0 ? 'rounded-tr-2xl' : idx === 1 ? 'rounded-br-2xl' : ''}
               />
             ))}

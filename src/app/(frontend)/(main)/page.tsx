@@ -21,8 +21,6 @@ export default async function HomePage() {
   const heroSection = homeData?.heroSection
   console.log({ user, homeData })
 
-  
-
   return (
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
       {/* HERO SECTION (full width, no container px) */}
@@ -45,7 +43,7 @@ export default async function HomePage() {
             <h1 className="text-6xl md:text-7xl font-bold leading-tight bebas">
               {heroSection.title}
             </h1>
-            <p className="text-base md:text-xl max-w-2xl leading-relaxed font-geist text-center ">
+            <p className="text-base md:text-xl max-w-2xl text-left md:text-center leading-relaxed font-geist text-center ">
               {heroSection.subtitle}
             </p>
             <div className="flex flex-row gap-[1rem]">
@@ -68,43 +66,49 @@ export default async function HomePage() {
       {/* <Toast message="Hello World!" /> */}
 
       {/* ABOUT SECTION (with standard container) */}
-      <section className=" text-white w-full flex flex-col gap-[10px] ">
+      <section className="text-white w-full flex flex-col gap-[10px]">
         {/* Heading */}
-        <div className=" px-[6~24] flex flex-col gap-[10px] h-[40vh] bg-neutral-800 rounded-2xl w-full text-center justify-center items-center">
-          <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
+        <div className="py-[8~12] px-4 sm:px-6 md:px-6 flex flex-col gap-[10px] min-h-[20vh~50vh] bg-neutral-800 rounded-2xl w-full text-center justify-center items-center">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold Sansation-bold mb-3 uppercase">
             About <span className="text-[#f80a0a]">Us</span>
           </h1>
-          <h2 className="bebas text-[5xl~7xl] leading-none">
+          <h2 className="bebas text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-none px-2">
             Your <span className="text-[#f80a0a]">Fitness</span> Journey Starts Here
           </h2>
           {/* Description */}
-          <p className="sansation-regular text-white-700 text-lg leading-[1.5] text-center max-w-4xl">
+          <p className="sansation-regular text-gray-300 text-sm sm:text-base md:text-lg leading-[1.5] text-center max-w-4xl px-2 sm:px-4">
             At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
-            more than just exercise — it’s a lifestyle transformation. Our state-of-the-art facility
+            more than just exercise — it's a lifestyle transformation. Our state-of-the-art facility
             combines cutting-edge equipment with personalized training to help you achieve your
             goals.
           </p>
         </div>
 
         {/* Stats Section */}
-        <div className="flex flex-row gap-[10px] w-full">
-          <div className=" flex flex-col gap-30 w-[50vh] bg-neutral-800 rounded-l-2xl justify-center items-center">
-            <div>
-              <div className=" text-center Sansation-bold text-5xl">
+        <div className="flex flex-col md:flex-row gap-[10px] w-full">
+          {/* Left Stats Card */}
+          <div className="flex md:flex-col  w-full md:w-[20%] bg-neutral-800 rounded-t-2xl md:rounded-t-none md:rounded-l-2xl justify-between items-center py-8 md:py-16 px-12 md:px-0">
+            <div className="text-center">
+              <div className="Sansation-bold text-3xl sm:text-4xl md:text-5xl">
                 12<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="text-white Sansation-regular">Years of experience</div>
+              <div className="text-gray-300 Sansation-regular text-xs sm:text-sm md:text-base mt-2">
+                Years of experience
+              </div>
             </div>
 
-            <div>
-              <div className="text-center text-5xl Sansation-bold">
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl md:text-5xl Sansation-bold">
                 2K<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className="text-white Sansation-regular">Members</div>
+              <div className="text-gray-300 Sansation-regular text-xs sm:text-sm md:text-base mt-2">
+                Members
+              </div>
             </div>
           </div>
 
-          <div className="h-[450px] relative w-full">
+          {/* Center Image */}
+          <div className="h-[250px] sm:h-[350px] md:h-[450px] relative w-full md:w-[60%]">
             <Image
               src="/api/media/file/risen-wang-20jX9b35r_M-unsplash.jpg"
               alt="About image"
@@ -114,18 +118,23 @@ export default async function HomePage() {
             />
           </div>
 
-          <div className=" flex flex-col gap-30 w-[50vh] bg-neutral-800 rounded-r-2xl justify-center items-center">
-            <div>
-              <div className=" text-center Sansation-bold text-5xl">
+          {/* Right Stats Card */}
+          <div className="flex md:flex-col gap-8 sm:gap-12 md:gap-6 lg:gap-8 w-full md:w-[20%] bg-neutral-800 rounded-b-2xl md:rounded-br-2xl md:rounded-b-none md:rounded-tr-2xl justify-between items-center py-8 md:py-16 px-12 md:px-0">
+            <div className="text-center">
+              <div className="Sansation-bold text-3xl sm:text-4xl md:text-5xl">
                 24/<span className="text-[#f80a0a]">7</span>
               </div>
-              <div className="text-white Sansation-regular text-center">Open</div>
+              <div className="text-gray-300 Sansation-regular text-xs sm:text-sm md:text-base text-center mt-2">
+                Open
+              </div>
             </div>
-            <div>
-              <div className="text-center text-5xl Sansation-bold">
+            <div className="text-center">
+              <div className="text-3xl sm:text-4xl md:text-5xl Sansation-bold">
                 10<span className="text-[#f80a0a]">+</span>
               </div>
-              <div className=" text-white Sansation-regular">Expert trainers</div>
+              <div className="text-gray-300 Sansation-regular text-xs sm:text-sm md:text-base mt-2">
+                Expert trainers
+              </div>
             </div>
           </div>
         </div>
@@ -133,7 +142,7 @@ export default async function HomePage() {
 
       {/* TRAINERS SECTION (with standard container) */}
       <section className="text-black w-full">
-        <div className=" px-[6~24] flex flex-col">
+        <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
 
           <div className="flex flex-col items-center justify-center text-center gap-[10px] h-[40vh]">
@@ -183,8 +192,8 @@ export default async function HomePage() {
         </div>
       </section>
       {/* PLAN SECTION (with standard container) */}
-      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full">
-        <div className=" px-[6~24] flex flex-col justify-between items-center">
+      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
+        <div className=" px-2 md:px-24 flex flex-col justify-between items-center">
           {/* Heading */}
           <div>
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase text-[#f80a0a]">
@@ -198,15 +207,30 @@ export default async function HomePage() {
             transformation today with our comprehensive training packages.
           </p>
           <Plans />
-          <p className="sansation-regular text-slate-200 pt-12">All plan include access to our system and basic amenities. No setup fees</p>
+          <p className="sansation-regular text-slate-200 pt-12 text-center">
+            All plan include access to our system and basic amenities. No setup fees
+          </p>
         </div>
-        <svg className="!bg-slate-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#262626" fill-opacity="1" d="M0,96L48,106.7C96,117,192,139,288,170.7C384,203,480,245,576,240C672,235,768,181,864,154.7C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+        <div className="bg-slate-200 overflow-hidden">
+          <svg
+            className="w-full h-auto block bg-slate-200"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1440 320"
+            preserveAspectRatio="none"
+            style={{ display: 'block' }}
+          >
+            <path
+              fill="#262626"
+              fillOpacity="1"
+              d="M0,96L48,106.7C96,117,192,139,288,170.7C384,203,480,245,576,240C672,235,768,181,864,154.7C960,128,1056,128,1152,138.7C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+            ></path>
+          </svg>
+        </div>
       </section>
-      
 
       {/* SERVICES SECTION (with standard container) */}
       <section className="text-black w-full">
-        <div className=" px-[6~24] flex flex-col">
+        <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
           <div>
             <h1 className="text-3xl font-semibold Sansation-bold mb-3 uppercase">
@@ -226,15 +250,15 @@ export default async function HomePage() {
           </p>
         </div>
 
-        {/*Services grid*/ }
+        {/*Services grid*/}
         <MasonryGrid />
       </section>
 
-      {/*Review Section*/ }
-      <Reviews/>
+      {/*Review Section*/}
+      <Reviews />
 
-      {/* Footer Section */ }
-      <Footer/>
+      {/* Footer Section */}
+      <Footer />
     </main>
   )
 }
