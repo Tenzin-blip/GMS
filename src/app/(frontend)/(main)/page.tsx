@@ -63,7 +63,7 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      {/* <Toast message="Hello World!" /> */}
+      
 
       {/* ABOUT SECTION (with standard container) */}
       <section className="text-white w-full flex flex-col gap-[10px]">
@@ -243,9 +243,9 @@ export default async function HomePage() {
           </div>
 
           {/* Description */}
-          <p className="sansation-regular text-gray-700 text-lg leading-[1.5] max-w-5xl">
+          <p className="Sansation-regular text-gray-700 text-lg leading-[1.5] max-w-5xl">
             At Level Up Gym, we offer personalized fitness services to help you reach your goals.
-            From one-on-one training to high-energy classNamees and recovery sessions, we provide
+            From one-on-one training to high-energy classes and recovery sessions, we provide
             everything you need to succeed in your fitness journey.
           </p>
         </div>

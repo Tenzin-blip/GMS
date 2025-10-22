@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Check } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Toast from '@/components/toast'
 
 const Plans = ({ onSelectPlan, selectedPlan }) => {
   const plans = [
@@ -125,6 +126,16 @@ export default function SignupForm() {
     otp: '',
     password: '',
   })
+
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
+
   const [errors, setErrors] = useState({})
 
   const tabs = ['Select Plan', 'Basic Information', 'Verify Email', 'Check Out', 'Sign Up']
@@ -178,17 +189,21 @@ export default function SignupForm() {
           plan: formData.plan,
         }),
       })
+
       const data = await res.json()
+
       if (res.ok) {
         setUserId(data.userId)
         setActiveTab(2)
-        alert('OTP sent to your email ✉️')
+        showToast('OTP sent to your email!', 'success')
       } else {
-        alert('Error: ' + data.message)
+        // Extract error message from nested structure
+        const errorMsg = data.errors?.[0]?.message || data.message || 'An error occurred'
+        showToast(errorMsg, 'error')
       }
     } catch (error) {
-      alert('Error submitting form')
       console.error(error)
+      showToast('Error submitting form', 'error')
     }
   }
 
@@ -202,15 +217,19 @@ export default function SignupForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, otp: formData.otp }),
       })
+
       const data = await res.json()
+
       if (res.ok) {
         setActiveTab(3)
-        alert('Email verified! ✓')
+        showToast('Email verified successfully!', 'success')
       } else {
-        alert('Error: ' + data.message)
+        // Extract error message from nested structure
+        const errorMsg = data.errors?.[0]?.message || data.message || 'An error occurred'
+        showToast(errorMsg, 'error')
       }
     } catch (error) {
-      alert('Error verifying OTP')
+      showToast('Error verifying OTP', 'error')
       console.error(error)
     }
   }
@@ -218,34 +237,43 @@ export default function SignupForm() {
   // Set password and complete signup
   const submitPassword = async () => {
     if (!validateTab(4)) return
-    if (!userId) return alert('User ID missing')
+    if (!userId) {
+      showToast('User ID missing', 'error')
+      return
+    }
     try {
       const res = await fetch('/api/auth/set-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, password: formData.password }),
       })
+
       const data = await res.json()
+
       if (res.ok) {
-        alert('Signup complete ✅')
-        setActiveTab(0)
-        setFormData({
-          plan: '',
-          name: '',
-          email: '',
-          dob: '',
-          phoneNumber: '',
-          gender: '',
-          otp: '',
-          password: '',
-        })
-        setUserId(null)
-        router.push('/login')
+        showToast('Signup complete ✅', 'success')
+        setTimeout(() => {
+          setActiveTab(0)
+          setFormData({
+            plan: '',
+            name: '',
+            email: '',
+            dob: '',
+            phoneNumber: '',
+            gender: '',
+            otp: '',
+            password: '',
+          })
+          setUserId(null)
+          router.push('/login')
+        }, 2000)
       } else {
-        alert('Error: ' + data.message)
+        // Extract error message from nested structure
+        const errorMsg = data.errors?.[0]?.message || data.message || 'An error occurred'
+        showToast(errorMsg, 'error')
       }
     } catch (error) {
-      alert('Error setting password')
+      showToast('Error setting password', 'error')
       console.error(error)
     }
   }
@@ -403,10 +431,8 @@ export default function SignupForm() {
                 type="text"
                 maxLength={6}
                 value={formData.otp}
-                onChange={(e) =>
-                  handleInputChange('otp', e.target.value.replace(/\D/g, ''))
-                }
-                className={`w-full px-4 py-4 text-center text-2xl font-bold tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                onChange={(e) => handleInputChange('otp', e.target.value.replace(/\D/g, ''))}
+                className={`w-full px-4 py-4 text-center text-gray-900 placeholder:text-gray-400 text-2xl font-bold tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
                   errors.otp ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="000000"
@@ -506,27 +532,13 @@ export default function SignupForm() {
                   type="password"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 placeholder:text-gray-400 ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Create a strong password"
                 />
                 {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
               </div>
-
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                <input
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Confirm your password"
-                />
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
-              </div> */}
 
               <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mt-6">
                 <p className="text-sm text-gray-700">
@@ -546,43 +558,43 @@ export default function SignupForm() {
     <div className="min-h-screen bg-gray-50 py-6 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Progress Steps */}
-          <div className="mb-6">
-            <div className="flex items-start justify-between max-w-4xl mx-auto">
-              {tabs.map((tab, index) => (
-                <React.Fragment key={index}>
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
-                        index < activeTab
-                          ? 'bg-green-500 text-white'
-                          : index === activeTab
-                            ? 'bg-orange-500 text-white ring-4 ring-orange-200'
-                            : 'bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {index < activeTab ? <Check size={20} /> : index + 1}
-                    </div>
-                    <span
-                      className={`text-xs mt-2 font-medium text-center whitespace-nowrap ${
-                        index === activeTab ? 'text-orange-500' : 'text-gray-500'
-                      }`}
-                    >
-                      {tab}
-                    </span>
+        <div className="mb-6">
+          <div className="flex items-start justify-between max-w-4xl mx-auto">
+            {tabs.map((tab, index) => (
+              <React.Fragment key={index}>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                      index < activeTab
+                        ? 'bg-green-500 text-white'
+                        : index === activeTab
+                          ? 'bg-orange-500 text-white ring-4 ring-orange-200'
+                          : 'bg-gray-200 text-gray-500'
+                    }`}
+                  >
+                    {index < activeTab ? <Check size={20} /> : index + 1}
                   </div>
-                  {index < tabs.length - 1 && (
-                    <div className="flex items-center flex-1 px-2" style={{ marginTop: '20px' }}>
-                      <div
-                        className={`h-1 w-full rounded transition-all ${
-                          index < activeTab ? 'bg-green-500' : 'bg-gray-200'
-                        }`}
-                      />
-                    </div>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+                  <span
+                    className={`text-xs mt-2 font-medium text-center whitespace-nowrap ${
+                      index === activeTab ? 'text-orange-500' : 'text-gray-500'
+                    }`}
+                  >
+                    {tab}
+                  </span>
+                </div>
+                {index < tabs.length - 1 && (
+                  <div className="flex items-center flex-1 px-2" style={{ marginTop: '20px' }}>
+                    <div
+                      className={`h-1 w-full rounded transition-all ${
+                        index < activeTab ? 'bg-green-500' : 'bg-gray-200'
+                      }`}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </div>
+        </div>
 
         {/* Tab Content */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
@@ -610,6 +622,16 @@ export default function SignupForm() {
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+          duration={3000}
+        />
+      )}
     </div>
   )
 }

@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 
-
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login')
   const [showPassword, setShowPassword] = useState(false)
@@ -183,21 +182,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-200 flex w-screen p-1 items-center justify-center">
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-2xl">
+    <div className=" h-[100vh] md:min-h-screen bg-slate-200 flex w-screen p-1 items-center justify-center">
+      <div className="h-full md:w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden">
         {/* Left Side - Login Form */}
-        <div className="bg-white p-8 md:p-10 flex flex-col justify-center">
+        <div className=" bg-white py-[1~10] p-8 md:p-10 flex flex-col justify-center text-black">
           <div className="mb-8">
             <div className="flex items-center justify-center gap-2 mb-6">
-                <Image
-                  src={'/api/media/file/Logo-Dark.png'}
-                  alt={'Logo'}
-                  width={142}
-                  height={27}
-                />
+              <Image src={'/api/media/file/Logo-Dark.png'} alt={'Logo'} width={142} height={27} />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600 text-sm">Please enter your Login information.</p>
+            <h1 className="text-3xl bebas mb-2">Welcome Back</h1>
+            <p className="text-sm">Please enter your Login information.</p>
           </div>
 
           {errors.general && (

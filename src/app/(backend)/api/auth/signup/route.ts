@@ -59,11 +59,14 @@ export async function POST(req: NextRequest) {
         if (!payloadRes.ok) {
             const err = await payloadRes.json()
             console.error('Payload error:', err)
+            
+            // Extract the actual error message from Payload's error structure
+            const errorMessage = err.errors?.[0]?.message || err.message || 'Failed to create user'
+            
             return NextResponse.json({
-                message: 'Payload error',
-                error: err,
-                details: err.errors || err.message
-            }, { status: 500 })
+                message: errorMessage,
+                errors: err.errors || []
+            }, { status: payloadRes.status })
         }
 
         const newUser = await payloadRes.json()
