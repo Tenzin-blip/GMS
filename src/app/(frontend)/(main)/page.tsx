@@ -32,7 +32,7 @@ export default async function HomePage() {
             alt={heroSection.backgroundImage?.alt || 'Hero image'}
             fill
             priority
-            className="object-cover rounded-2xl"
+            className="object-cover "
           />
 
           {/* Overlay */}

@@ -191,7 +191,7 @@ export default function LoginPage() {
               <Image src={'/api/media/file/Logo-Dark.png'} alt={'Logo'} width={142} height={27} />
             </div>
             <h1 className="text-3xl bebas mb-2">Welcome Back</h1>
-            <p className="text-sm">Please enter your Login information.</p>
+            <p className="font-regular">Please enter your Login information.</p>
           </div>
 
           {errors.general && (

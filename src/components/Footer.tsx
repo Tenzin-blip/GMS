@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
   return (
     <>
       {/* Mobile & Tablet Footer */}
-      <footer className="md:hidden w-full bg-neutral-800 text-white rounded-t-2xl">
+      <footer className="md:hidden w-full bg-neutral-800 text-white rounded-b-2xl">
         <div className="p-6 sm:p-8">
           {/* Logo */}
           <div className="mb-8">
@@ -121,7 +121,7 @@ const Footer: React.FC = () => {
       </footer>
 
       {/* Desktop Footer */}
-      <footer className="hidden md:block relative w-full bg-neutral-800 text-white overflow-hidden rounded-l-2xl min-h-screen">
+      <footer className="hidden md:block relative w-full bg-neutral-800 text-white overflow-hidden rounded-l-2xl">
         <div className="flex items-stretch h-full">
           {/* Main content */}
           <div className="flex-1 pl-6 lg:pl-8 flex flex-col justify-between py-8 lg:py-16">
