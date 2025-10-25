@@ -69,10 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    'meal-plans': MealPlan;
-    'meal-logs': MealLog;
-    'workout-plans': WorkoutPlan;
-    'workout-logs': WorkoutLog;
+    'user-fitness': UserFitness;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,10 +78,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    'meal-plans': MealPlansSelect<false> | MealPlansSelect<true>;
-    'meal-logs': MealLogsSelect<false> | MealLogsSelect<true>;
-    'workout-plans': WorkoutPlansSelect<false> | WorkoutPlansSelect<true>;
-    'workout-logs': WorkoutLogsSelect<false> | WorkoutLogsSelect<true>;
+    'user-fitness': UserFitnessSelect<false> | UserFitnessSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -181,281 +175,39 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "meal-plans".
+ * via the `definition` "user-fitness".
  */
-export interface MealPlan {
-  id: string;
-  /**
-   * User this meal plan belongs to
-   */
-  user: string | User;
-  /**
-   * e.g., "Vegetarian Weight Loss Plan"
-   */
-  planName: string;
-  status: 'active' | 'completed' | 'paused';
-  dailyCalories: number;
-  macros: {
-    protein: number;
-    carbs: number;
-    fats: number;
-  };
-  mealsPerDay: number;
-  days: {
-    /**
-     * 1-7 for a weekly rotating plan
-     */
-    dayNumber: number;
-    /**
-     * e.g., "Monday" or "Day 1"
-     */
-    dayName?: string | null;
-    meals: {
-      /**
-       * e.g., "Protein Oats Bowl"
-       */
-      mealName: string;
-      /**
-       * e.g., "7:00 AM" or "Breakfast"
-       */
-      mealTime: string;
-      calories: number;
-      macros: {
-        protein: number;
-        carbs: number;
-        fats: number;
-      };
-      ingredients: {
-        item: string;
-        /**
-         * e.g., "60g" or "1 cup"
-         */
-        amount: string;
-        id?: string | null;
-      }[];
-      instructions: string;
-      prepTime: number;
-      mealPrepFriendly?: boolean | null;
-      imageUrl?: (string | null) | Media;
-      tags?: ('quick' | 'high_protein' | 'low_carb' | 'vegetarian' | 'vegan')[] | null;
-      id?: string | null;
-    }[];
-    id?: string | null;
-  }[];
-  shoppingList?: {
-    produce?:
-      | {
-          item?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    dairy?:
-      | {
-          item?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    protein?:
-      | {
-          item?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    pantry?:
-      | {
-          item?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  mealPrepSchedule?:
-    | {
-        /**
-         * e.g., "Sunday"
-         */
-        day?: string | null;
-        tasks?:
-          | {
-              task?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Private notes about this meal plan
-   */
-  trainerNotes?: string | null;
-  createdBy?: (string | null) | User;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "meal-logs".
- */
-export interface MealLog {
+export interface UserFitness {
   id: string;
   user: string | User;
-  mealPlan?: (string | null) | MealPlan;
-  date: string;
-  mealTime: 'breakfast' | 'morning_snack' | 'lunch' | 'afternoon_snack' | 'dinner' | 'evening_snack';
-  mealName: string;
-  calories: number;
-  macros?: {
-    protein?: number | null;
-    carbs?: number | null;
-    fats?: number | null;
+  goal?: ('weight_loss' | 'weight_gain' | 'muscle_building' | 'toning' | 'maintenance') | null;
+  bodyMetrics?: {
+    height?: number | null;
+    currentWeight?: number | null;
+    targetWeight?: number | null;
   };
-  /**
-   * Did you follow the meal plan?
-   */
-  adherence?: boolean | null;
+  dailyCalories?: {
+    target?: number | null;
+    consumed?: number | null;
+    burned?: number | null;
+  };
+  mealPlan?: {
+    dietType?: ('vegetarian' | 'non_vegetarian' | 'vegan' | 'pescatarian') | null;
+    allergies?:
+      | {
+          allergen?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    preferences?: string | null;
+  };
+  workoutPlan?: {
+    frequency?: number | null;
+    preferredDays?: ('monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday')[] | null;
+    duration?: number | null;
+    preferredTypes?: ('cardio' | 'strength' | 'yoga' | 'hiit' | 'sports')[] | null;
+  };
   notes?: string | null;
-  photo?: (string | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workout-plans".
- */
-export interface WorkoutPlan {
-  id: string;
-  /**
-   * User this workout plan belongs to
-   */
-  user: string | User;
-  /**
-   * e.g., "12-Week Weight Loss Program"
-   */
-  planName: string;
-  /**
-   * Current status of the workout plan
-   */
-  status: 'draft' | 'active' | 'completed' | 'paused';
-  /**
-   * Type of workout split
-   */
-  splitType: 'full_body' | 'upper_lower' | 'push_pull_legs' | 'body_part_split' | 'custom';
-  /**
-   * Number of workout days per week
-   */
-  daysPerWeek: number;
-  /**
-   * Average session duration in minutes
-   */
-  estimatedDuration: number;
-  /**
-   * Total program duration in weeks
-   */
-  totalWeeks: number;
-  weeks: {
-    weekNumber: number;
-    /**
-     * e.g., "Build foundation, focus on form"
-     */
-    focusNote?: string | null;
-    days: {
-      /**
-       * 1-7 for Monday-Sunday
-       */
-      dayNumber: number;
-      /**
-       * e.g., "Upper Body Strength"
-       */
-      workoutName: string;
-      estimatedDuration: number;
-      exercises: {
-        exerciseName: string;
-        sets: number;
-        /**
-         * e.g., "8-10" or "12-15"
-         */
-        reps: string;
-        /**
-         * e.g., "90s" or "2 min"
-         */
-        rest: string;
-        /**
-         * Form cues, modifications, etc.
-         */
-        notes?: string | null;
-        /**
-         * Link to exercise demonstration
-         */
-        videoUrl?: string | null;
-        alternatives?:
-          | {
-              exerciseName?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[];
-      warmup?: string | null;
-      cooldown?: string | null;
-      id?: string | null;
-    }[];
-    id?: string | null;
-  }[];
-  /**
-   * How to progress through the program
-   */
-  progressionNotes?: string | null;
-  /**
-   * Private notes about this plan
-   */
-  trainerNotes?: string | null;
-  /**
-   * Trainer who created this plan
-   */
-  createdBy?: (string | null) | User;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workout-logs".
- */
-export interface WorkoutLog {
-  id: string;
-  user: string | User;
-  /**
-   * Link to the original workout plan
-   */
-  workoutPlan?: (string | null) | WorkoutPlan;
-  date: string;
-  workoutName: string;
-  completed?: boolean | null;
-  /**
-   * Actual workout duration
-   */
-  duration?: number | null;
-  exercises?:
-    | {
-        exerciseName: string;
-        sets?:
-          | {
-              reps?: number | null;
-              weight?: number | null;
-              completed?: boolean | null;
-              id?: string | null;
-            }[]
-          | null;
-        notes?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * How did you feel? Any issues?
-   */
-  overallNotes?: string | null;
-  /**
-   * 1-5 stars
-   */
-  rating?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -475,20 +227,8 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'meal-plans';
-        value: string | MealPlan;
-      } | null)
-    | ({
-        relationTo: 'meal-logs';
-        value: string | MealLog;
-      } | null)
-    | ({
-        relationTo: 'workout-plans';
-        value: string | WorkoutPlan;
-      } | null)
-    | ({
-        relationTo: 'workout-logs';
-        value: string | WorkoutLog;
+        relationTo: 'user-fitness';
+        value: string | UserFitness;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -581,204 +321,46 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "meal-plans_select".
+ * via the `definition` "user-fitness_select".
  */
-export interface MealPlansSelect<T extends boolean = true> {
+export interface UserFitnessSelect<T extends boolean = true> {
   user?: T;
-  planName?: T;
-  status?: T;
-  dailyCalories?: T;
-  macros?:
+  goal?: T;
+  bodyMetrics?:
     | T
     | {
-        protein?: T;
-        carbs?: T;
-        fats?: T;
+        height?: T;
+        currentWeight?: T;
+        targetWeight?: T;
       };
-  mealsPerDay?: T;
-  days?:
+  dailyCalories?:
     | T
     | {
-        dayNumber?: T;
-        dayName?: T;
-        meals?:
-          | T
-          | {
-              mealName?: T;
-              mealTime?: T;
-              calories?: T;
-              macros?:
-                | T
-                | {
-                    protein?: T;
-                    carbs?: T;
-                    fats?: T;
-                  };
-              ingredients?:
-                | T
-                | {
-                    item?: T;
-                    amount?: T;
-                    id?: T;
-                  };
-              instructions?: T;
-              prepTime?: T;
-              mealPrepFriendly?: T;
-              imageUrl?: T;
-              tags?: T;
-              id?: T;
-            };
-        id?: T;
+        target?: T;
+        consumed?: T;
+        burned?: T;
       };
-  shoppingList?:
+  mealPlan?:
     | T
     | {
-        produce?:
+        dietType?: T;
+        allergies?:
           | T
           | {
-              item?: T;
+              allergen?: T;
               id?: T;
             };
-        dairy?:
-          | T
-          | {
-              item?: T;
-              id?: T;
-            };
-        protein?:
-          | T
-          | {
-              item?: T;
-              id?: T;
-            };
-        pantry?:
-          | T
-          | {
-              item?: T;
-              id?: T;
-            };
+        preferences?: T;
       };
-  mealPrepSchedule?:
+  workoutPlan?:
     | T
     | {
-        day?: T;
-        tasks?:
-          | T
-          | {
-              task?: T;
-              id?: T;
-            };
-        id?: T;
+        frequency?: T;
+        preferredDays?: T;
+        duration?: T;
+        preferredTypes?: T;
       };
-  trainerNotes?: T;
-  createdBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "meal-logs_select".
- */
-export interface MealLogsSelect<T extends boolean = true> {
-  user?: T;
-  mealPlan?: T;
-  date?: T;
-  mealTime?: T;
-  mealName?: T;
-  calories?: T;
-  macros?:
-    | T
-    | {
-        protein?: T;
-        carbs?: T;
-        fats?: T;
-      };
-  adherence?: T;
   notes?: T;
-  photo?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workout-plans_select".
- */
-export interface WorkoutPlansSelect<T extends boolean = true> {
-  user?: T;
-  planName?: T;
-  status?: T;
-  splitType?: T;
-  daysPerWeek?: T;
-  estimatedDuration?: T;
-  totalWeeks?: T;
-  weeks?:
-    | T
-    | {
-        weekNumber?: T;
-        focusNote?: T;
-        days?:
-          | T
-          | {
-              dayNumber?: T;
-              workoutName?: T;
-              estimatedDuration?: T;
-              exercises?:
-                | T
-                | {
-                    exerciseName?: T;
-                    sets?: T;
-                    reps?: T;
-                    rest?: T;
-                    notes?: T;
-                    videoUrl?: T;
-                    alternatives?:
-                      | T
-                      | {
-                          exerciseName?: T;
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              warmup?: T;
-              cooldown?: T;
-              id?: T;
-            };
-        id?: T;
-      };
-  progressionNotes?: T;
-  trainerNotes?: T;
-  createdBy?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workout-logs_select".
- */
-export interface WorkoutLogsSelect<T extends boolean = true> {
-  user?: T;
-  workoutPlan?: T;
-  date?: T;
-  workoutName?: T;
-  completed?: T;
-  duration?: T;
-  exercises?:
-    | T
-    | {
-        exerciseName?: T;
-        sets?:
-          | T
-          | {
-              reps?: T;
-              weight?: T;
-              completed?: T;
-              id?: T;
-            };
-        notes?: T;
-        id?: T;
-      };
-  overallNotes?: T;
-  rating?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -11,9 +11,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
+    
     <html lang="en">
-      <Navbar/>
+      
       <body className="min-h-screen bg-slate-200 p-[10px]">   
+        <Navbar/>
         <main>{children}</main>
       </body>
     </html>

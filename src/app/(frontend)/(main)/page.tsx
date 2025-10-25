@@ -25,14 +25,14 @@ export default async function HomePage() {
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
       {/* HERO SECTION (full width, no container px) */}
       {heroSection && (
-        <section className="relative w-full h-[88vh]">
+        <section className="relative w-full h-[88vh] ">
           {/* Background Image */}
           <Image
             src={heroSection.backgroundImage?.url}
             alt={heroSection.backgroundImage?.alt || 'Hero image'}
             fill
             priority
-            className="object-cover "
+            className="object-cover rounded-2xl"
           />
 
           {/* Overlay */}

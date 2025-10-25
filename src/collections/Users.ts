@@ -39,7 +39,7 @@ export const Users: CollectionConfig = {
 
   hooks: {
     beforeChange: [
-      ({ data, originalDoc }) => {
+      ({ data,  }) => {
         // Force admin@gms.com to have role 'admin'
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
@@ -134,7 +134,7 @@ export const Users: CollectionConfig = {
       defaultValue: 'monthly',
       required: true,
       access: {
-        update: ({ req: { user }, id }) => {
+        update: ({ req: { user }, }) => {
           // Only admins can change payment plans
           return user?.role === 'admin'
         },

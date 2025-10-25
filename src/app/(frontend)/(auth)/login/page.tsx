@@ -68,7 +68,7 @@ export default function LoginPage() {
             sessionStorage.setItem('token', data.token)
           }
         }
-        window.location.href = '/dashboard'
+        window.location.href = '/setup'
       } else {
         setErrors({
           general: data.message || 'Invalid email or password. Please try again.',
