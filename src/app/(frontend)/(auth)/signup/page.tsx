@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Check } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import Toast from '@/components/toast'
+import Toast from '@/components/website/toast'
 
 const Plans = ({ onSelectPlan, selectedPlan }) => {
   const plans = [

@@ -17,14 +17,24 @@ export default function OnboardingForm() {
     daysPerWeek: '',
     dietType: '',
     allergies: '',
-    preferences: ''
+    preferences: '',
   })
 
   const totalSteps = 4
 
   const goals = [
-    { id: 'weight_loss', label: 'Lose Weight & Burn Fat', icon: '🔥', desc: 'Shed fat, feel lighter' },
-    { id: 'muscle_building', label: 'Build Muscle & Strength', icon: '🏋️', desc: 'Get stronger, bigger' },
+    {
+      id: 'weight_loss',
+      label: 'Lose Weight & Burn Fat',
+      icon: '🔥',
+      desc: 'Shed fat, feel lighter',
+    },
+    {
+      id: 'muscle_building',
+      label: 'Build Muscle & Strength',
+      icon: '🏋️',
+      desc: 'Get stronger, bigger',
+    },
     { id: 'toning', label: 'Tone & Define', icon: '💪', desc: 'Sculpt your physique' },
     { id: 'maintenance', label: 'General Fitness', icon: '🎯', desc: 'Stay healthy, active' },
   ]
@@ -34,7 +44,7 @@ export default function OnboardingForm() {
     { value: 2, label: 'Lightly Active', desc: 'Light exercise 1-2x/week' },
     { value: 3, label: 'Moderate', desc: 'Exercise 3-4x/week' },
     { value: 4, label: 'Very Active', desc: 'Exercise 5-6x/week' },
-    { value: 5, label: 'Extreme', desc: 'Athlete/physical job' }
+    { value: 5, label: 'Extreme', desc: 'Athlete/physical job' },
   ]
 
   const dietTypes = [
@@ -59,7 +69,7 @@ export default function OnboardingForm() {
         parseFloat(formData.currentWeight),
         parseFloat(formData.height),
         parseInt(formData.age),
-        formData.gender
+        formData.gender,
       )
       const tdee = calculateTDEE(bmr, formData.activityLevel)
       const targetCalories = adjustCaloriesForGoal(tdee, formData.goal)
@@ -79,7 +89,9 @@ export default function OnboardingForm() {
         },
         mealPlan: {
           dietType: formData.dietType,
-          allergies: formData.allergies ? formData.allergies.split(',').map(a => ({ allergen: a.trim() })) : [],
+          allergies: formData.allergies
+            ? formData.allergies.split(',').map((a) => ({ allergen: a.trim() }))
+            : [],
           preferences: formData.preferences,
         },
         workoutPlan: {
@@ -149,16 +161,21 @@ export default function OnboardingForm() {
   }
 
   const updateFormData = (key: string, value: any) => {
-    setFormData(prev => ({ ...prev, [key]: value }))
+    setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
   const isStepValid = () => {
-    switch(step) {
-      case 1: return formData.goal !== ''
-      case 2: return formData.currentWeight && formData.height
-      case 3: return formData.hoursPerDay && formData.daysPerWeek
-      case 4: return formData.dietType !== ''
-      default: return true
+    switch (step) {
+      case 1:
+        return formData.goal !== ''
+      case 2:
+        return formData.currentWeight && formData.height
+      case 3:
+        return formData.hoursPerDay && formData.daysPerWeek
+      case 4:
+        return formData.dietType !== ''
+      default:
+        return true
     }
   }
 
@@ -178,24 +195,28 @@ export default function OnboardingForm() {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-400">Progress</span>
-            <span className="text-sm text-gray-400">{step} of {totalSteps}</span>
+            <span className="text-sm text-gray-400">
+              {step} of {totalSteps}
+            </span>
           </div>
           <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-orange-500 transition-all duration-300 ease-out"
               style={{ width: `${(step / totalSteps) * 100}%` }}
             />
           </div>
           <div className="flex justify-between mt-2">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-600'}`} />
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-600'}`}
+              />
             ))}
           </div>
         </div>
 
         {/* Form Container */}
         <div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-700">
-          
           {/* Step 1: Primary Goal */}
           {step === 1 && (
             <div className="space-y-6">
@@ -203,9 +224,9 @@ export default function OnboardingForm() {
                 <h2 className="text-2xl font-bold mb-2">What's your primary goal?</h2>
                 <p className="text-gray-400 text-sm">This helps us customize everything for you</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {goals.map(goal => (
+                {goals.map((goal) => (
                   <button
                     key={goal.id}
                     onClick={() => updateFormData('goal', goal.id)}
@@ -229,7 +250,9 @@ export default function OnboardingForm() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Tell us about yourself</h2>
-                <p className="text-gray-400 text-sm">We'll use this to calculate your BMI and calorie needs</p>
+                <p className="text-gray-400 text-sm">
+                  We'll use this to calculate your BMI and calorie needs
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -292,7 +315,7 @@ export default function OnboardingForm() {
               <div>
                 <label className="block text-sm font-medium mb-2">Gender</label>
                 <div className="grid grid-cols-3 gap-3">
-                  {['Male', 'Female', 'Other'].map(gender => (
+                  {['Male', 'Female', 'Other'].map((gender) => (
                     <button
                       key={gender}
                       onClick={() => updateFormData('gender', gender.toLowerCase())}
@@ -329,7 +352,7 @@ export default function OnboardingForm() {
                     onChange={(e) => updateFormData('activityLevel', parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 100%)`
+                      background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 100%)`,
                     }}
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-2">
@@ -338,8 +361,12 @@ export default function OnboardingForm() {
                   </div>
                 </div>
                 <div className="mt-3 p-3 bg-gray-700/50 rounded-lg">
-                  <p className="text-sm font-medium">{activityLevels[formData.activityLevel - 1].label}</p>
-                  <p className="text-xs text-gray-400">{activityLevels[formData.activityLevel - 1].desc}</p>
+                  <p className="text-sm font-medium">
+                    {activityLevels[formData.activityLevel - 1].label}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {activityLevels[formData.activityLevel - 1].desc}
+                  </p>
                 </div>
               </div>
 
@@ -368,8 +395,10 @@ export default function OnboardingForm() {
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
                   >
                     <option value="">Select</option>
-                    {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                      <option key={day} value={day}>{day} {day === 1 ? 'day' : 'days'}</option>
+                    {[1, 2, 3, 4, 5, 6, 7].map((day) => (
+                      <option key={day} value={day}>
+                        {day} {day === 1 ? 'day' : 'days'}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -378,7 +407,8 @@ export default function OnboardingForm() {
               <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                 <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-blue-300">
-                  <strong>Pro tip:</strong> Consistency beats intensity. Start with what you can sustain!
+                  <strong>Pro tip:</strong> Consistency beats intensity. Start with what you can
+                  sustain!
                 </p>
               </div>
             </div>
@@ -389,13 +419,15 @@ export default function OnboardingForm() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Dietary preferences</h2>
-                <p className="text-gray-400 text-sm">Help us create the perfect meal plan for you</p>
+                <p className="text-gray-400 text-sm">
+                  Help us create the perfect meal plan for you
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-3">Diet Type</label>
                 <div className="grid grid-cols-2 gap-3">
-                  {dietTypes.map(diet => (
+                  {dietTypes.map((diet) => (
                     <button
                       key={diet.id}
                       onClick={() => updateFormData('dietType', diet.id)}
@@ -459,7 +491,7 @@ export default function OnboardingForm() {
                   Back
                 </button>
               )}
-              
+
               {step < totalSteps ? (
                 <button
                   onClick={handleNext}

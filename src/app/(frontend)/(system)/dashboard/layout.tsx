@@ -1,3 +1,6 @@
+import '../../css/styles.css'
+import React from 'react'
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

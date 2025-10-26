@@ -5,12 +5,12 @@ import { getPayload } from 'payload'
 import React from 'react'
 import config from '@/payload.config'
 import '../css/styles.css'
-import TrainerCard from '@/components/Card'
-import Plans from '@/components/Plans'
-import Toast from '@/components/toast'
-import MasonryGrid from '@/components/Masonry-Grid'
-import Reviews from '@/components/Reviews'
-import Footer from '@/components/Footer'
+import TrainerCard from '@/components/website/Card'
+import Plans from '@/components/website/Plans'
+import Toast from '@/components/website/toast'
+import MasonryGrid from '@/components/website/Masonry-Grid'
+import Reviews from '@/components/website/Reviews'
+import Footer from '@/components/website/Footer'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -63,7 +63,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-      
 
       {/* ABOUT SECTION (with standard container) */}
       <section className="text-white w-full flex flex-col gap-[10px]">
