@@ -66,6 +66,13 @@ export const Users: CollectionConfig = {
       },
     },
     {
+      name: 'profilePicture',
+      type: 'upload',
+      relationTo: 'media',
+      required: false, // Optional
+      label: 'Profile Picture',
+    },
+    {
       name: 'dob',
       type: 'date',
       label: 'Date of Birth',

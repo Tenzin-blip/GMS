@@ -18,7 +18,10 @@ export default function OnboardingForm() {
     dietType: '',
     allergies: '',
     preferences: '',
+    profilePicture: '',
   })
+
+  
 
   const totalSteps = 4
 

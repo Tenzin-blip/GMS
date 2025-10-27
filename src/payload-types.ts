@@ -130,6 +130,7 @@ export interface UserAuthOperations {
 export interface User {
   id: string;
   name: string;
+  profilePicture?: (string | null) | Media;
   dob?: string | null;
   phoneNumber?: string | null;
   gender?: ('male' | 'female' | 'other') | null;
@@ -278,6 +279,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  profilePicture?: T;
   dob?: T;
   phoneNumber?: T;
   gender?: T;
