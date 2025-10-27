@@ -1,7 +1,16 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Calendar, Flame, Users, TrendingUp, Bell, ChevronLeft, ChevronRight, Trophy } from 'lucide-react'
+import {
+  Calendar,
+  Flame,
+  Users,
+  TrendingUp,
+  Bell,
+  ChevronLeft,
+  ChevronRight,
+  Trophy,
+} from 'lucide-react'
 
 interface UserFitnessData {
   user: string
@@ -59,9 +68,42 @@ export default function Dashboard() {
   }
 
   const leaderboardData = [
-    { name: 'Swoyam Pokharel', rank: 2, total: 520, squat: 180, bench: 120, deadlift: 220, gender: 'Male', weight: 62, month: 'Sep 2025', progress: 15 },
-    { name: 'Tenzin Dolker', rank: 1, total: 520, squat: 180, bench: 120, deadlift: 220, gender: 'Female', weight: 68, month: 'Sep 2025', progress: 10 },
-    { name: 'Dayjen Jigme', rank: 2, total: 520, squat: 180, bench: 120, deadlift: 220, gender: 'Male', weight: 75, month: 'Sep 2025', progress: 5 },
+    {
+      name: 'Swoyam Pokharel',
+      rank: 2,
+      total: 520,
+      squat: 180,
+      bench: 120,
+      deadlift: 220,
+      gender: 'Male',
+      weight: 62,
+      month: 'Sep 2025',
+      progress: 15,
+    },
+    {
+      name: 'Tenzin Dolker',
+      rank: 1,
+      total: 520,
+      squat: 180,
+      bench: 120,
+      deadlift: 220,
+      gender: 'Female',
+      weight: 68,
+      month: 'Sep 2025',
+      progress: 10,
+    },
+    {
+      name: 'Dayjen Jigme',
+      rank: 2,
+      total: 520,
+      squat: 180,
+      bench: 120,
+      deadlift: 220,
+      gender: 'Male',
+      weight: 75,
+      month: 'Sep 2025',
+      progress: 5,
+    },
   ]
 
   const notices = [
@@ -71,10 +113,34 @@ export default function Dashboard() {
   ]
 
   const mealPlan = [
-    { name: 'Power Protein', time: 'Breakfast', intensity: 'Medium', calories: 1800, description: 'Scrambled eggs with sauted spinach' },
-    { name: 'Vegan Energy Boost', time: 'Lunch', intensity: 'Medium', calories: 1800, description: 'Scrambled eggs with sauted spinach' },
-    { name: 'Fruits & Nuts', time: 'Snacks', intensity: 'Medium', calories: 1800, description: 'Scrambled eggs with sauted spinach' },
-    { name: 'Lean & Green', time: 'Dinner', intensity: 'Medium', calories: 1800, description: 'Scrambled eggs with sauted spinach' },
+    {
+      name: 'Power Protein',
+      time: 'Breakfast',
+      intensity: 'Medium',
+      calories: 1800,
+      description: 'Scrambled eggs with sauted spinach',
+    },
+    {
+      name: 'Vegan Energy Boost',
+      time: 'Lunch',
+      intensity: 'Medium',
+      calories: 1800,
+      description: 'Scrambled eggs with sauted spinach',
+    },
+    {
+      name: 'Fruits & Nuts',
+      time: 'Snacks',
+      intensity: 'Medium',
+      calories: 1800,
+      description: 'Scrambled eggs with sauted spinach',
+    },
+    {
+      name: 'Lean & Green',
+      time: 'Dinner',
+      intensity: 'Medium',
+      calories: 1800,
+      description: 'Scrambled eggs with sauted spinach',
+    },
   ]
 
   const workoutPlan = [
@@ -106,7 +172,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
@@ -123,7 +189,9 @@ export default function Dashboard() {
               <span className="text-gray-400">Attendance</span>
               <Calendar className="w-5 h-5 text-orange-500" />
             </div>
-            <div className="text-3xl font-bold mb-1">{attendance.current}/{attendance.total}</div>
+            <div className="text-3xl font-bold mb-1">
+              {attendance.current}/{attendance.total}
+            </div>
             <p className="text-sm text-gray-500">Days this month</p>
           </div>
 
@@ -183,7 +251,9 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-gray-400">BMI Status: <span className="text-white">{calculateBMI()} BMI</span></p>
+            <p className="text-sm text-gray-400">
+              BMI Status: <span className="text-white">{calculateBMI()} BMI</span>
+            </p>
           </div>
         </div>
 
@@ -198,19 +268,26 @@ export default function Dashboard() {
                 <h2 className="text-xl font-bold">Notice Board</h2>
               </div>
               <p className="text-sm text-gray-400 mb-6">Important announcements and updates</p>
-              
+
               <div className="space-y-3">
                 {notices.map((notice, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                  >
                     <div>
                       <h3 className="font-medium text-sm mb-1">{notice.title}</h3>
                       <p className="text-xs text-gray-500">{notice.date}</p>
                     </div>
-                    <span className={`text-xs px-3 py-1 rounded-full ${
-                      notice.type === 'important' ? 'bg-red-500/20 text-red-400' :
-                      notice.type === 'warning' ? 'bg-orange-500/20 text-orange-400' :
-                      'bg-green-500/20 text-green-400'
-                    }`}>
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full ${
+                        notice.type === 'important'
+                          ? 'bg-red-500/20 text-red-400'
+                          : notice.type === 'warning'
+                            ? 'bg-orange-500/20 text-orange-400'
+                            : 'bg-green-500/20 text-green-400'
+                      }`}
+                    >
                       {notice.type}
                     </span>
                   </div>
@@ -250,7 +327,9 @@ export default function Dashboard() {
                     <button
                       key={day}
                       className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-colors ${
-                        isToday ? 'bg-orange-500 text-white font-bold' : 'hover:bg-gray-800 text-gray-300'
+                        isToday
+                          ? 'bg-orange-500 text-white font-bold'
+                          : 'hover:bg-gray-800 text-gray-300'
                       }`}
                     >
                       {day}
@@ -274,14 +353,21 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold">
-                        {member.name.split(' ').map(n => n[0]).join('')}
+                        {member.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
                       </div>
                       <div>
                         <h3 className="font-bold">{member.name}</h3>
                         <div className="flex items-center gap-2 text-sm">
-                          <span className={`px-2 py-0.5 rounded-full text-xs ${
-                            member.rank === 1 ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'
-                          }`}>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs ${
+                              member.rank === 1
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-gray-700 text-gray-400'
+                            }`}
+                          >
                             Rank #{member.rank}
                           </span>
                         </div>
@@ -316,7 +402,9 @@ export default function Dashboard() {
                   <div className="flex items-center gap-4 text-xs text-gray-400">
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                      <span>{member.gender} {member.weight}kg</span>
+                      <span>
+                        {member.gender} {member.weight}kg
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
@@ -352,7 +440,9 @@ export default function Dashboard() {
                           <span className="text-orange-500">🔥 {meal.calories} Calories</span>
                         </div>
                       </div>
-                      <span className="text-xs px-3 py-1 bg-gray-700 rounded-full">{meal.time}</span>
+                      <span className="text-xs px-3 py-1 bg-gray-700 rounded-full">
+                        {meal.time}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-400">{meal.description}</p>
                   </div>
@@ -379,9 +469,13 @@ export default function Dashboard() {
                           className="w-4 h-4 rounded border-gray-600 text-orange-500 focus:ring-orange-500"
                           readOnly
                         />
-                        <span className={exercise.completed ? 'line-through text-gray-500' : ''}>{exercise.name}</span>
+                        <span className={exercise.completed ? 'line-through text-gray-500' : ''}>
+                          {exercise.name}
+                        </span>
                       </div>
-                      <span className="text-sm text-gray-400">{exercise.duration || exercise.sets}</span>
+                      <span className="text-sm text-gray-400">
+                        {exercise.duration || exercise.sets}
+                      </span>
                     </div>
                   ))}
                 </div>

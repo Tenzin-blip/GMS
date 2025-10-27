@@ -1,30 +1,42 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, KeyboardEvent, ChangeEvent } from 'react'
 import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 
+interface FormData {
+  email: string
+  password: string
+  rememberMe: boolean
+}
+
+interface FormErrors {
+  email?: string
+  password?: string
+  general?: string
+}
+
 export default function LoginPage() {
-  const [activeTab, setActiveTab] = useState('login')
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showForgotPassword, setShowForgotPassword] = useState(false)
-  const [showTerms, setShowTerms] = useState(false)
-  const [formData, setFormData] = useState({
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login')
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [showForgotPassword, setShowForgotPassword] = useState<boolean>(false)
+  const [showTerms, setShowTerms] = useState<boolean>(false)
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     rememberMe: false,
   })
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState<FormErrors>({})
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData({ ...formData, [field]: value })
-    if (errors[field]) {
+    if (errors[field as keyof FormErrors]) {
       setErrors({ ...errors, [field]: '' })
     }
   }
 
-  const validateForm = () => {
-    const newErrors = {}
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {}
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -39,7 +51,7 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) return
 
     setIsLoading(true)
@@ -62,13 +74,26 @@ export default function LoginPage() {
       if (response.ok) {
         console.log('Login successful:', data)
         if (data.token) {
-          if (formData.rememberMe) {
-            sessionStorage.setItem('token', data.token)
-          } else {
-            sessionStorage.setItem('token', data.token)
-          }
+          sessionStorage.setItem('token', data.token)
         }
-        window.location.href = '/setup'
+
+        // Check if user has fitness profile
+        const profileCheck = await fetch('/api/user-fitness', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${data.token}`,
+          },
+        })
+
+        const profileData = await profileCheck.json()
+
+        // Route based on profile existence
+        if (profileData.exists) {
+          window.location.href = '/dashboard'
+        } else {
+          window.location.href = '/setup'
+        }
       } else {
         setErrors({
           general: data.message || 'Invalid email or password. Please try again.',
@@ -84,7 +109,7 @@ export default function LoginPage() {
     }
   }
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter' && !isLoading) {
       handleSubmit()
     }
@@ -103,7 +128,7 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-2xl p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h2>
             <p className="text-gray-600 text-sm mb-6">
-              Enter your email address and we'll send you instructions to reset your password.
+              Enter your email address and we will send you instructions to reset your password.
             </p>
 
             <div className="space-y-4">
@@ -182,10 +207,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className=" h-[100vh] md:min-h-screen bg-slate-200 flex w-screen p-1 items-center justify-center">
+    <div className="h-[100vh] md:min-h-screen bg-slate-200 flex w-screen p-1 items-center justify-center">
       <div className="h-full md:w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden">
         {/* Left Side - Login Form */}
-        <div className=" bg-white py-[1~10] p-8 md:p-10 flex flex-col justify-center text-black">
+        <div className="bg-white py-10 p-8 md:p-10 flex flex-col justify-center text-black">
           <div className="mb-8">
             <div className="flex items-center justify-center gap-2 mb-6">
               <Image src={'/api/media/file/Logo-Dark.png'} alt={'Logo'} width={142} height={27} />
@@ -229,7 +254,9 @@ export default function LoginPage() {
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleInputChange('email', e.target.value)
+                }
                 onKeyPress={handleKeyPress}
                 disabled={isLoading}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all ${
@@ -246,7 +273,9 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleInputChange('password', e.target.value)
+                  }
                   onKeyPress={handleKeyPress}
                   disabled={isLoading}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all pr-10 ${
@@ -305,17 +334,6 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side - Image */}
-        {/* <div className="hidden md:block bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/40"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-32 h-32 bg-gradient-to-br from-orange-500 to-red-500 rounded-full opacity-20 blur-3xl mx-auto mb-8"></div>
-              <p className="text-white text-lg font-semibold">Build Your Strength</p>
-              <p className="text-gray-400 text-sm mt-2">Transform Your Body</p>
-            </div>
-          </div>
-          
-        </div> */}
         <div
           className="hidden md:block bg-cover bg-center bg-no-repeat relative overflow-hidden"
           style={{

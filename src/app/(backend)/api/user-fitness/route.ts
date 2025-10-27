@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
 
     // Get the authenticated user from the request
-    // This depends on your auth setup - adjust accordingly
     const token = req.cookies.get('payload-token')?.value
     
     if (!token) {
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
         id: existingProfile.docs[0].id,
         data: {
           ...body,
-          user: user.id, // Ensure user ID is set correctly
+          user: user.id,
         },
       })
     } else {
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest) {
         collection: 'user-fitness',
         data: {
           ...body,
-          user: user.id, // Set the user relationship
+          user: user.id,
         },
       })
     }
@@ -100,16 +99,11 @@ export async function GET(req: NextRequest) {
       limit: 1,
     })
 
-    if (result.docs.length === 0) {
-      return NextResponse.json(
-        { error: 'Fitness profile not found' },
-        { status: 404 }
-      )
-    }
-
+    // Return exists status regardless of whether profile is found
     return NextResponse.json({
       success: true,
-      data: result.docs[0],
+      exists: result.docs.length > 0,
+      data: result.docs.length > 0 ? result.docs[0] : null,
     })
   } catch (error: any) {
     console.error('Error fetching user-fitness:', error)
