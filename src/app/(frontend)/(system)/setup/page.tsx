@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ChevronRight, ChevronLeft, AlertCircle, Check } from 'lucide-react'
+import Image from 'next/image'
+import { ChevronRight, ChevronLeft, AlertCircle, Check, Upload, Camera } from 'lucide-react'
 
 export default function OnboardingForm() {
   const [step, setStep] = useState(1)
@@ -18,12 +19,11 @@ export default function OnboardingForm() {
     dietType: '',
     allergies: '',
     preferences: '',
-    profilePicture: '',
+    profilePicture: null as File | null,
+    profilePicturePreview: '',
   })
 
-  
-
-  const totalSteps = 4
+  const totalSteps = 5 // Updated to 5 steps
 
   const goals = [
     {
@@ -65,6 +65,29 @@ export default function OnboardingForm() {
     if (step > 1) setStep(step - 1)
   }
 
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Check if file is an image
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload an image file')
+        return
+      }
+
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB')
+        return
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        profilePicture: file,
+        profilePicturePreview: URL.createObjectURL(file),
+      }))
+    }
+  }
+
   const handleSubmit = async () => {
     try {
       // Calculate BMR and TDEE for target calories
@@ -77,7 +100,10 @@ export default function OnboardingForm() {
       const tdee = calculateTDEE(bmr, formData.activityLevel)
       const targetCalories = adjustCaloriesForGoal(tdee, formData.goal)
 
-      // Transform form data to match UserFitness schema
+      // Create FormData for multipart/form-data upload
+      const submitData = new FormData()
+
+      // Add fitness data as JSON string
       const fitnessData = {
         goal: formData.goal,
         bodyMetrics: {
@@ -99,23 +125,26 @@ export default function OnboardingForm() {
         },
         workoutPlan: {
           frequency: parseInt(formData.daysPerWeek),
-          duration: parseFloat(formData.hoursPerDay) * 60, // Convert hours to minutes
+          duration: parseFloat(formData.hoursPerDay) * 60,
           preferredDays: [],
           preferredTypes: [],
         },
       }
 
+      submitData.append('fitnessData', JSON.stringify(fitnessData))
+
+      // Add profile picture if exists
+      if (formData.profilePicture) {
+        submitData.append('profilePicture', formData.profilePicture)
+      }
+
       const response = await fetch('/api/user-fitness', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fitnessData),
+        body: submitData,
       })
 
       if (response.ok) {
         alert('Welcome to Level Up! Your personalized dashboard is ready 🎉')
-        // Redirect to dashboard
         window.location.href = '/dashboard'
       } else {
         const error = await response.json()
@@ -128,7 +157,6 @@ export default function OnboardingForm() {
     }
   }
 
-  // Helper function to calculate BMR (Basal Metabolic Rate) using Mifflin-St Jeor Equation
   const calculateBMR = (weight: number, height: number, age: number, gender: string) => {
     if (gender === 'male') {
       return 10 * weight + 6.25 * height - 5 * age + 5
@@ -137,22 +165,20 @@ export default function OnboardingForm() {
     }
   }
 
-  // Helper function to calculate TDEE (Total Daily Energy Expenditure)
   const calculateTDEE = (bmr: number, activityLevel: number) => {
     const multipliers = [1.2, 1.375, 1.55, 1.725, 1.9]
     return bmr * multipliers[activityLevel - 1]
   }
 
-  // Helper function to adjust calories based on goal
   const adjustCaloriesForGoal = (tdee: number, goal: string) => {
     switch (goal) {
       case 'weight_loss':
-        return tdee - 500 // 500 calorie deficit
+        return tdee - 500
       case 'weight_gain':
       case 'muscle_building':
-        return tdee + 300 // 300 calorie surplus
+        return tdee + 300
       case 'toning':
-        return tdee - 200 // Slight deficit
+        return tdee - 200
       case 'maintenance':
       default:
         return tdee
@@ -177,6 +203,8 @@ export default function OnboardingForm() {
         return formData.hoursPerDay && formData.daysPerWeek
       case 4:
         return formData.dietType !== ''
+      case 5:
+        return true // Profile picture is optional
       default:
         return true
     }
@@ -209,7 +237,7 @@ export default function OnboardingForm() {
             />
           </div>
           <div className="flex justify-between mt-2">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
                 className={`w-2 h-2 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-600'}`}
@@ -471,6 +499,80 @@ export default function OnboardingForm() {
                   rows={3}
                   className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none text-white"
                 />
+              </div>
+            </div>
+          )}
+
+          {/* Step 5: Profile Picture */}
+          {step === 5 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Show us your best smile! 📸</h2>
+                <p className="text-gray-400 text-sm">
+                  Add a profile picture to personalize your experience
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center justify-center">
+                {/* Preview Area */}
+                <div className="relative mb-6">
+                  {formData.profilePicturePreview ? (
+                    <div className="relative">
+                      <Image
+                        src={formData.profilePicturePreview}
+                        alt="Profile preview"
+                        width={160}
+                        height={160}
+                        className="w-full h-full object-cover"
+                        unoptimized // Required for blob URLs
+                      />
+                      <button
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            profilePicture: null,
+                            profilePicturePreview: '',
+                          }))
+                        }
+                        className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-40 h-40 rounded-full bg-gray-700 border-4 border-dashed border-gray-600 flex items-center justify-center">
+                      <Camera className="w-12 h-12 text-gray-500" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload Button */}
+                <label className="cursor-pointer">
+                  <div className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors flex items-center gap-2 text-white font-medium">
+                    <Upload className="w-5 h-5" />
+                    {formData.profilePicturePreview ? 'Change Picture' : 'Upload Picture'}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                    className="hidden"
+                  />
+                </label>
+
+                <p className="text-xs text-gray-500 mt-4 text-center">
+                  Recommended: Square image, max 5MB
+                  <br />
+                  Formats: JPG, PNG, GIF
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                <AlertCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-purple-300">
+                  Don't worry! You can always add or change your profile picture later from
+                  settings.
+                </p>
               </div>
             </div>
           )}

@@ -1,8 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { Payload } from 'payload'
+import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 import {
   Calendar,
   Flame,
@@ -176,17 +175,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <div className="mb-8 flex flex-row gap-10">
-          <div className="w-3 h-3 rounded-xl">
-            <p>Hi</p>
-          </div>
-          <div>
-          <h1 className="text-3xl font-bold mb-2">
-            Hello, <span className="text-orange-500">Tenzin</span>!
-          </h1>
-          <p className="text-gray-400">Here's your fitness overview for today</p>
-          </div>
-        </div>
+        <DashboardHeader/>
 
         {/* Top Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
