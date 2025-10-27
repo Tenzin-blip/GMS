@@ -7,16 +7,14 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-black">
-        {/* Sidebar - Fixed */}
-        <Sidebar />
-
-        {/* Main Content Area - Scrollable */}
-        <main className="ml-64 min-h-screen overflow-y-auto">{children}</main>
-      </body>
+    <html lang='en'>
+    <body className="flex">
+      <Sidebar />
+      <main className="flex-1 md:ml-64 bg-gray-100 min-h-screen">{children}</main>
+    </body>
     </html>
   )
 }
+

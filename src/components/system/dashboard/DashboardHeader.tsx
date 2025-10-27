@@ -46,7 +46,7 @@ export default function DashboardHeader() {
 
   return (
     <div className="mb-8 flex flex-row gap-6 items-center">
-      <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-orange-500 to-orange-600 flex-shrink-0 border-4 border-orange-500/30 shadow-lg">
+      <div className="w-16 h-16 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
