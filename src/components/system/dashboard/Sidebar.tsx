@@ -34,7 +34,7 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = () => {
-    console.log('Logging out...')
+    console.log()
   }
 
   return (

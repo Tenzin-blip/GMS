@@ -55,7 +55,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href={homeData.ctaButton2.href}
-                className="btn bg-slate-200 px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl !text-black"
+                className="btn bg-slate-200 px-7 py-3 rounded-2xl hover:bg-[#e00707] hover:shadow-lg hover:shadow-red-500/25 hover:scale-[1.02] transition-all duration-300 ease-out bebas text-xl md:text-2xl !text-black hover:!text-white"
               >
                 {homeData.ctaButton2.text}
               </Link>
