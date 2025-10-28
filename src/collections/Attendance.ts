@@ -1,7 +1,7 @@
 // payload/collections/Attendance.ts
 import { CollectionConfig } from 'payload'
 
-const Attendance: CollectionConfig = {
+export const Attendance: CollectionConfig = {
   slug: 'attendance',
   fields: [
     {
@@ -49,5 +49,3 @@ const Attendance: CollectionConfig = {
     },
   ],
 }
-
-export default Attendance

@@ -13,6 +13,8 @@ import { Home } from './globals/Home'
 import { Navbar } from './globals/Navbar'
 import { Reviews } from './globals/Reviews'
 import { UserFitness } from './collections/UserFitness'
+import { Attendance } from './collections/Attendance'
+import { GymCounts } from './collections/GymCount'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,7 +26,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, UserFitness,],
+  collections: [Users, Media, UserFitness, Attendance, GymCounts,],
   globals: [Home, Navbar, Reviews],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

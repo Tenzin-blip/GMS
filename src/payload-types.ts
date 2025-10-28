@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     'user-fitness': UserFitness;
+    attendance: Attendance;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +80,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'user-fitness': UserFitnessSelect<false> | UserFitnessSelect<true>;
+    attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -214,6 +216,22 @@ export interface UserFitness {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attendance".
+ */
+export interface Attendance {
+  id: string;
+  user: string | User;
+  role: 'member' | 'trainer';
+  date: string;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  durationMinutes?: number | null;
+  status?: ('checked-in' | 'checked-out' | 'auto-closed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -230,6 +248,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'user-fitness';
         value: string | UserFitness;
+      } | null)
+    | ({
+        relationTo: 'attendance';
+        value: string | Attendance;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -363,6 +385,21 @@ export interface UserFitnessSelect<T extends boolean = true> {
         preferredTypes?: T;
       };
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attendance_select".
+ */
+export interface AttendanceSelect<T extends boolean = true> {
+  user?: T;
+  role?: T;
+  date?: T;
+  checkInTime?: T;
+  checkOutTime?: T;
+  durationMinutes?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
