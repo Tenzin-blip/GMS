@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     'user-fitness': UserFitness;
     attendance: Attendance;
+    'gym-counts': GymCount;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -81,6 +82,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'user-fitness': UserFitnessSelect<false> | UserFitnessSelect<true>;
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
+    'gym-counts': GymCountsSelect<false> | GymCountsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -232,6 +234,23 @@ export interface Attendance {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gym-counts".
+ */
+export interface GymCount {
+  id: string;
+  date: string;
+  currentMembers?: number | null;
+  currentTrainers?:
+    | {
+        trainer?: (string | null) | User;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -252,6 +271,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'attendance';
         value: string | Attendance;
+      } | null)
+    | ({
+        relationTo: 'gym-counts';
+        value: string | GymCount;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -400,6 +423,22 @@ export interface AttendanceSelect<T extends boolean = true> {
   checkOutTime?: T;
   durationMinutes?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gym-counts_select".
+ */
+export interface GymCountsSelect<T extends boolean = true> {
+  date?: T;
+  currentMembers?: T;
+  currentTrainers?:
+    | T
+    | {
+        trainer?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

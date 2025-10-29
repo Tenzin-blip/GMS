@@ -7,7 +7,7 @@ export const Attendance: CollectionConfig = {
     {
       name: 'user',
       type: 'relationship',
-      relationTo: 'users', 
+      relationTo: 'users',
       required: true,
     },
     {
@@ -45,7 +45,7 @@ export const Attendance: CollectionConfig = {
       name: 'status',
       type: 'select',
       options: ['checked-in', 'checked-out', 'auto-closed'],
-      defaultValue: 'checked-in',
+      defaultValue: 'checked-out',
     },
   ],
 }

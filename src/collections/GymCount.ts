@@ -1,8 +1,7 @@
-
 import { CollectionConfig } from 'payload'
 
 export const GymCounts: CollectionConfig = {
-  slug: 'gym_counts',
+  slug: 'gym-counts',
   admin: { useAsTitle: 'date' },
   fields: [
     {
@@ -29,5 +28,3 @@ export const GymCounts: CollectionConfig = {
     },
   ],
 }
-
-
