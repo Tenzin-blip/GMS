@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { 
   LayoutDashboard, Dumbbell, UtensilsCrossed, TrendingUp, 
   Calendar, CreditCard, User, QrCode, Settings, LogOut, Menu, X
 } from 'lucide-react'
+
 
 interface NavItem {
   label: string
@@ -30,11 +31,14 @@ const bottomNavItems: NavItem[] = [
 ]
 
 export default function Sidebar() {
+  const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = () => {
-    console.log()
+    localStorage.removeItem('token')
+    sessionStorage.clear()
+    router.push('/login')
   }
 
   return (

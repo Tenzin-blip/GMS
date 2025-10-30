@@ -5,8 +5,6 @@ import config from '@payload-config'
 export async function POST(req: NextRequest) {
   try {
     const payload = await getPayloadHMR({ config })
-    
-    // Get the authenticated user from the request
     const token = req.cookies.get('payload-token')?.value
     
     if (!token) {
@@ -16,7 +14,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verify the user is authenticated
     const { user } = await payload.auth({ headers: req.headers })
     
     if (!user) {
@@ -26,33 +23,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Check if request contains multipart form data (with image)
     const contentType = req.headers.get('content-type') || ''
     let fitnessData
     let profilePictureFile = null
 
     if (contentType.includes('multipart/form-data')) {
-      // Handle form data with file upload
       const formData = await req.formData()
       const fitnessDataString = formData.get('fitnessData') as string
       fitnessData = JSON.parse(fitnessDataString)
       profilePictureFile = formData.get('profilePicture') as File | null
     } else {
-      // Handle regular JSON request (no file upload)
       fitnessData = await req.json()
     }
 
-    // Upload profile picture if provided
     let profilePictureId = null
     if (profilePictureFile && profilePictureFile.size > 0) {
       try {
-        // Convert File to Buffer
+
         const bytes = await profilePictureFile.arrayBuffer()
         const buffer = Buffer.from(bytes)
 
-        // Create media document in Payload
         const uploadedImage = await payload.create({
-          collection: 'media', // Make sure you have a media collection
+          collection: 'media', 
           data: {
             alt: `${user.name || 'User'} profile picture`,
           },
@@ -67,11 +59,9 @@ export async function POST(req: NextRequest) {
         profilePictureId = uploadedImage.id
       } catch (uploadError) {
         console.error('Error uploading profile picture:', uploadError)
-        // Continue without profile picture if upload fails
       }
     }
 
-    // Update user's profile picture if uploaded
     if (profilePictureId) {
       await payload.update({
         collection: 'users',
@@ -82,7 +72,6 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Check if user already has a fitness profile
     const existingProfile = await payload.find({
       collection: 'user-fitness',
       where: {
@@ -96,7 +85,6 @@ export async function POST(req: NextRequest) {
     let result
 
     if (existingProfile.docs.length > 0) {
-      // Update existing profile
       result = await payload.update({
         collection: 'user-fitness',
         id: existingProfile.docs[0].id,
@@ -106,7 +94,6 @@ export async function POST(req: NextRequest) {
         },
       })
     } else {
-      // Create new profile
       result = await payload.create({
         collection: 'user-fitness',
         data: {
@@ -134,7 +121,6 @@ export async function GET(req: NextRequest) {
   try {
     const payload = await getPayloadHMR({ config })
 
-    // Get the authenticated user
     const { user } = await payload.auth({ headers: req.headers })
     
     if (!user) {
@@ -144,7 +130,6 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // Fetch user's fitness profile
     const result = await payload.find({
       collection: 'user-fitness',
       where: {
@@ -155,14 +140,13 @@ export async function GET(req: NextRequest) {
       limit: 1,
     })
 
-    // Fetch user data with profile picture
+
     const userData = await payload.findByID({
       collection: 'users',
       id: user.id,
-      depth: 2, // To populate the profilePicture relationship
+      depth: 2, 
     })
 
-    // Return exists status regardless of whether profile is found
     return NextResponse.json({
       success: true,
       exists: result.docs.length > 0,

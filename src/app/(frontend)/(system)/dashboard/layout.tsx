@@ -3,9 +3,7 @@ import React from 'react'
 
 import Sidebar from '@/components/system/dashboard/Sidebar'
 
-interface DashboardLayoutProps {
-  children: React.ReactNode
-}
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -225,10 +225,22 @@ export interface Attendance {
   user: string | User;
   role: 'member' | 'trainer';
   date: string;
+  /**
+   * Format: HH:MM (24-hour format, e.g., 09:30)
+   */
   checkInTime?: string | null;
+  /**
+   * Format: HH:MM (24-hour format, e.g., 18:45)
+   */
   checkOutTime?: string | null;
+  /**
+   * Automatically calculated from check-in and check-out times
+   */
   durationMinutes?: number | null;
-  status?: ('checked-in' | 'checked-out' | 'auto-closed') | null;
+  /**
+   * Status is "absent" if no check-in/check-out time is provided
+   */
+  status: 'checked-in' | 'checked-out' | 'auto-closed' | 'absent';
   updatedAt: string;
   createdAt: string;
 }

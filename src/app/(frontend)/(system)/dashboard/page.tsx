@@ -42,8 +42,8 @@ interface UserFitnessData {
 export default function Dashboard() {
   const [fitnessData, setFitnessData] = useState<UserFitnessData | null>(null)
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [attendance, setAttendance] = useState({ current: 18, total: 22 })
-  const [streak, setStreak] = useState(7)
+  const [attendance, setAttendance] = useState({ current: 0, total: 22 })
+  const [streak, setStreak] = useState(0)
 
   useEffect(() => {
     // Fetch user fitness data
@@ -180,7 +180,7 @@ export default function Dashboard() {
         {/* Top Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Attendance Card */}
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
+          <div className="bg-gray-900 rounded-xl p-4 border border-gray-800">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400">Attendance</span>
               <Calendar className="w-5 h-5 text-orange-500" />
