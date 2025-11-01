@@ -46,7 +46,6 @@ export default function Dashboard() {
   const [streak, setStreak] = useState(0)
 
   useEffect(() => {
-    // Fetch user fitness data
     fetchFitnessData()
   }, [])
 
@@ -175,7 +174,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-[1400px] mx-auto">
         {/* Header */}
-        <DashboardHeader/>
+        <DashboardHeader />
 
         {/* Top Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">

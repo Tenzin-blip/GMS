@@ -240,7 +240,7 @@ export interface Attendance {
   /**
    * Status is "absent" if no check-in/check-out time is provided
    */
-  status: 'checked-in' | 'checked-out' | 'auto-closed' | 'absent';
+  status: 'checked-in' | 'checked-out' | 'auto-closed' | 'absent' | 'present';
   updatedAt: string;
   createdAt: string;
 }

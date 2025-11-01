@@ -9,10 +9,7 @@ export async function GET(req: NextRequest) {
     const { user } = await payload.auth({ headers: req.headers })
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
     }
 
     const userId = user.id
@@ -28,13 +25,6 @@ export async function GET(req: NextRequest) {
     const month = searchParams.get('month')
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
-
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'Missing userId parameter' },
-        { status: 400 },
-      )
-    }
 
     const query: Record<string, any> = {
       user: { equals: String(userId) },
@@ -70,8 +60,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         success: true,
         hasData: false,
-        message:
-          'No attendance data yet.',
+        message: 'No attendance data yet.',
         data: [],
         stats: {
           daysThisMonth: 0,
@@ -83,26 +72,41 @@ export async function GET(req: NextRequest) {
       })
     }
 
-   const formattedData = attendanceRecords.docs.map((record: any) => {
-      const formatTime = (timeStr: string | null) => {
-        if (!timeStr) return null
-        const [hours, minutes] = timeStr.split(':').map(Number)
-        const period = hours >= 12 ? 'PM' : 'AM'
-        const displayHours = hours % 12 || 12
-        return `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`
+    const formatTime = (timeStr: string | null | undefined | Date | any) => {
+      if (!timeStr) return null
+
+      // If it's a Date object, extract HH:MM
+      if (timeStr instanceof Date) {
+        const hours = timeStr.getHours().toString().padStart(2, '0')
+        const minutes = timeStr.getMinutes().toString().padStart(2, '0')
+        timeStr = `${hours}:${minutes}`
       }
 
+      // Convert to string if it isn't already
+      const timeString = String(timeStr)
+
+      // Check if it's a valid time format
+      if (!timeString.includes(':')) return null
+
+      const [hours, minutes] = timeString.split(':').map(Number)
+      const period = hours >= 12 ? 'PM' : 'AM'
+      const displayHours = hours % 12 || 12
+      return `${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`
+    }
+
+    const formattedData = attendanceRecords.docs.map((record: any) => {
       return {
         id: record.id,
         date: record.date,
         checkIn: formatTime(record.checkInTime),
         checkOut: formatTime(record.checkOutTime),
         duration: record.durationMinutes || 0,
-        status: record.status === 'checked-out' || record.status === 'auto-closed' 
-          ? 'completed' 
-          : record.status === 'absent' 
-          ? 'absent' 
-          : 'in-progress',
+        status:
+          record.status === 'checked-out' || record.status === 'auto-closed'
+            ? 'completed'
+            : record.status === 'absent'
+              ? 'absent'
+              : 'in-progress',
       }
     })
 
@@ -178,3 +182,112 @@ export async function GET(req: NextRequest) {
   }
 }
 
+export async function POST(req: NextRequest) {
+  try {
+    const payload = await getPayload({ config })
+
+    const { user } = await payload.auth({ headers: req.headers })
+
+    if (!user) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
+    }
+
+    const userId = user.id
+
+    if (!userId) {
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 })
+    }
+
+    const searchParams = req.nextUrl.searchParams
+    const date = searchParams.get('present')
+
+    if (!date) {
+      return NextResponse.json(
+        { success: false, message: 'Missing date parameter' },
+        { status: 400 },
+      )
+    }
+
+    // Check if attendance already exists for this date
+    const existing = await payload.find({
+      collection: 'attendance',
+      where: {
+        user: { equals: String(userId) },
+        date: { equals: date },
+      },
+    })
+
+    const now = new Date()
+    const hours = now.getHours().toString().padStart(2, '0')
+    const minutes = now.getMinutes().toString().padStart(2, '0')
+    const currentTime = `${hours}:${minutes}`
+
+    // If already checked in, check them out
+    if (existing.docs.length > 0) {
+      const record = existing.docs[0]
+      console.log('shit alr exists')
+      // If already checked out, return error
+      if (record.status === 'checked-out' || record.status === 'auto-closed') {
+        return NextResponse.json(
+          { success: false, message: 'Already checked out for this date' },
+          { status: 400 },
+        )
+      }
+
+      // Calculate duration
+      const checkInTime = record.checkInTime
+      const [checkInHours, checkInMinutes] = checkInTime.split(':').map(Number)
+      const [checkOutHours, checkOutMinutes] = currentTime.split(':').map(Number)
+
+      const checkInTotalMinutes = checkInHours * 60 + checkInMinutes
+      const checkOutTotalMinutes = checkOutHours * 60 + checkOutMinutes
+      const durationMinutes = checkOutTotalMinutes - checkInTotalMinutes
+
+      // Update to checked-out
+      const updated = await payload.update({
+        collection: 'attendance',
+        id: record.id,
+        data: {
+          status: 'checked-out',
+          checkOutTime: currentTime,
+          durationMinutes: durationMinutes > 0 ? durationMinutes : 0,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Checked out successfully',
+        action: 'checkout',
+        data: updated,
+      })
+    }
+
+    // Create new check-in record
+    const attendance = await payload.create({
+      collection: 'attendance',
+      data: {
+        user: userId,
+        date: date,
+        role: 'member',
+        status: 'checked-in',
+        checkInTime: currentTime,
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Checked in successfully',
+      action: 'checkin',
+      data: attendance,
+    })
+  } catch (error: any) {
+    console.error('Attendance POST error:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || 'Failed to mark attendance',
+      },
+      { status: 500 },
+    )
+  }
+}

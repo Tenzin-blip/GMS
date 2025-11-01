@@ -80,7 +80,7 @@ export default function Sidebar() {
                         ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20'
                         : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                     }`}
-                    onClick={() => setIsOpen(false)} // close menu on mobile click
+                    onClick={() => setIsOpen(false)} 
                   >
                     {item.icon}
                     <span className="text-sm font-medium">{item.label}</span>

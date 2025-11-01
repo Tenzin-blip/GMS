@@ -59,7 +59,7 @@ export const Attendance: CollectionConfig = {
         description: 'Format: HH:MM (24-hour format, e.g., 09:30)',
       },
       validate: (value) => {
-        if (!value) return true 
+        if (!value) return true
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
         if (!timeRegex.test(value)) {
           return 'Please enter time in HH:MM format (e.g., 09:30)'
@@ -75,7 +75,7 @@ export const Attendance: CollectionConfig = {
         description: 'Format: HH:MM (24-hour format, e.g., 18:45)',
       },
       validate: (value) => {
-        if (!value) return true 
+        if (!value) return true
         const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
         if (!timeRegex.test(value)) {
           return 'Please enter time in HH:MM format (e.g., 18:45)'
@@ -86,7 +86,7 @@ export const Attendance: CollectionConfig = {
     {
       name: 'durationMinutes',
       type: 'number',
-      admin: { 
+      admin: {
         readOnly: true,
         description: 'Automatically calculated from check-in and check-out times',
       },
@@ -96,10 +96,10 @@ export const Attendance: CollectionConfig = {
             if (data?.checkInTime && data?.checkOutTime) {
               const [inHour, inMin] = data?.checkInTime.split(':').map(Number)
               const [outHour, outMin] = data?.checkOutTime.split(':').map(Number)
-              
+
               const inMinutes = inHour * 60 + inMin
               const outMinutes = outHour * 60 + outMin
-              
+
               return outMinutes - inMinutes
             }
             return 0
@@ -115,7 +115,9 @@ export const Attendance: CollectionConfig = {
         { label: 'Checked Out', value: 'checked-out' },
         { label: 'Auto Closed', value: 'auto-closed' },
         { label: 'Absent', value: 'absent' },
+        { label: 'Present', value: 'present' }, // ADD THIS
       ],
+      // ... rest
       required: true,
       defaultValue: 'absent',
       admin: {
@@ -145,8 +147,7 @@ export const Attendance: CollectionConfig = {
     beforeValidate: [
       ({ data }) => {
         if (!data?.date) {
-          if(data)
-          data.date = new Date().toISOString().split('T')[0]
+          if (data) data.date = new Date().toISOString().split('T')[0]
         }
         return data
       },

@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'Password must be at least 8 characters' }, { status: 400 })
         }
 
-        // Update user's password
         const updateRes = await fetch(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/${userId}`, {
             method: 'PATCH',
             headers: {

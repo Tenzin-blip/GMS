@@ -4,7 +4,7 @@ type ToastProps = {
   message: string
   type?: 'success' | 'error' | 'info'
   onClose?: () => void
-  duration?: number // optional (default: 3000ms)
+  duration?: number 
 }
 
 export default function Toast({

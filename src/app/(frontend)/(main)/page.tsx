@@ -7,7 +7,6 @@ import config from '@/payload.config'
 import '../css/styles.css'
 import TrainerCard from '@/components/website/Card'
 import Plans from '@/components/website/Plans'
-import Toast from '@/components/website/toast'
 import MasonryGrid from '@/components/website/Masonry-Grid'
 import Reviews from '@/components/website/Reviews'
 import Footer from '@/components/website/Footer'
@@ -23,7 +22,7 @@ export default async function HomePage() {
 
   return (
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
-      {/* HERO SECTION (full width, no container px) */}
+      {/* HERO SECTION */}
       {heroSection && (
         <section className="relative w-full h-[88vh] ">
           {/* Background Image */}
@@ -64,7 +63,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ABOUT SECTION (with standard container) */}
+      {/* ABOUT SECTION */}
       <section className="text-white w-full flex flex-col gap-[10px]">
         {/* Heading */}
         <div className="py-[8~12] px-4 sm:px-6 md:px-6 flex flex-col gap-[10px] min-h-[20vh~50vh] bg-neutral-800 rounded-2xl w-full text-center justify-center items-center">
@@ -139,7 +138,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* TRAINERS SECTION (with standard container) */}
+      {/* TRAINERS SECTION */}
       <section className="text-black w-full">
         <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
@@ -190,7 +189,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-      {/* PLAN SECTION (with standard container) */}
+      {/* PLAN SECTION */}
       <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
         <div className=" px-2 md:px-24 flex flex-col justify-between items-center">
           {/* Heading */}
@@ -227,7 +226,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* SERVICES SECTION (with standard container) */}
+      {/* SERVICES SECTION */}
       <section className="text-black w-full">
         <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
