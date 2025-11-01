@@ -18,43 +18,26 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 })
     }
 
-    console.log('Authenticated user:', user)
-
-    const searchParams = req.nextUrl.searchParams
-
-    const month = searchParams.get('month')
-    const startDate = searchParams.get('startDate')
-    const endDate = searchParams.get('endDate')
+    // Get last 30 days
+    const today = new Date()
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(today.getDate() - 30)
 
     const query: Record<string, any> = {
       user: { equals: String(userId) },
       role: { equals: 'member' },
-    }
-
-    if (month) {
-      const [year, monthNum] = month.split('-')
-      const firstDay = new Date(parseInt(year), parseInt(monthNum) - 1, 1)
-      const lastDay = new Date(parseInt(year), parseInt(monthNum), 0)
-
-      query.date = {
-        greater_than_equal: firstDay.toISOString().split('T')[0],
-        less_than_equal: lastDay.toISOString().split('T')[0],
-      }
-    } else if (startDate && endDate) {
-      query.date = {
-        greater_than_equal: startDate,
-        less_than_equal: endDate,
-      }
+      date: {
+        greater_than_equal: thirtyDaysAgo.toISOString().split('T')[0],
+        less_than_equal: today.toISOString().split('T')[0],
+      },
     }
 
     const attendanceRecords = await payload.find({
       collection: 'attendance',
       where: query,
       sort: '-date',
-      limit: 50,
+      limit: 100,
     })
-
-    console.log('Attendance found:', attendanceRecords.docs.length)
 
     if (attendanceRecords.docs.length === 0) {
       return NextResponse.json({
@@ -75,17 +58,13 @@ export async function GET(req: NextRequest) {
     const formatTime = (timeStr: string | null | undefined | Date | any) => {
       if (!timeStr) return null
 
-      // If it's a Date object, extract HH:MM
       if (timeStr instanceof Date) {
         const hours = timeStr.getHours().toString().padStart(2, '0')
         const minutes = timeStr.getMinutes().toString().padStart(2, '0')
         timeStr = `${hours}:${minutes}`
       }
 
-      // Convert to string if it isn't already
       const timeString = String(timeStr)
-
-      // Check if it's a valid time format
       if (!timeString.includes(':')) return null
 
       const [hours, minutes] = timeString.split(':').map(Number)
@@ -95,18 +74,24 @@ export async function GET(req: NextRequest) {
     }
 
     const formattedData = attendanceRecords.docs.map((record: any) => {
+      let status = 'absent'
+      if (
+        record.status === 'checked-out' ||
+        record.status === 'auto-closed' ||
+        record.status === 'present'
+      ) {
+        status = 'completed'
+      } else if (record.status === 'checked-in') {
+        status = 'in-progress'
+      }
+
       return {
         id: record.id,
         date: record.date,
         checkIn: formatTime(record.checkInTime),
         checkOut: formatTime(record.checkOutTime),
         duration: record.durationMinutes || 0,
-        status:
-          record.status === 'checked-out' || record.status === 'auto-closed'
-            ? 'completed'
-            : record.status === 'absent'
-              ? 'absent'
-              : 'in-progress',
+        status: status,
       }
     })
 
@@ -120,7 +105,8 @@ export async function GET(req: NextRequest) {
     })
 
     const completedRecords = thisMonthRecords.filter(
-      (r: any) => r.status === 'checked-out' || r.status === 'auto-closed',
+      (r: any) =>
+        r.status === 'checked-out' || r.status === 'auto-closed' || r.status === 'present',
     )
 
     const totalMinutes = completedRecords.reduce(
@@ -132,6 +118,7 @@ export async function GET(req: NextRequest) {
       completedRecords.length > 0 ? Math.round(totalMinutes / completedRecords.length) : 0
 
     const sortedDates = attendanceRecords.docs
+      .filter((r: any) => r.status !== 'absent')
       .map((r: any) => new Date(r.date))
       .sort((a: Date, b: Date) => b.getTime() - a.getTime())
 
@@ -225,9 +212,13 @@ export async function POST(req: NextRequest) {
     // If already checked in, check them out
     if (existing.docs.length > 0) {
       const record = existing.docs[0]
-      console.log('shit alr exists')
+
       // If already checked out, return error
-      if (record.status === 'checked-out' || record.status === 'auto-closed') {
+      if (
+        record.status === 'checked-out' ||
+        record.status === 'auto-closed' ||
+        record.status === 'present'
+      ) {
         return NextResponse.json(
           { success: false, message: 'Already checked out for this date' },
           { status: 400 },
@@ -243,12 +234,11 @@ export async function POST(req: NextRequest) {
       const checkOutTotalMinutes = checkOutHours * 60 + checkOutMinutes
       const durationMinutes = checkOutTotalMinutes - checkInTotalMinutes
 
-      // Update to checked-out
+      // Update to checked-out (don't set status, let hook handle it)
       const updated = await payload.update({
         collection: 'attendance',
         id: record.id,
         data: {
-          status: 'checked-out',
           checkOutTime: currentTime,
           durationMinutes: durationMinutes > 0 ? durationMinutes : 0,
         },
@@ -262,14 +252,13 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Create new check-in record
+    // Create new check-in record (don't set status, let hook handle it)
     const attendance = await payload.create({
       collection: 'attendance',
       data: {
         user: userId,
         date: date,
         role: 'member',
-        status: 'checked-in',
         checkInTime: currentTime,
       },
     })

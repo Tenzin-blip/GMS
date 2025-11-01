@@ -14,9 +14,26 @@ import {
 } from 'lucide-react'
 
 export default function AttendancePage() {
+  type AttendanceRecord = {
+    id: string
+    date: string
+    checkIn?: string
+    checkOut?: string | null
+    duration: number
+    status?: 'completed' | 'in-progress' | 'absent'
+  }
+
+  type Stats = {
+    daysThisMonth: number
+    totalDays: number
+    currentStreak: number
+    avgDuration: number
+    totalHours: number
+  }
+
   const [currentDate, setCurrentDate] = useState(new Date())
-  const [attendanceData, setAttendanceData] = useState([])
-  const [stats, setStats] = useState({
+  const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([])
+  const [stats, setStats] = useState<Stats>({
     daysThisMonth: 0,
     totalDays: 0,
     currentStreak: 0,
@@ -26,6 +43,7 @@ export default function AttendancePage() {
   const [showManualModal, setShowManualModal] = useState(false)
   const [manualAction, setManualAction] = useState('checkin')
   const [reason, setReason] = useState('')
+  const [motivationalMessage, setMotivationalMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [hasData, setHasData] = useState(false)
 
@@ -36,33 +54,33 @@ export default function AttendancePage() {
   const fetchAttendanceData = async () => {
     setLoading(true)
     try {
-      const month = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`
-      const response = await fetch(`/api/attendance-stats?month=${month}`, {
-        credentials: 'include',
-      })
-
+      const response = await fetch(`/api/attendance-stats`)
       const result = await response.json()
-      console.log(result)
 
       if (result.success) {
-        if (result.hasData){
-          setHasData(true)
-        }
-        
+        setHasData(result.hasData)
         setAttendanceData(result.data || [])
-        setStats(result.stats)
-      } else {
-        setHasData(false)
+        setStats(
+          result.stats || {
+            daysThisMonth: 0,
+            totalDays: 0,
+            currentStreak: 0,
+            avgDuration: 0,
+            totalHours: 0,
+          },
+        )
+        setMotivationalMessage(result.hasData ? null : result.message)
       }
     } catch (error) {
       console.error('Failed to fetch attendance:', error)
       setHasData(false)
+      setMotivationalMessage('Unable to load data. Please try again later.')
     } finally {
       setLoading(false)
     }
   }
 
-  const getDaysInMonth = (date) => {
+  const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear()
     const month = date.getMonth()
     const firstDay = new Date(year, month, 1)
@@ -73,14 +91,18 @@ export default function AttendancePage() {
     return { daysInMonth, startingDayOfWeek, year, month }
   }
 
-  const getAttendanceStatus = (day) => {
+  const getAttendanceStatus = (day: number) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    const attendance = attendanceData.find((a) => a.date === dateStr)
 
-    if (attendance) return 'present'
+    const attendance = attendanceData.find((a) => {
+      const recordDate = new Date(a.date).toISOString().split('T')[0]
+      return recordDate === dateStr
+    })
+
+    if (attendance && attendance.status !== 'absent') return 'present'
 
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-    if (date.getDay() === 6) return 'skip' 
+    if (date.getDay() === 6) return 'skip'
     if (date > new Date()) return 'future'
     return 'absent'
   }
@@ -93,7 +115,7 @@ export default function AttendancePage() {
       currentDate.getMonth() === new Date().getMonth() &&
       currentDate.getFullYear() === new Date().getFullYear()
 
-    const adjustedStartDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek 
+    const adjustedStartDay = startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1
 
     for (let i = 0; i < adjustedStartDay; i++) {
       const prevMonthDays = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate()
@@ -174,7 +196,7 @@ export default function AttendancePage() {
     }
   }
 
-  const changeMonth = (direction) => {
+  const changeMonth = (direction: number) => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
   }
 
@@ -183,7 +205,7 @@ export default function AttendancePage() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your attendance data..</p>
+          <p className="text-gray-400">Loading your attendance data...</p>
         </div>
       </div>
     )
@@ -192,7 +214,6 @@ export default function AttendancePage() {
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold text-orange-500">Attendance</h1>
@@ -207,20 +228,18 @@ export default function AttendancePage() {
           </button>
         </div>
 
-        {/* No Data Message */}
-        {!hasData && (
+        {!hasData && motivationalMessage && (
           <div className="bg-gradient-to-br from-orange-900/30 to-orange-800/20 border border-orange-700/50 rounded-2xl p-8 text-center">
             <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-orange-400 mb-2">Ready to Begin?</h2>
+            <p className="text-gray-300 text-lg mb-4">{motivationalMessage}</p>
             <p className="text-gray-400 text-sm">
               Check in at the gym to start tracking your progress!
             </p>
           </div>
         )}
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Attendance */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Attendance</h3>
@@ -232,7 +251,6 @@ export default function AttendancePage() {
             <p className="text-gray-400 text-sm mt-1">Days this month</p>
           </div>
 
-          {/* Streak */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Streak</h3>
@@ -242,7 +260,6 @@ export default function AttendancePage() {
             <p className="text-gray-400 text-sm mt-1">Current active streak</p>
           </div>
 
-          {/* Avg Duration */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Avg Duration</h3>
@@ -254,7 +271,6 @@ export default function AttendancePage() {
             <p className="text-gray-400 text-sm mt-1">Per Session</p>
           </div>
 
-          {/* Total Hours */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Total Hours</h3>
@@ -266,7 +282,6 @@ export default function AttendancePage() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          {/* Calendar */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">
@@ -288,10 +303,9 @@ export default function AttendancePage() {
               </div>
             </div>
 
-            {/* Calendar Grid */}
             <div className="space-y-2">
               <div className="grid grid-cols-7 gap-2 mb-2">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day) => (
                   <div key={day} className="text-center text-gray-400 text-sm font-medium">
                     {day}
                   </div>
@@ -300,7 +314,6 @@ export default function AttendancePage() {
               <div className="grid grid-cols-7 gap-2">{renderCalendar()}</div>
             </div>
 
-            {/* Legend */}
             <div className="flex items-center gap-4 mt-6 text-xs">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 bg-green-700 rounded"></div>
@@ -317,7 +330,6 @@ export default function AttendancePage() {
             </div>
           </div>
 
-          {/* Recent Attendance */}
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-1">Recent Attendance</h2>
@@ -334,9 +346,9 @@ export default function AttendancePage() {
                   </p>
                 </div>
               ) : (
-                attendanceData.map((record, idx) => (
+                attendanceData.map((record) => (
                   <div
-                    key={idx}
+                    key={record.id}
                     className="bg-gray-700 bg-opacity-50 rounded-lg p-4 flex items-center justify-between"
                   >
                     <div className="flex items-start gap-3">
@@ -350,7 +362,7 @@ export default function AttendancePage() {
                           })}
                         </p>
                         <p className="text-gray-400 text-sm">
-                          {record.checkIn} - {record.checkOut || 'In Progress'}
+                          {record.checkIn || 'N/A'} - {record.checkOut || 'In Progress'}
                         </p>
                       </div>
                     </div>
@@ -375,7 +387,6 @@ export default function AttendancePage() {
         </div>
       </div>
 
-      {/* Manual Check-in Modal */}
       {showManualModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50">
           <div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-gray-700">

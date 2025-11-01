@@ -115,7 +115,7 @@ export const Attendance: CollectionConfig = {
         { label: 'Checked Out', value: 'checked-out' },
         { label: 'Auto Closed', value: 'auto-closed' },
         { label: 'Absent', value: 'absent' },
-        { label: 'Present', value: 'present' }, // ADD THIS
+        { label: 'Present', value: 'present' }, 
       ],
       // ... rest
       required: true,
