@@ -90,7 +90,7 @@ export default function AttendancePage() {
 
     return { daysInMonth, startingDayOfWeek, year, month }
   }
-
+const { daysInMonth } = getDaysInMonth(currentDate)
   const getAttendanceStatus = (day: number) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
@@ -246,7 +246,7 @@ export default function AttendancePage() {
               <Calendar className="w-5 h-5 text-orange-500" />
             </div>
             <p className="text-4xl font-bold">
-              {stats.daysThisMonth}/{stats.totalDays}
+              {stats.daysThisMonth}/{daysInMonth}
             </p>
             <p className="text-gray-400 text-sm mt-1">Days this month</p>
           </div>
@@ -376,7 +376,7 @@ export default function AttendancePage() {
                           record.status === 'completed' ? 'bg-orange-600' : 'bg-blue-600'
                         }`}
                       >
-                        {record.status === 'completed' ? 'Completed' : 'In Progress'}
+                        {record.status === 'completed' ? 'Completed' : 'Inprogress'}
                       </span>
                     </div>
                   </div>

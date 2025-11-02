@@ -124,9 +124,9 @@ const Footer: React.FC = () => {
       <footer className="hidden md:block relative w-full bg-neutral-800 text-white overflow-hidden rounded-l-2xl">
         <div className="flex items-stretch h-full">
           {/* Main content */}
-          <div className="flex-1 pl-6 lg:pl-8 flex flex-col justify-between py-8 lg:py-16">
+          <div className="flex-1 pl-6 lg:pl-8 flex flex-col gap-10 justify-between py-8 lg:py-16">
             {/* Links section */}
-            <div className="flex gap-12 lg:gap-20 pt-8 lg:pt-16">
+            <div className="flex gap-12 lg:gap-20">
               {/* Socials */}
               <div>
                 <h3 className="text-lg lg:text-xl text-geist-regular mb-3 tracking-widest">SOCIALS</h3>

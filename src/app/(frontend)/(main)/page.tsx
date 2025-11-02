@@ -76,7 +76,7 @@ export default async function HomePage() {
           {/* Description */}
           <p className="sansation-regular text-gray-300 text-sm sm:text-base md:text-lg leading-[1.5] text-center max-w-4xl px-2 sm:px-4">
             At <span className="font-bold text-[#f80a0a]">Level Up</span>, we believe fitness is
-            more than just exercise — it's a lifestyle transformation. Our state-of-the-art facility
+            more than just exercise, it's a lifestyle transformation. Our state-of-the-art facility
             combines cutting-edge equipment with personalized training to help you achieve your
             goals.
           </p>

@@ -69,7 +69,7 @@ export default function Navbar() {
           {navbar.navLinks.map((link) => (
             <li key={link.id}>
               <Link
-                className="relative hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:w-0 after:h-0.5 after:bg-[#696970] after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full text-sm"
+                className="relative hover:text-white transition-colors duration-300 after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:w-0 after:h-0.5 after:bg-[#696970] after:transition-all after:duration-300 after:-translate-x-1/2 hover:after:w-full text-md"
                 href={link.href}
               >
                 {link.title}
