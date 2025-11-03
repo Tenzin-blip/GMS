@@ -1,10 +1,10 @@
 import type { GlobalConfig } from 'payload'
 
 export const Reviews: GlobalConfig = {
-  slug: 'reviews', // Global identifier
+  slug: 'reviews', 
   label: 'Reviews',
   access: {
-    read: () => true, // make it public
+    read: () => true, 
   },
   fields: [
     {

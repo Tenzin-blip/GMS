@@ -7,20 +7,18 @@ export const Users: CollectionConfig = {
   },
   auth: {
     tokenExpiration: 7200, // 2 hours
-    verify: false, // We're handling verification with OTP manually
+    verify: false,
     maxLoginAttempts: 5,
     lockTime: 600000, // 10 minutes
   },
 
-  // CRITICAL: Allow public user creation for signup
   access: {
     create: () => true, // Anyone can create a user (signup)
     read: ({ req: { user } }) => {
       // Admins can read all users
       if (user?.role === 'admin') return true
-      // Allow reading during signup flow (for OTP verification)
+
       if (!user) return true
-      // Users can only read their own data
       if (user) {
         return {
           id: {
@@ -32,14 +30,13 @@ export const Users: CollectionConfig = {
     },
     update: () => true, // Allow all updates, but restrict via field-level access
     delete: ({ req: { user } }) => {
-      // Only admins can delete users
       return user?.role === 'admin'
     },
   },
 
   hooks: {
     beforeChange: [
-      ({ data,  }) => {
+      ({ data }) => {
         // Force admin@gms.com to have role 'admin'
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
@@ -58,7 +55,6 @@ export const Users: CollectionConfig = {
       required: true,
       access: {
         update: ({ req: { user }, id }) => {
-          // Admins can update any name
           if (user?.role === 'admin') return true
           // Users can update their own name
           return user?.id === id
@@ -69,7 +65,7 @@ export const Users: CollectionConfig = {
       name: 'profilePicture',
       type: 'upload',
       relationTo: 'media',
-      required: false, // Optional
+      required: false,
       label: 'Profile Picture',
     },
     {
@@ -141,7 +137,7 @@ export const Users: CollectionConfig = {
       defaultValue: 'monthly',
       required: true,
       access: {
-        update: ({ req: { user }, }) => {
+        update: ({ req: { user } }) => {
           // Only admins can change payment plans
           return user?.role === 'admin'
         },
@@ -156,7 +152,6 @@ export const Users: CollectionConfig = {
         hidden: true,
       },
       required: false,
-      // Allow system to clear OTP during verification (unauthenticated)
       access: {
         read: () => true,
         update: () => true, // Allow OTP clearing during signup

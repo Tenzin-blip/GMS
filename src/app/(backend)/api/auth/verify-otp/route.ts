@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
     if (!updateRes.ok) {
       const err = await updateRes.json()
       console.error('Error clearing OTP:', err)
-      // Don't fail the request if clearing OTP fails
     }
 
     return NextResponse.json({

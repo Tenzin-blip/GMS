@@ -4,7 +4,7 @@ export const Navbar: GlobalConfig = {
   slug: 'navbar',
   label: 'Navbar',
   access: {
-    read: () => true, // make it public
+    read: () => true, 
   },
   fields: [
     {
@@ -36,7 +36,7 @@ export const Navbar: GlobalConfig = {
     {
       name: 'ctaButton',
       label: 'CTA Button',
-      type: 'group', // group is perfect for multiple sub-fields
+      type: 'group', 
       fields: [
         {
           name: 'text',
