@@ -77,6 +77,13 @@ export default function LoginPage() {
           sessionStorage.setItem('token', data.token)
         }
 
+        //CHECK USER ROLE
+        if (data.user.role === 'admin') {
+          // Redirect admin to admin dashboard
+          window.location.href = '/admin-dash'
+          return
+        }
+
         // Check if user has fitness profile
         const profileCheck = await fetch('/api/user-fitness', {
           method: 'GET',
