@@ -72,6 +72,7 @@ export interface Config {
     'user-fitness': UserFitness;
     attendance: Attendance;
     'gym-counts': GymCount;
+    notices: Notice;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -83,6 +84,7 @@ export interface Config {
     'user-fitness': UserFitnessSelect<false> | UserFitnessSelect<true>;
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     'gym-counts': GymCountsSelect<false> | GymCountsSelect<true>;
+    notices: NoticesSelect<false> | NoticesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -263,6 +265,35 @@ export interface GymCount {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notices".
+ */
+export interface Notice {
+  id: string;
+  /**
+   * Notice title or headline
+   */
+  title: string;
+  /**
+   * Date of the notice or event
+   */
+  date: string;
+  /**
+   * Notice priority level
+   */
+  type: 'important' | 'warning' | 'reminder';
+  /**
+   * Optional detailed description of the notice
+   */
+  description?: string | null;
+  /**
+   * Toggle to show/hide this notice
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -287,6 +318,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gym-counts';
         value: string | GymCount;
+      } | null)
+    | ({
+        relationTo: 'notices';
+        value: string | Notice;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -451,6 +486,19 @@ export interface GymCountsSelect<T extends boolean = true> {
         trainer?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notices_select".
+ */
+export interface NoticesSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  type?: T;
+  description?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }
