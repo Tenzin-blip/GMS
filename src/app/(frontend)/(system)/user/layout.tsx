@@ -1,4 +1,4 @@
-import '../css/styles.css'
+import '../../css/styles.css'
 import React from 'react'
 
 import Sidebar from '@/components/system/dashboard/Sidebar'

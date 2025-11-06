@@ -97,9 +97,9 @@ export default function LoginPage() {
 
         // Route based on profile existence
         if (profileData.exists) {
-          window.location.href = '/dashboard'
+          window.location.href = 'user/dashboard'
         } else {
-          window.location.href = '/setup'
+          window.location.href = 'user/setup'
         }
       } else {
         setErrors({

@@ -17,7 +17,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: 'Notices', href: '/notices', icon: <Dumbbell className="w-5 h-5" /> },
+  { label: 'Notices', href: '/admin-panel/notices', icon: <Dumbbell className="w-5 h-5" /> },
   { label: 'Meal Plan', href: '/meal-plan', icon: <UtensilsCrossed className="w-5 h-5" /> },
   { label: 'Track-progress', href: '/track-progress', icon: <TrendingUp className="w-5 h-5" /> },
   { label: 'Attendance', href: '/attendance', icon: <Calendar className="w-5 h-5" /> },
