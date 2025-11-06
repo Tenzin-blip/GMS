@@ -91,7 +91,6 @@ export default function Admin_dash() {
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
-        <DashboardHeader/>
         <Notices showAdminControls={true}/>
     </div>
   )

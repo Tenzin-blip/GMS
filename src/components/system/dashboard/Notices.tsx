@@ -192,7 +192,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-950 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
           <div className="flex items-center justify-center gap-3">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
@@ -205,7 +205,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-950 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
           <p className="text-red-400">Error: {error}</p>
         </div>
@@ -215,7 +215,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   return (
     <>
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-950 flex items-center justify-center">
         <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl overflow-hidden">
           <div className="p-6 border-b border-slate-800/50 flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -238,7 +238,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
               <p className="text-slate-500">No notices available at the moment.</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-800/50">
+            <div className="divide-y divide-slate-800/50 max-h-[456px] overflow-y-auto">
               {notices.map((notice) => (
                 <div
                   key={notice.id}
