@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Notices from '@/components/system/dashboard/Notices'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 import {
   Calendar,
@@ -257,38 +258,7 @@ export default function Dashboard() {
           {/* Left Column - Notice Board + Calendar */}
           <div className="space-y-6">
             {/* Notice Board */}
-            <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-              <div className="flex items-center gap-2 mb-4">
-                <Bell className="w-5 h-5 text-orange-500" />
-                <h2 className="text-xl font-bold">Notice Board</h2>
-              </div>
-              <p className="text-sm text-gray-400 mb-6">Important announcements and updates</p>
-
-              <div className="space-y-3">
-                {notices.map((notice, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
-                  >
-                    <div>
-                      <h3 className="font-medium text-sm mb-1">{notice.title}</h3>
-                      <p className="text-xs text-gray-500">{notice.date}</p>
-                    </div>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        notice.type === 'important'
-                          ? 'bg-red-500/20 text-red-400'
-                          : notice.type === 'warning'
-                            ? 'bg-orange-500/20 text-orange-400'
-                            : 'bg-green-500/20 text-green-400'
-                      }`}
-                    >
-                      {notice.type}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Notices/>
 
             {/* Calendar */}
             <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">

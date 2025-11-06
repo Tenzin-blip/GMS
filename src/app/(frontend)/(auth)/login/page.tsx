@@ -80,7 +80,7 @@ export default function LoginPage() {
         //CHECK USER ROLE
         if (data.user.role === 'admin') {
           // Redirect admin to admin dashboard
-          window.location.href = '/admin-dash'
+          window.location.href = 'admin-panel/admin-dash'
           return
         }
 

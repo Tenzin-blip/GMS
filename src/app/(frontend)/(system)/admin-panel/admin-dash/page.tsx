@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 
 interface User {
