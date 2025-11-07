@@ -7,6 +7,7 @@ import {
   LayoutDashboard, Dumbbell, UtensilsCrossed, TrendingUp, 
   Calendar, CreditCard, User, QrCode, Settings, LogOut, Menu, X
 } from 'lucide-react'
+import Image from 'next/image'
 
 
 interface NavItem {
@@ -16,18 +17,18 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: 'Workout plan', href: '/workout-plan', icon: <Dumbbell className="w-5 h-5" /> },
-  { label: 'Meal Plan', href: '/meal-plan', icon: <UtensilsCrossed className="w-5 h-5" /> },
-  { label: 'Track-progress', href: '/track-progress', icon: <TrendingUp className="w-5 h-5" /> },
-  { label: 'Attendance', href: '/attendance', icon: <Calendar className="w-5 h-5" /> },
-  { label: 'Payment', href: '/payment', icon: <CreditCard className="w-5 h-5" /> },
-  { label: 'Profile', href: '/profile', icon: <User className="w-5 h-5" /> },
+  { label: 'Dashboard', href: '/user/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { label: 'Workout plan', href: '/user/workout-plan', icon: <Dumbbell className="w-5 h-5" /> },
+  { label: 'Meal Plan', href: '/user/meal-plan', icon: <UtensilsCrossed className="w-5 h-5" /> },
+  { label: 'Track-progress', href: '/user/track-progress', icon: <TrendingUp className="w-5 h-5" /> },
+  { label: 'Attendance', href: '/user/attendance', icon: <Calendar className="w-5 h-5" /> },
+  { label: 'Payment', href: '/user/payment', icon: <CreditCard className="w-5 h-5" /> },
+  { label: 'Profile', href: '/user/profile', icon: <User className="w-5 h-5" /> },
 ]
 
 const bottomNavItems: NavItem[] = [
-  { label: 'QR', href: '/qr', icon: <QrCode className="w-5 h-5" /> },
-  { label: 'Settings', href: '/settings', icon: <Settings className="w-5 h-5" /> },
+  { label: 'QR', href: '/user/qr', icon: <QrCode className="w-5 h-5" /> },
+  { label: 'Settings', href: '/user/settings', icon: <Settings className="w-5 h-5" /> },
 ]
 
 export default function Sidebar() {
@@ -58,12 +59,14 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <div className="p-6 border-b border-gray-800 flex items-center gap-3">
-          <div className="flex gap-0.5">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="w-1 h-6 bg-white rounded-sm"></div>
-            ))}
-          </div>
-          <div className="text-white font-bold text-lg tracking-wider">LEVEL UP</div>
+          <Image
+                      src="/api/media/file/logo-2.png"
+                      alt={'Logo'}
+                      priority
+                      width={120}
+                      height={27}
+                      className="w-auto h-auto"
+                    />
         </div>
 
         {/* Main Navigation */}
