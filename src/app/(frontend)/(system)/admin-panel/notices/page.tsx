@@ -215,21 +215,23 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
 
   return (
     <>
-      <div className="bg-slate-950 p-4 min-h-screen">
-        <div className="w-full bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl overflow-hidden">
-          <div className="p-6 border-b border-slate-800/50 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+      <div className="p-4 min-h-screen">
+        <div className="w-full bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
+          <div className="p-7 border-b border-slate-800/50 flex-column justify-center items-center">
+            <div className="flex items-center gap-3 justify-center">
               <Bell className="text-orange-500" size={28} />
               <h1 className="text-2xl font-bold text-white">Notice Board</h1>
             </div>
 
             {showControls && (
+              <div className="flex justify-end">
               <button
                 onClick={openCreateModal}
                 className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors"
               >
                 <Plus size={16} /> Add
               </button>
+              </div>
             )}
           </div>
 

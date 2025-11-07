@@ -8,7 +8,7 @@ export default function AttendanceLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className="flex">
         <AdminSidebar />
-        <main className="flex-1 md:ml-64 bg-gray-100 min-h-screen">{children}</main>
+        <main className="flex-1 md:ml-64 bg-black min-h-screen">{children}</main>
       </body>
     </html>
   )

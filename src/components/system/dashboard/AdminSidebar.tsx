@@ -49,11 +49,11 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-gray-900 to-black border-r border-gray-800 flex flex-col transform transition-transform duration-300 ease-in-out z-40
+        className={`fixed top-0 left-0 h-screen w-64 bg-black backdrop-blur-md flex flex-col transform transition-transform duration-300 ease-in-out z-40
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         {/* Logo */}
-        <div className="p-6 flex  items-center gap-3">
+        <div className="p-6 flex  items-center gap-3 bg-white/10 backdrop-blur-md">
           <Image
             src="/api/media/file/logo-2.png"
             alt={'Logo'}
@@ -64,7 +64,7 @@ export default function Sidebar() {
         </div>
 
         {/* Main Navigation */}
-        <nav className="flex-1 overflow-y-auto py-6 px-3">
+        <nav className="flex-1 overflow-y-auto py-6 px-3 bg-white/10 backdrop-blur-md">
           <ul className="space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href
@@ -89,7 +89,7 @@ export default function Sidebar() {
         </nav>
 
         {/* Bottom Navigation */}
-        <div className="border-t border-gray-800 p-3">
+        <div className="border-t border-gray-800 p-3 bg-white/10 backdrop-blur-md">
           <ul className="space-y-1 mb-2">
             {bottomNavItems.map((item) => {
               const isActive = pathname === item.href

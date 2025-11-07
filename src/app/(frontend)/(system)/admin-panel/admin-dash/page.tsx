@@ -211,21 +211,21 @@ export default function Admin_dash() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <DashboardHeader/>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gray-800 rounded-xl p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 ">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
           <h3 className="text-gray-400 mb-2">Total Users</h3>
           <p className="text-3xl font-bold">{gymData?.totalUsers || 0}</p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
           <h3 className="text-gray-400 mb-2">Active Members</h3>
           <p className="text-3xl font-bold">{gymData?.activeMembers || 0}</p>
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
           <h3 className="text-gray-400 mb-2">Admins</h3>
           <p className="text-3xl font-bold">
             {gymData?.users.filter((u) => u.role === 'admin').length || 0}
@@ -234,12 +234,12 @@ export default function Admin_dash() {
       </div>
 
       {/* Users List */}
-      <div className="bg-gray-800 rounded-xl p-6">
+      <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">All Users</h2>
+          <h2 className="text-2xl font-bold p-3">All Users</h2>
           <button
             onClick={handleCreateUser}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
+            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors"
           >
             + Add User
           </button>
