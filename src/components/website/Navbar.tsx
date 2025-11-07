@@ -55,9 +55,10 @@ export default function Navbar() {
       {/* Logo */}
       <div className="flex-shrink-0">
         <Image
-          src={navbar.logo.url}
-          alt={navbar.logo.alt || 'Logo'}
-          width={142}
+          src="/api/media/file/logo-2.png"
+          alt={'Logo'}
+          priority
+          width={120}
           height={27}
           className="w-auto h-auto"
         />

@@ -15,7 +15,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: 'Dashboard',
-    href: '/admin-panel/dashboard',
+    href: '/admin-panel/admin-dash',
     icon: <LayoutDashboard className="w-5 h-5" />,
   },
   { label: 'Notices', href: '/admin-panel/notices', icon: <Dumbbell className="w-5 h-5" /> },
@@ -53,14 +53,13 @@ export default function Sidebar() {
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         {/* Logo */}
-        <div className="p-6 flex justify-center items-center gap-3">
+        <div className="p-6 flex  items-center gap-3">
           <Image
             src="/api/media/file/logo-2.png"
             alt={'Logo'}
             priority
             width={120}
             height={27}
-            className="w-auto h-auto"
           />
         </div>
 
