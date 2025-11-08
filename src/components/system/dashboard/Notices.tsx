@@ -216,7 +216,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
   return (
     <>
       <div className="flex items-center justify-center">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden pb-4 px-2">
+        <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden pb-4 px-2 border border-gray-400">
           <div className="p-6 border-b border-slate-800/50 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <Bell className="text-orange-500" size={28} />

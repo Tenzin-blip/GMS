@@ -180,7 +180,7 @@ export default function Dashboard() {
         {/* Top Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Attendance Card */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 ">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-gray-400">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400">Attendance</span>
               <Calendar className="w-5 h-5 text-orange-500" />
@@ -192,7 +192,7 @@ export default function Dashboard() {
           </div>
 
           {/* Streak Card */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400">Streak</span>
               <Flame className="w-5 h-5 text-orange-500" />
@@ -202,7 +202,7 @@ export default function Dashboard() {
           </div>
 
           {/* Active Members */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -224,7 +224,7 @@ export default function Dashboard() {
           </div>
 
           {/* Weight/BMI Card */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400">Weight</span>
               <select className="bg-gray-800 text-white text-sm px-2 py-1 rounded border border-gray-700">
@@ -261,7 +261,7 @@ export default function Dashboard() {
             <Notices/>
 
             {/* Calendar */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold">
                   {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
@@ -306,7 +306,7 @@ export default function Dashboard() {
           </div>
 
           {/* Middle Column - Leaderboard */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
             <div className="flex items-center gap-2 mb-6">
               <Trophy className="w-5 h-5 text-orange-500" />
               <h2 className="text-xl font-bold">Leaderboard</h2>
@@ -388,7 +388,7 @@ export default function Dashboard() {
           {/* Right Column - Meal & Workout Plans */}
           <div className="space-y-6">
             {/* Meal Plan */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">Meal plan</h2>
                 <span className="text-sm text-gray-400">Thu, 18 May</span>
@@ -416,7 +416,7 @@ export default function Dashboard() {
             </div>
 
             {/* Workout Plan */}
-            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 ">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-gray-400">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">Workout plan</h2>
                 <span className="text-sm text-gray-400">Thu, 18 May</span>

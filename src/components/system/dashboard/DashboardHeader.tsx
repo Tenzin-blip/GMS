@@ -65,10 +65,10 @@ export default function DashboardHeader() {
       </div>
       
       <div>
-        <h1 className="text-3xl font-bold mb-2">
+        <h1 className="text-3xl font-bold mb-2 Poppins-bold">
           Hello, <span className="text-orange-500">{userName}</span>!
         </h1>
-        <p className="text-gray-400">Here is your fitness overview for today</p>
+        <p className="text-gray-400 Poppins-regular">Here is your fitness overview for today</p>
       </div>
     </div>
   )

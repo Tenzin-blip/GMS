@@ -83,3 +83,38 @@
   font-family: 'Sansation', sans-serif;
   font-weight: 700;
 }
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-Bold.ttf') format('truetype');
+  font-style: bold;
+  font-weight: 700;
+}
+
+.Poppins-bold {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-SemiBold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+}
+
+.Poppins-semibold {
+  font-family: 'Poppins', sans-serif;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/Poppins-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+}
+
+.Poppins-regular {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}

@@ -211,10 +211,10 @@ export default function Admin_dash() {
   }
 
   return (
-    <div className="min-h-screen text-white p-6">
+    <div className="min-h-screen text-white p-6 ">
       <DashboardHeader/>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 ">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 Poppins-regular">
         <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
           <h3 className="text-gray-400 mb-2">Total Users</h3>
           <p className="text-3xl font-bold">{gymData?.totalUsers || 0}</p>
@@ -236,10 +236,10 @@ export default function Admin_dash() {
       {/* Users List */}
       <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold p-3">All Users</h2>
+          <h2 className="text-2xl font-bold p-3 Poppins-bold">All Users</h2>
           <button
             onClick={handleCreateUser}
-            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors"
+            className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg transition-colors Poppins-semibold"
           >
             + Add User
           </button>
@@ -247,7 +247,7 @@ export default function Admin_dash() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-700">
+              <tr className="border-b border-gray-700 Poppins-bold">
                 <th className="text-left p-3">Name</th>
                 <th className="text-left p-3">Email</th>
                 <th className="text-left p-3">Role</th>
@@ -258,7 +258,7 @@ export default function Admin_dash() {
             </thead>
             <tbody>
               {gymData?.users.map((user) => (
-                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700 transition-colors">
+                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700 transition-colors text-sm Poppins-regular">
                   <td className="p-3">{user.name}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">

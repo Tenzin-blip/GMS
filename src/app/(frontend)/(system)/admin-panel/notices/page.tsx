@@ -220,14 +220,14 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
           <div className="p-7 border-b border-slate-800/50 flex-column justify-center items-center">
             <div className="flex items-center gap-3 justify-center">
               <Bell className="text-orange-500" size={28} />
-              <h1 className="text-2xl font-bold text-white">Notice Board</h1>
+              <h1 className="text-2xl Poppins-bold text-white">Notice Board</h1>
             </div>
 
             {showControls && (
               <div className="flex justify-end">
               <button
                 onClick={openCreateModal}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors"
+                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors Poppins-semibold"
               >
                 <Plus size={16} /> Add
               </button>
@@ -236,7 +236,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
           </div>
 
           {notices.length === 0 ? (
-            <div className="p-6 text-center">
+            <div className="p-6 text-center Poppins-regular">
               <p className="text-slate-500">No notices available at the moment.</p>
             </div>
           ) : (
@@ -248,16 +248,16 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-white font-semibold mb-2">{notice.title}</h3>
+                      <h3 className="text-white Poppins-bold mb-2">{notice.title}</h3>
                       {notice.description && (
-                        <p className="text-slate-400 text-sm mb-2">
+                        <p className="text-slate-400 text-sm mb-2 Poppins-regular">
                           {notice.description}
                         </p>
                       )}
-                      <p className="text-slate-500 text-sm">{formatDate(notice.date)}</p>
+                      <p className="text-slate-500 text-sm Poppins-regular">{formatDate(notice.date)}</p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getTypeBadgeStyles(
+                      className={`px-3 py-1  Poppins-semibold rounded-full text-xs font-medium whitespace-nowrap ${getTypeBadgeStyles(
                         notice.type
                       )}`}
                     >
@@ -266,7 +266,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
                   </div>
 
                   {showControls && (
-                    <div className="flex gap-3 mt-3">
+                    <div className="flex gap-3 mt-3 Poppins-regular justify-end">
                       <button
                         onClick={() => openEditModal(notice)}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs bg-blue-700 hover:bg-blue-800 text-white transition-colors"
