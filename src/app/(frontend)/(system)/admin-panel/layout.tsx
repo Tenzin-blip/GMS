@@ -3,7 +3,7 @@ import React from 'react'
 
 import AdminSidebar from '@/components/system/dashboard/AdminSidebar'
 
-export default function AttendanceLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="flex">

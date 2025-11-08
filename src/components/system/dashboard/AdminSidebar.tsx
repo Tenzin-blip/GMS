@@ -53,7 +53,7 @@ export default function Sidebar() {
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
       >
         {/* Logo */}
-        <div className="p-6 flex  items-center gap-3 bg-white/10 backdrop-blur-md">
+        <div className="p-6 flex  items-center gap-3 bg-white/10 backdrop-blur-md ">
           <Image
             src="/api/media/file/logo-2.png"
             alt={'Logo'}

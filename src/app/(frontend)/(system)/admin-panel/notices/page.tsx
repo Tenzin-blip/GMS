@@ -161,7 +161,6 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
         throw new Error(`Failed to ${editingNotice ? 'update' : 'create'} notice`)
       }
 
-      // Refresh notices list
       await fetchNotices()
       closeModal()
     } catch (err) {
@@ -192,7 +191,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
 
   if (loading) {
     return (
-      <div className="bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-950 flex items-center justify-center p-4 min-h-screen">
         <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
           <div className="flex items-center justify-center gap-3">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
@@ -205,7 +204,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
 
   if (error) {
     return (
-      <div className="bg-slate-950 flex items-center justify-center p-4">
+      <div className="bg-slate-950 flex items-center justify-center p-4 min-h-screen">
         <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
           <p className="text-red-400">Error: {error}</p>
         </div>
@@ -215,22 +214,22 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
 
   return (
     <>
-      <div className="p-4 min-h-screen">
-        <div className="w-full bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden">
-          <div className="p-7 border-b border-slate-800/50 flex-column justify-center items-center">
-            <div className="flex items-center gap-3 justify-center">
-              <Bell className="text-orange-500" size={28} />
-              <h1 className="text-2xl Poppins-bold text-white">Notice Board</h1>
+      <div className=" w-full p-4 min-h-screen pt-20 md:pt-4">
+        <div className="w-full mx-auto bg-white/10 backdrop-blur-md border border-gray-400 rounded-2xl shadow-2xl overflow-hidden">
+          <div className="p-4 md:p-7 border-b border-slate-800/50">
+            <div className="flex items-center gap-3 justify-center mb-4 md:mb-0">
+              <Bell className="text-orange-500" size={24} />
+              <h1 className="text-xl md:text-2xl Poppins-bold text-white">Notice Board</h1>
             </div>
 
             {showControls && (
-              <div className="flex justify-end">
-              <button
-                onClick={openCreateModal}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors Poppins-semibold"
-              >
-                <Plus size={16} /> Add
-              </button>
+              <div className="flex justify-end mt-4 md:mt-0">
+                <button
+                  onClick={openCreateModal}
+                  className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors Poppins-semibold w-full sm:w-auto justify-center"
+                >
+                  <Plus size={16} /> Add Notice
+                </button>
               </div>
             )}
           </div>
@@ -244,38 +243,40 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
               {notices.map((notice) => (
                 <div
                   key={notice.id}
-                  className="p-6 hover:bg-slate-800/30 transition-colors duration-200"
+                  className="p-4 md:p-6 hover:bg-slate-800/30 transition-colors duration-200"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h3 className="text-white Poppins-bold mb-2">{notice.title}</h3>
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-2">
+                        <h3 className="text-white Poppins-bold text-base md:text-lg">{notice.title}</h3>
+                        <span
+                          className={`px-3 py-1 Poppins-semibold rounded-full text-xs font-medium whitespace-nowrap self-start ${getTypeBadgeStyles(
+                            notice.type
+                          )}`}
+                        >
+                          {notice.type}
+                        </span>
+                      </div>
                       {notice.description && (
-                        <p className="text-slate-400 text-sm mb-2 Poppins-regular">
+                        <p className="text-slate-400 text-sm mb-2 Poppins-regular break-words">
                           {notice.description}
                         </p>
                       )}
                       <p className="text-slate-500 text-sm Poppins-regular">{formatDate(notice.date)}</p>
                     </div>
-                    <span
-                      className={`px-3 py-1  Poppins-semibold rounded-full text-xs font-medium whitespace-nowrap ${getTypeBadgeStyles(
-                        notice.type
-                      )}`}
-                    >
-                      {notice.type}
-                    </span>
                   </div>
 
                   {showControls && (
-                    <div className="flex gap-3 mt-3 Poppins-regular justify-end">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-3 Poppins-regular">
                       <button
                         onClick={() => openEditModal(notice)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs bg-blue-700 hover:bg-blue-800 text-white transition-colors"
+                        className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs bg-blue-700 hover:bg-blue-800 text-white transition-colors"
                       >
                         <Pencil size={14} /> Edit
                       </button>
                       <button
                         onClick={() => handleDelete(notice.id)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs bg-red-700 hover:bg-red-800 text-white transition-colors"
+                        className="flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs bg-red-700 hover:bg-red-800 text-white transition-colors"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -291,9 +292,9 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-md">
-            <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-white">
+          <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-4 md:p-6 border-b border-slate-800 flex justify-between items-center sticky top-0 bg-slate-900 z-10">
+              <h2 className="text-lg md:text-xl font-bold text-white">
                 {editingNotice ? 'Edit Notice' : 'Create New Notice'}
               </h2>
               <button
@@ -304,81 +305,84 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Title <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Enter notice title"
-                />
-              </div>
+            <div className="p-4 md:p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Title <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 md:px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm md:text-base"
+                    placeholder="Enter notice title"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Date <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Date <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 md:px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm md:text-base"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Type <span className="text-red-400">*</span>
-                </label>
-                <select
-                  required
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as NoticeType })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="reminder">Reminder</option>
-                  <option value="warning">Warning</option>
-                  <option value="important">Important</option>
-                </select>
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Type <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    required
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as NoticeType })}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 md:px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm md:text-base"
+                  >
+                    <option value="reminder">Reminder</option>
+                    <option value="warning">Warning</option>
+                    <option value="important">Important</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-                  placeholder="Enter optional description"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 md:px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none text-sm md:text-base"
+                    placeholder="Enter optional description"
+                  />
+                </div>
 
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors"
-                  disabled={submitting}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Saving...' : editingNotice ? 'Update' : 'Create'}
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors text-sm md:text-base order-2 sm:order-1"
+                    disabled={submitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base order-1 sm:order-2"
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Saving...' : editingNotice ? 'Update' : 'Create'}
+                  </button>
+                </div>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
