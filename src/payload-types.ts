@@ -143,6 +143,7 @@ export interface User {
   role: 'admin' | 'trainer' | 'user';
   plan: 'essential' | 'premium' | 'elite';
   OTP?: string | null;
+  planPrice?: number | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -378,6 +379,7 @@ export interface UsersSelect<T extends boolean = true> {
   role?: T;
   plan?: T;
   OTP?: T;
+  planPrice?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

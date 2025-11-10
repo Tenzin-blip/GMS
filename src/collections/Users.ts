@@ -41,6 +41,16 @@ export const Users: CollectionConfig = {
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
         }
+        const planPrices = {
+          essential: 3000,
+          premium: 4500,
+          elite: 6000,
+        }
+
+        if (data.plan) {
+          data.planPrice = planPrices[data.plan]
+        }
+
         return data
       },
     ],
@@ -56,7 +66,7 @@ export const Users: CollectionConfig = {
       access: {
         update: ({ req: { user }, id }) => {
           if (user?.role === 'admin') return true
-          // Users can update their own name
+
           return user?.id === id
         },
       },
@@ -156,6 +166,12 @@ export const Users: CollectionConfig = {
         read: () => true,
         update: () => true, // Allow OTP clearing during signup
       },
+    },
+    {
+      name: 'planPrice',
+      type: 'number',
+      label: 'Plan Price (NRP)',
+      admin: { readOnly: true },
     },
   ],
 }

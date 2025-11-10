@@ -197,7 +197,6 @@ export default function SignupForm() {
         setActiveTab(2)
         showToast('OTP sent to your email!', 'success')
       } else {
-        // Extract error message from nested structure
         const errorMsg = data.errors?.[0]?.message || data.message || 'An error occurred'
         showToast(errorMsg, 'error')
       }
