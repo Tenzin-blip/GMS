@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Dumbbell, CreditCard, Settings, LogOut, Menu, X } from 'lucide-react'
+import { LayoutDashboard, CreditCard, Settings, LogOut, Menu, X, UsersRound } from 'lucide-react'
 import Image from 'next/image'
 
 interface NavItem {
@@ -18,7 +18,8 @@ const navItems: NavItem[] = [
     href: '/admin-panel/admin-dash',
     icon: <LayoutDashboard className="w-5 h-5" />,
   },
-  { label: 'Notices', href: '/admin-panel/notices', icon: <Dumbbell className="w-5 h-5" /> },
+  { label: 'Users', href: '/admin-panel/users', icon: <UsersRound className="w-5 h-5" /> },
+  { label: 'Notices', href: '/admin-panel/notices', icon: <Menu className="w-5 h-5" /> },
   { label: 'Payment', href: '/admin-panel/payment', icon: <CreditCard className="w-5 h-5" /> },
 ]
 

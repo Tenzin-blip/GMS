@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     // Get query parameters from URL
     const { searchParams } = new URL(request.url);
     const page = searchParams.get('page') || '1';
-    const limit = searchParams.get('limit') || '10';
+    const limit = searchParams.get('limit') || '20';
     const sort = searchParams.get('sort') || '-date';
 
     // Fetch notices from Payload

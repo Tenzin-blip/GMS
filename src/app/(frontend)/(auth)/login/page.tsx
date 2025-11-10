@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, KeyboardEvent, ChangeEvent } from 'react'
-import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 
 interface FormData {
@@ -79,7 +79,6 @@ export default function LoginPage() {
 
         //CHECK USER ROLE
         if (data.user.role === 'admin') {
-          // Redirect admin to admin dashboard
           window.location.href = 'admin-panel/admin-dash'
           return
         }
@@ -99,7 +98,7 @@ export default function LoginPage() {
         if (profileData.exists) {
           window.location.href = 'user/dashboard'
         } else {
-          window.location.href = 'user/setup'
+          window.location.href = 'signup'
         }
       } else {
         setErrors({
