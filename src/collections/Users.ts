@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+// import { Subscription } from './Subscription'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -40,15 +41,6 @@ export const Users: CollectionConfig = {
         // Force admin@gms.com to have role 'admin'
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
-        }
-        const planPrices = {
-          essential: 3000,
-          premium: 4500,
-          elite: 6000,
-        }
-
-        if (data.plan) {
-          data.planPrice = planPrices[data.plan]
         }
 
         return data
@@ -135,24 +127,16 @@ export const Users: CollectionConfig = {
         update: ({ req: { user } }) => user?.role === 'admin',
       },
     },
-    {
-      name: 'plan',
-      type: 'select',
-      label: 'Payment Plan',
-      options: [
-        { label: 'Essential', value: 'essential' },
-        { label: 'Premium', value: 'premium' },
-        { label: 'Elite', value: 'elite' },
-      ],
-      defaultValue: 'monthly',
-      required: true,
-      access: {
-        update: ({ req: { user } }) => {
-          // Only admins can change payment plans
-          return user?.role === 'admin'
-        },
-      },
-    },
+    // {
+    //   name: 'subscription',
+    //   type: 'relationship',
+    //   relationTo: 'subscriptions',
+    //   label: 'Subscription Plan',
+    //   required: false,
+    //   access: {
+    //     update: ({ req: { user } }) => user?.role === 'admin',
+    //   },
+    // },
     {
       name: 'OTP',
       type: 'text',
@@ -167,11 +151,6 @@ export const Users: CollectionConfig = {
         update: () => true, // Allow OTP clearing during signup
       },
     },
-    {
-      name: 'planPrice',
-      type: 'number',
-      label: 'Plan Price (NRP)',
-      admin: { readOnly: true },
-    },
+    // ...existing code...
   ],
 }

@@ -98,7 +98,7 @@ export default function LoginPage() {
         if (profileData.exists) {
           window.location.href = 'user/dashboard'
         } else {
-          window.location.href = 'signup'
+          window.location.href = 'user/setup'
         }
       } else {
         setErrors({

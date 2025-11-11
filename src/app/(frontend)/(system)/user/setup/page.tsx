@@ -30,13 +30,13 @@ export default function OnboardingForm() {
       try {
         const response = await fetch('/api/user-fitness')
         const data = await response.json()
-        
+
         if (data.success && data.user) {
           setUserData(data.user)
         }
       } catch (error) {
         console.error('Error fetching user data:', error)
-      } 
+      }
     }
 
     fetchUserData()
@@ -167,7 +167,7 @@ export default function OnboardingForm() {
 
       if (response.ok) {
         alert('Welcome to Level Up! Your personalized dashboard is ready 🎉')
-        window.location.href = '/dashboard'
+        window.location.href = '/user/dashboard'
       } else {
         const error = await response.json()
         console.error('Error saving fitness data:', error)
@@ -226,7 +226,7 @@ export default function OnboardingForm() {
       case 4:
         return formData.dietType !== ''
       case 5:
-        return true 
+        return true
       default:
         return true
     }
@@ -238,7 +238,7 @@ export default function OnboardingForm() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome to Level Up, <span className="text-orange-500">{userInitial}</span> ! 
+            Welcome to Level Up, <span className="text-orange-500">{userInitial}</span> !
           </h1>
           <p className="text-gray-400">Let's personalize your fitness journey</p>
           <p className="text-sm text-gray-500 mt-1">(Takes just 60 seconds)</p>

@@ -73,6 +73,8 @@ export interface Config {
     attendance: Attendance;
     'gym-counts': GymCount;
     notices: Notice;
+    subscription: Subscription;
+    transaction: Transaction;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -85,6 +87,8 @@ export interface Config {
     attendance: AttendanceSelect<false> | AttendanceSelect<true>;
     'gym-counts': GymCountsSelect<false> | GymCountsSelect<true>;
     notices: NoticesSelect<false> | NoticesSelect<true>;
+    subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
+    transaction: TransactionSelect<false> | TransactionSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -141,9 +145,7 @@ export interface User {
   phoneNumber?: string | null;
   gender?: ('male' | 'female' | 'other') | null;
   role: 'admin' | 'trainer' | 'user';
-  plan: 'essential' | 'premium' | 'elite';
   OTP?: string | null;
-  planPrice?: number | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -295,6 +297,31 @@ export interface Notice {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription".
+ */
+export interface Subscription {
+  id: string;
+  name: string;
+  price: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transaction".
+ */
+export interface Transaction {
+  id: string;
+  user: string | User;
+  amount: number;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  stripeTransactionId?: string | null;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -323,6 +350,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'notices';
         value: string | Notice;
+      } | null)
+    | ({
+        relationTo: 'subscription';
+        value: string | Subscription;
+      } | null)
+    | ({
+        relationTo: 'transaction';
+        value: string | Transaction;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -377,9 +412,7 @@ export interface UsersSelect<T extends boolean = true> {
   phoneNumber?: T;
   gender?: T;
   role?: T;
-  plan?: T;
   OTP?: T;
-  planPrice?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -503,6 +536,29 @@ export interface NoticesSelect<T extends boolean = true> {
   isActive?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscription_select".
+ */
+export interface SubscriptionSelect<T extends boolean = true> {
+  name?: T;
+  price?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "transaction_select".
+ */
+export interface TransactionSelect<T extends boolean = true> {
+  user?: T;
+  amount?: T;
+  status?: T;
+  stripeTransactionId?: T;
+  notes?: T;
+  createdAt?: T;
+  updatedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

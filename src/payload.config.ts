@@ -16,6 +16,8 @@ import { UserFitness } from './collections/UserFitness'
 import { Attendance } from './collections/Attendance'
 import { GymCounts } from './collections/GymCount'
 import { Notices } from './collections/Notices'
+import { Subscription } from './collections/Subscription'
+import { Transaction } from './collections/Transaction'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -27,7 +29,16 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, UserFitness, Attendance, GymCounts,Notices,],
+  collections: [
+    Users,
+    Media,
+    UserFitness,
+    Attendance,
+    GymCounts,
+    Notices,
+    Subscription,
+    Transaction,
+  ],
   globals: [Home, Navbar, Reviews],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
