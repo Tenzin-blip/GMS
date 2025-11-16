@@ -56,38 +56,38 @@ const Plans = ({ onSelectPlan, selectedPlan }) => {
         <div
           key={plan.id}
           onClick={() => onSelectPlan(plan.id)}
-          className={`relative bg-white rounded-2xl p-8 cursor-pointer transition-all duration-300  ${
+          className={`relative backdrop-blur-xl bg-white/5 rounded-2xl p-8 cursor-pointer transition-all duration-300  ${
             selectedPlan === plan.id
-              ? 'border-2 border-orange-500 shadow-lg scale-105'
-              : 'border-2 border-gray-200 hover:border-orange-300 hover:shadow-md'
-          } ${plan.popular ? 'border-orange-400' : ''}`}
+              ? 'border-2 border-orange-500 shadow-lg shadow-orange-500/20 scale-105'
+              : 'border-2 border-white/10 hover:border-orange-500/50 hover:shadow-md'
+          } ${plan.popular ? 'border-orange-500/30' : ''}`}
         >
           {plan.popular && (
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-              <span className="bg-red-500 text-white px-6 py-1.5 rounded-full text-sm font-semibold">
+              <span className="bg-orange-500 text-white px-6 py-1.5 rounded-full text-sm font-semibold shadow-lg">
                 Most Popular
               </span>
             </div>
           )}
 
           <div className="text-center mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-orange-50 rounded-2xl flex items-center justify-center text-3xl">
+            <div className="w-16 h-16 mx-auto mb-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-3xl">
               {plan.icon}
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
-            <p className="text-gray-600 text-sm">{plan.description}</p>
+            <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+            <p className="text-white/60 text-sm">{plan.description}</p>
           </div>
 
           <div className="text-center mb-6">
-            <div className="text-4xl font-bold text-gray-900">
+            <div className="text-4xl font-bold text-white">
               {plan.price}
-              <span className="text-lg font-normal text-gray-500">/month</span>
+              <span className="text-lg font-normal text-white/60">/month</span>
             </div>
           </div>
 
           <ul className="space-y-3 mb-8">
             {plan.features.map((feature, idx) => (
-              <li key={idx} className="flex items-start gap-3 text-gray-700">
+              <li key={idx} className="flex items-start gap-3 text-white/80">
                 <span className="text-orange-500 mt-1">✓</span>
                 <span className="text-sm">{feature}</span>
               </li>
@@ -98,10 +98,10 @@ const Plans = ({ onSelectPlan, selectedPlan }) => {
             type="button"
             className={`w-full py-3 rounded-xl font-semibold transition-all ${
               selectedPlan === plan.id
-                ? 'bg-orange-500 text-white'
+                ? 'bg-orange-500 text-white hover:bg-orange-600'
                 : plan.popular
-                  ? 'bg-red-500 text-white hover:bg-red-600'
-                  : 'border-2 border-orange-500 text-orange-500 hover:bg-orange-50'
+                  ? 'bg-orange-500 text-white hover:bg-orange-600'
+                  : 'border-2 border-orange-500 text-orange-500 hover:bg-orange-500/10'
             }`}
           >
             {selectedPlan === plan.id ? 'Selected' : 'Choose Plan'}
@@ -315,80 +315,80 @@ export default function SignupForm() {
               onSelectPlan={(plan) => handleInputChange('plan', plan.toLowerCase())}
               selectedPlan={formData.plan}
             />
-            {errors.plan && <p className="text-red-500 text-center mt-4">{errors.plan}</p>}
+            {errors.plan && <p className="text-red-400 text-center mt-4">{errors.plan}</p>}
           </div>
         )
 
       case 1:
         return (
           <div className="max-w-2xl mx-auto py-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Basic Information</h2>
-            <div className="space-y-5 text-black">
+            <h2 className="text-2xl font-bold text-white mb-6">Basic Information</h2>
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-white mb-2">Full Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500  ${
-                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                    errors.name ? 'border-red-500/50' : 'border-white/10'
                   }`}
                   placeholder="Enter your full name"
                 />
-                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-medium text-white mb-2">Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                    errors.email ? 'border-red-500/50' : 'border-white/10'
                   }`}
                   placeholder="your.email@example.com"
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Date of Birth
                   </label>
                   <input
                     type="date"
                     value={formData.dob}
                     onChange={(e) => handleInputChange('dob', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      errors.dob ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full px-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                      errors.dob ? 'border-red-500/50' : 'border-white/10'
                     }`}
                   />
-                  {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
+                  {errors.dob && <p className="text-red-400 text-sm mt-1">{errors.dob}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     value={formData.phoneNumber}
                     onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+                    className={`w-full px-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                      errors.phoneNumber ? 'border-red-500/50' : 'border-white/10'
                     }`}
                     placeholder="9801234567"
                   />
                   {errors.phoneNumber && (
-                    <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+                    <p className="text-red-400 text-sm mt-1">{errors.phoneNumber}</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                <label className="block text-sm font-medium text-white mb-2">Gender</label>
                 <div className="grid grid-cols-3 gap-3">
                   {['Male', 'Female', 'Other'].map((gender) => (
                     <button
@@ -398,14 +398,14 @@ export default function SignupForm() {
                       className={`px-4 py-3 rounded-xl font-medium transition-all ${
                         formData.gender === gender.toLowerCase()
                           ? 'bg-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'backdrop-blur-xl bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'
                       }`}
                     >
                       {gender}
                     </button>
                   ))}
                 </div>
-                {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+                {errors.gender && <p className="text-red-400 text-sm mt-1">{errors.gender}</p>}
               </div>
             </div>
           </div>
@@ -414,32 +414,32 @@ export default function SignupForm() {
       case 2:
         return (
           <div className="max-w-md mx-auto py-8 text-center">
-            <div className="w-20 h-20 mx-auto mb-6 bg-orange-100 rounded-full flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto mb-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-full flex items-center justify-center">
               <span className="text-4xl">📧</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">Verify Your Email</h2>
-            <p className="text-gray-600 mb-8">
+            <h2 className="text-2xl font-bold text-white mb-3">Verify Your Email</h2>
+            <p className="text-white/60 mb-8">
               We've sent a 6-digit verification code to
               <br />
-              <span className="font-semibold text-gray-900">{formData.email}</span>
+              <span className="font-semibold text-white">{formData.email}</span>
             </p>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">Enter Code</label>
+              <label className="block text-sm font-medium text-white mb-3">Enter Code</label>
               <input
                 type="text"
                 maxLength={6}
                 value={formData.otp}
                 onChange={(e) => handleInputChange('otp', e.target.value.replace(/\D/g, ''))}
-                className={`w-full px-4 py-4 text-center text-gray-900 placeholder:text-gray-400 text-2xl font-bold tracking-widest border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                  errors.otp ? 'border-red-500' : 'border-gray-300'
+                className={`w-full px-4 py-4 text-center text-white placeholder-white/40 text-2xl font-bold tracking-widest backdrop-blur-xl bg-white/5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                  errors.otp ? 'border-red-500/50' : 'border-white/10'
                 }`}
                 placeholder="000000"
               />
-              {errors.otp && <p className="text-red-500 text-sm mt-2">{errors.otp}</p>}
+              {errors.otp && <p className="text-red-400 text-sm mt-2">{errors.otp}</p>}
             </div>
 
-            <button type="button" className="text-orange-500 font-medium hover:text-orange-600">
+            <button type="button" className="text-orange-500 font-medium hover:text-orange-400 transition-colors">
               Resend Code
             </button>
           </div>
@@ -448,18 +448,18 @@ export default function SignupForm() {
       case 3:
         return (
           <div className="max-w-2xl mx-auto py-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Order Summary</h2>
 
-            <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+            <div className="backdrop-blur-xl bg-white/5 border-2 border-white/10 rounded-2xl p-6 mb-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 capitalize">
+                  <h3 className="text-xl font-bold text-white capitalize">
                     {formData.plan} Plan
                   </h3>
-                  <p className="text-gray-600">Monthly Membership</p>
+                  <p className="text-white/60">Monthly Membership</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-2xl font-bold text-white">
                     NRP{' '}
                     {formData.plan === 'essential'
                       ? '3,000'
@@ -470,8 +470,8 @@ export default function SignupForm() {
                 </div>
               </div>
 
-              <div className="border-t pt-4 space-y-2">
-                <div className="flex justify-between text-gray-700">
+              <div className="border-t border-white/10 pt-4 space-y-2">
+                <div className="flex justify-between text-white/80">
                   <span>Subtotal</span>
                   <span>
                     NRP{' '}
@@ -482,11 +482,11 @@ export default function SignupForm() {
                         : '6,000'}
                   </span>
                 </div>
-                <div className="flex justify-between text-gray-700">
+                <div className="flex justify-between text-white/80">
                   <span>Registration Fee</span>
                   <span>NRP 500</span>
                 </div>
-                <div className="border-t pt-2 flex justify-between text-xl font-bold text-gray-900">
+                <div className="border-t border-white/10 pt-2 flex justify-between text-xl font-bold text-white">
                   <span>Total</span>
                   <span>
                     NRP{' '}
@@ -500,20 +500,20 @@ export default function SignupForm() {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-2xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-3">Member Information</h3>
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-6">
+              <h3 className="font-semibold text-white mb-3">Member Information</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Name:</span>
-                  <span className="font-medium text-gray-900">{formData.name}</span>
+                  <span className="text-white/60">Name:</span>
+                  <span className="font-medium text-white">{formData.name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Email:</span>
-                  <span className="font-medium text-gray-900">{formData.email}</span>
+                  <span className="text-white/60">Email:</span>
+                  <span className="font-medium text-white">{formData.email}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Phone:</span>
-                  <span className="font-medium text-gray-900">{formData.phoneNumber}</span>
+                  <span className="text-white/60">Phone:</span>
+                  <span className="font-medium text-white">{formData.phoneNumber}</span>
                 </div>
               </div>
             </div>
@@ -523,24 +523,24 @@ export default function SignupForm() {
       case 4:
         return (
           <div className="max-w-md mx-auto py-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Your Account</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Create Your Account</h2>
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <label className="block text-sm font-medium text-white mb-2">Password</label>
                 <input
                   type="password"
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 placeholder:text-gray-400 ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                    errors.password ? 'border-red-500/50' : 'border-white/10'
                   }`}
                   placeholder="Create a strong password"
                 />
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password}</p>}
               </div>
 
-              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mt-6">
-                <p className="text-sm text-gray-700">
+              <div className="backdrop-blur-xl bg-orange-500/10 border border-orange-500/30 rounded-xl p-4 mt-6">
+                <p className="text-sm text-white/80">
                   By creating an account, you agree to our Terms of Service and Privacy Policy.
                 </p>
               </div>
@@ -554,7 +554,7 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4">
+    <div className="min-h-screen bg-black py-6 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Progress Steps */}
         <div className="mb-6">
@@ -563,19 +563,19 @@ export default function SignupForm() {
               <React.Fragment key={index}>
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all backdrop-blur-xl ${
                       index < activeTab
-                        ? 'bg-green-500 text-white'
+                        ? 'bg-orange-500 text-white'
                         : index === activeTab
-                          ? 'bg-orange-500 text-white ring-4 ring-orange-200'
-                          : 'bg-gray-200 text-gray-500'
+                          ? 'bg-orange-500 text-white ring-4 ring-orange-500/20'
+                          : 'bg-white/5 border border-white/10 text-white/40'
                     }`}
                   >
                     {index < activeTab ? <Check size={20} /> : index + 1}
                   </div>
                   <span
                     className={`text-xs mt-2 font-medium text-center whitespace-nowrap ${
-                      index === activeTab ? 'text-orange-500' : 'text-gray-500'
+                      index === activeTab ? 'text-orange-500' : 'text-white/60'
                     }`}
                   >
                     {tab}
@@ -585,7 +585,7 @@ export default function SignupForm() {
                   <div className="flex items-center flex-1 px-2" style={{ marginTop: '20px' }}>
                     <div
                       className={`h-1 w-full rounded transition-all ${
-                        index < activeTab ? 'bg-green-500' : 'bg-gray-200'
+                        index < activeTab ? 'bg-orange-500' : 'bg-white/10'
                       }`}
                     />
                   </div>
@@ -596,7 +596,7 @@ export default function SignupForm() {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+        <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-5">
           {renderTabContent()}
 
           {/* Navigation Buttons */}
@@ -606,15 +606,15 @@ export default function SignupForm() {
               disabled={activeTab === 0}
               className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                 activeTab === 0
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'backdrop-blur-xl bg-white/5 text-white/30 cursor-not-allowed border border-white/10'
+                  : 'backdrop-blur-xl bg-white/10 text-white hover:bg-white/20 border border-white/10'
               }`}
             >
               Back
             </button>
             <button
               onClick={handleNext}
-              className="px-8 py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all"
+              className="px-8 py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg"
             >
               {activeTab === tabs.length - 1 ? 'Complete Signup' : 'Continue'}
             </button>

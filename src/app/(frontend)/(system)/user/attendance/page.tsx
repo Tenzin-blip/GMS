@@ -90,7 +90,9 @@ export default function AttendancePage() {
 
     return { daysInMonth, startingDayOfWeek, year, month }
   }
-const { daysInMonth } = getDaysInMonth(currentDate)
+  
+  const { daysInMonth } = getDaysInMonth(currentDate)
+  
   const getAttendanceStatus = (day: number) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
@@ -133,16 +135,16 @@ const { daysInMonth } = getDaysInMonth(currentDate)
       const status = getAttendanceStatus(day)
       const isToday = isCurrentMonth && day === today
 
-      let bgColor = 'bg-gray-700'
-      if (status === 'present') bgColor = 'bg-green-700'
-      if (status === 'absent') bgColor = 'bg-red-900'
-      if (status === 'skip') bgColor = 'bg-gray-800'
-      if (isToday) bgColor = 'bg-orange-600'
+      let bgColor = 'bg-gray-700/50 backdrop-blur-sm'
+      if (status === 'present') bgColor = 'bg-green-700/50 backdrop-blur-sm'
+      if (status === 'absent') bgColor = 'bg-red-900/50 backdrop-blur-sm'
+      if (status === 'skip') bgColor = 'bg-gray-800/50 backdrop-blur-sm'
+      if (isToday) bgColor = 'bg-orange-600/50 backdrop-blur-sm'
 
       days.push(
         <div
           key={day}
-          className={`aspect-square flex items-center justify-center text-white text-sm font-medium ${bgColor} ${isToday ? 'ring-2 ring-orange-400' : ''} transition-all hover:opacity-80 cursor-pointer rounded-lg`}
+          className={`aspect-square flex items-center justify-center text-white text-sm font-medium ${bgColor} ${isToday ? 'ring-2 ring-orange-400' : ''} transition-all hover:opacity-80 cursor-pointer rounded-lg border border-gray-700/30`}
         >
           {day}
         </div>,
@@ -202,7 +204,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
           <p className="text-gray-400">Loading your attendance data...</p>
@@ -212,7 +214,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -221,7 +223,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
           </div>
           <button
             onClick={() => setShowManualModal(true)}
-            className="px-6 py-3 bg-orange-600 hover:bg-orange-500 rounded-lg font-medium transition-colors flex items-center gap-2"
+            className="px-6 py-3 bg-orange-600/20 hover:bg-orange-600/30 backdrop-blur-xl border border-orange-500/30 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-orange-500/10"
           >
             <AlertCircle className="w-5 h-5" />
             Manual Check-in
@@ -229,7 +231,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
         </div>
 
         {!hasData && motivationalMessage && (
-          <div className="bg-gradient-to-br from-orange-900/30 to-orange-800/20 border border-orange-700/50 rounded-2xl p-8 text-center">
+          <div className="bg-orange-900/10 backdrop-blur-xl border border-orange-700/30 rounded-2xl p-8 text-center shadow-2xl shadow-orange-500/5">
             <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-orange-400 mb-2">Ready to Begin?</h2>
             <p className="text-gray-300 text-lg mb-4">{motivationalMessage}</p>
@@ -240,7 +242,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Attendance</h3>
               <Calendar className="w-5 h-5 text-orange-500" />
@@ -251,7 +253,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
             <p className="text-gray-400 text-sm mt-1">Days this month</p>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Streak</h3>
               <Flame className="w-5 h-5 text-orange-500" />
@@ -260,7 +262,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
             <p className="text-gray-400 text-sm mt-1">Current active streak</p>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Avg Duration</h3>
               <Clock className="w-5 h-5 text-orange-500" />
@@ -271,7 +273,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
             <p className="text-gray-400 text-sm mt-1">Per Session</p>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Total Hours</h3>
               <TrendingUp className="w-5 h-5 text-orange-500" />
@@ -282,7 +284,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">
                 {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
@@ -290,13 +292,13 @@ const { daysInMonth } = getDaysInMonth(currentDate)
               <div className="flex gap-2">
                 <button
                   onClick={() => changeMonth(-1)}
-                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/5 backdrop-blur-sm rounded-lg transition-all border border-gray-700/50"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => changeMonth(1)}
-                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-white/5 backdrop-blur-sm rounded-lg transition-all border border-gray-700/50"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -316,21 +318,21 @@ const { daysInMonth } = getDaysInMonth(currentDate)
 
             <div className="flex items-center gap-4 mt-6 text-xs">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-700 rounded"></div>
+                <div className="w-4 h-4 bg-green-700/50 backdrop-blur-sm border border-gray-700/30 rounded"></div>
                 <span className="text-gray-400">Present</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-900 rounded"></div>
+                <div className="w-4 h-4 bg-red-900/50 backdrop-blur-sm border border-gray-700/30 rounded"></div>
                 <span className="text-gray-400">Absent</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-orange-600 rounded"></div>
+                <div className="w-4 h-4 bg-orange-600/50 backdrop-blur-sm border border-gray-700/30 rounded"></div>
                 <span className="text-gray-400">Today</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700">
+          <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-1">Recent Attendance</h2>
               <p className="text-gray-400 text-sm">Your check-in and check-out history</p>
@@ -349,7 +351,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
                 attendanceData.map((record) => (
                   <div
                     key={record.id}
-                    className="bg-gray-700 bg-opacity-50 rounded-lg p-4 flex items-center justify-between"
+                    className="bg-white/5 backdrop-blur-sm rounded-lg p-4 flex items-center justify-between border border-gray-700/30 hover:bg-white/10 transition-all"
                   >
                     <div className="flex items-start gap-3">
                       <CheckSquare className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
@@ -388,8 +390,8 @@ const { daysInMonth } = getDaysInMonth(currentDate)
       </div>
 
       {showManualModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 rounded-2xl p-6 max-w-md w-full border border-gray-700">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900/90 backdrop-blur-2xl rounded-2xl p-6 max-w-md w-full border border-gray-700/50 shadow-2xl">
             <h3 className="text-2xl font-bold mb-4 text-orange-500">Manual Check-in Request</h3>
             <p className="text-gray-400 text-sm mb-6">
               Manual check-ins require admin approval. Please provide a valid reason.
@@ -401,7 +403,7 @@ const { daysInMonth } = getDaysInMonth(currentDate)
                 <select
                   value={manualAction}
                   onChange={(e) => setManualAction(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white"
+                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg px-4 py-3 text-white focus:border-orange-500/50 focus:outline-none transition-all"
                 >
                   <option value="checkin">Check In</option>
                   <option value="checkout">Check Out</option>
@@ -414,11 +416,11 @@ const { daysInMonth } = getDaysInMonth(currentDate)
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="e.g., QR scanner not working, forgot to scan, etc."
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white h-24 resize-none"
+                  className="w-full bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg px-4 py-3 text-white h-24 resize-none focus:border-orange-500/50 focus:outline-none transition-all"
                 />
               </div>
 
-              <div className="bg-yellow-900 bg-opacity-30 border border-yellow-700 rounded-lg p-3">
+              <div className="bg-yellow-900/20 backdrop-blur-sm border border-yellow-700/30 rounded-lg p-3">
                 <p className="text-yellow-500 text-xs flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>
@@ -435,13 +437,13 @@ const { daysInMonth } = getDaysInMonth(currentDate)
                   setShowManualModal(false)
                   setReason('')
                 }}
-                className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-3 bg-gray-700/50 backdrop-blur-sm hover:bg-gray-700/70 rounded-lg font-medium transition-all border border-gray-600/50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleManualCheckIn}
-                className="flex-1 px-4 py-3 bg-orange-600 hover:bg-orange-500 rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-3 bg-orange-600/20 backdrop-blur-sm hover:bg-orange-600/30 rounded-lg font-medium transition-all border border-orange-500/30 shadow-lg shadow-orange-500/10"
               >
                 Submit Request
               </button>

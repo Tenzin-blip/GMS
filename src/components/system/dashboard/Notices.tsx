@@ -71,12 +71,17 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
   const fetchNotices = async () => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch('/api/notices?where[isActive][equals]=true&sort=-date')
-      if (!response.ok) throw new Error('Failed to fetch notices')
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch notices: ${response.status}`)
+      }
 
       const data = await response.json()
       setNotices(data.docs || [])
     } catch (err) {
+      console.error('Error fetching notices:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
@@ -95,13 +100,13 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
   const getTypeBadgeStyles = (type: NoticeType) => {
     switch (type) {
       case 'important':
-        return 'bg-red-900/40 text-red-400 border border-red-800/50'
+        return 'bg-red-500/20 text-red-400 border border-red-500/30'
       case 'warning':
-        return 'bg-orange-900/40 text-orange-400 border border-orange-800/50'
+        return 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
       case 'reminder':
-        return 'bg-green-900/40 text-green-400 border border-green-800/50'
+        return 'bg-green-500/20 text-green-400 border border-green-500/30'
       default:
-        return 'bg-gray-700 text-gray-300'
+        return 'bg-white/10 text-gray-300 border border-white/20'
     }
   }
 
@@ -161,7 +166,6 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
         throw new Error(`Failed to ${editingNotice ? 'update' : 'create'} notice`)
       }
 
-      // Refresh notices list
       await fetchNotices()
       closeModal()
     } catch (err) {
@@ -192,12 +196,11 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   if (loading) {
     return (
-      <div className="bg-slate-950 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
-          <div className="flex items-center justify-center gap-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-            <p className="text-slate-400">Loading notices...</p>
-          </div>
+      <div className="backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-center gap-3">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+          <p className="text-gray-300">Loading notices...</p>
         </div>
       </div>
     )
@@ -205,9 +208,16 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   if (error) {
     return (
-      <div className="bg-slate-950 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-slate-900/50 rounded-2xl border border-slate-800/50 shadow-2xl p-6">
+      <div className="backdrop-blur-xl bg-white/5 rounded-2xl p-6 border border-white/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+        <div className="relative z-10">
           <p className="text-red-400">Error: {error}</p>
+          <button
+            onClick={fetchNotices}
+            className="mt-3 px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     )
@@ -215,9 +225,11 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
   return (
     <>
-      <div className="flex items-center justify-center">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden pb-4 px-2 border border-gray-400">
-          <div className="p-6 border-b border-slate-800/50 flex justify-between items-center">
+      <div className="backdrop-blur-xl bg-white/5 rounded-2xl shadow-2xl overflow-hidden border border-white/10 relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+        
+        <div className="relative z-10">
+          <div className="p-6 border-b border-white/10 flex justify-between items-center">
             <div className="flex items-center gap-3">
               <Bell className="text-orange-500" size={28} />
               <h1 className="text-2xl font-bold text-white">Notice Board</h1>
@@ -226,7 +238,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
             {showControls && (
               <button
                 onClick={openCreateModal}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md flex items-center gap-2 text-sm transition-colors"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors shadow-lg"
               >
                 <Plus size={16} /> Add
               </button>
@@ -235,27 +247,27 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
           {notices.length === 0 ? (
             <div className="p-6 text-center">
-              <p className="text-slate-500">No notices available at the moment.</p>
+              <p className="text-gray-400">No notices available at the moment.</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-800/50 max-h-[456px] overflow-y-auto">
+            <div className="divide-y divide-white/10 max-h-[456px] overflow-y-auto">
               {notices.map((notice) => (
                 <div
                   key={notice.id}
-                  className="p-6 hover:bg-slate-800/30 transition-colors duration-200"
+                  className="p-6 hover:bg-white/5 transition-colors duration-200"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-white font-semibold mb-2">{notice.title}</h3>
                       {notice.description && (
-                        <p className="text-slate-400 text-sm mb-2">
+                        <p className="text-gray-300 text-sm mb-2">
                           {notice.description}
                         </p>
                       )}
-                      <p className="text-slate-500 text-sm">{formatDate(notice.date)}</p>
+                      <p className="text-gray-400 text-sm">{formatDate(notice.date)}</p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getTypeBadgeStyles(
+                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap backdrop-blur-md ${getTypeBadgeStyles(
                         notice.type
                       )}`}
                     >
@@ -267,13 +279,13 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
                     <div className="flex gap-3 mt-3">
                       <button
                         onClick={() => openEditModal(notice)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs bg-blue-700 hover:bg-blue-800 text-white transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs backdrop-blur-md bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30 transition-colors"
                       >
                         <Pencil size={14} /> Edit
                       </button>
                       <button
                         onClick={() => handleDelete(notice.id)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs bg-red-700 hover:bg-red-800 text-white transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-md text-xs backdrop-blur-md bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 transition-colors"
                       >
                         <Trash2 size={14} /> Delete
                       </button>
@@ -288,95 +300,99 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = false }) => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl w-full max-w-md">
-            <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-white">
-                {editingNotice ? 'Edit Notice' : 'Create New Notice'}
-              </h2>
-              <button
-                onClick={closeModal}
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Title <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Enter notice title"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Date <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="date"
-                  required
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Type <span className="text-red-400">*</span>
-                </label>
-                <select
-                  required
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as NoticeType })}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="reminder">Reminder</option>
-                  <option value="warning">Warning</option>
-                  <option value="important">Important</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Description
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-                  placeholder="Enter optional description"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/10 shadow-2xl w-full max-w-md relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+            
+            <div className="relative z-10">
+              <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-white">
+                  {editingNotice ? 'Edit Notice' : 'Create New Notice'}
+                </h2>
                 <button
-                  type="button"
                   onClick={closeModal}
-                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors"
-                  disabled={submitting}
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Saving...' : editingNotice ? 'Update' : 'Create'}
+                  <X size={24} />
                 </button>
               </div>
-            </form>
+
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Title <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                    placeholder="Enter notice title"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Date <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Type <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    required
+                    value={formData.type}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value as NoticeType })}
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                  >
+                    <option value="reminder" className="bg-gray-900">Reminder</option>
+                    <option value="warning" className="bg-gray-900">Warning</option>
+                    <option value="important" className="bg-gray-900">Important</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={4}
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none transition-all"
+                    placeholder="Enter optional description"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="flex-1 backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-lg transition-colors"
+                    disabled={submitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Saving...' : editingNotice ? 'Update' : 'Create'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

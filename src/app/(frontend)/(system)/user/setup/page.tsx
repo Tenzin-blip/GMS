@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { ChevronRight, ChevronLeft, AlertCircle, Check, Upload, Camera } from 'lucide-react'
+import Toast from '@/components/website/toast'
 
 export default function OnboardingForm() {
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -43,9 +44,8 @@ export default function OnboardingForm() {
   }, [])
 
   const userName = userData?.name || 'Friend'
-  const userInitial = userName.charAt(0).toUpperCase()
 
-  const totalSteps = 5 // Updated to 5 steps
+  const totalSteps = 5
 
   const goals = [
     {
@@ -90,13 +90,11 @@ export default function OnboardingForm() {
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Check if file is an image
       if (!file.type.startsWith('image/')) {
         alert('Please upload an image file')
         return
       }
 
-      // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         alert('Image size should be less than 5MB')
         return
@@ -110,9 +108,17 @@ export default function OnboardingForm() {
     }
   }
 
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
+
   const handleSubmit = async () => {
     try {
-      // Calculate BMR and TDEE for target calories
       const bmr = calculateBMR(
         parseFloat(formData.currentWeight),
         parseFloat(formData.height),
@@ -122,10 +128,8 @@ export default function OnboardingForm() {
       const tdee = calculateTDEE(bmr, formData.activityLevel)
       const targetCalories = adjustCaloriesForGoal(tdee, formData.goal)
 
-      // Create FormData for multipart/form-data upload
       const submitData = new FormData()
 
-      // Add fitness data as JSON string
       const fitnessData = {
         goal: formData.goal,
         bodyMetrics: {
@@ -155,7 +159,6 @@ export default function OnboardingForm() {
 
       submitData.append('fitnessData', JSON.stringify(fitnessData))
 
-      // Add profile picture if exists
       if (formData.profilePicture) {
         submitData.append('profilePicture', formData.profilePicture)
       }
@@ -166,16 +169,18 @@ export default function OnboardingForm() {
       })
 
       if (response.ok) {
-        alert('Welcome to Level Up! Your personalized dashboard is ready 🎉')
-        window.location.href = '/user/dashboard'
+        showToast('Welcome to Level Up! Your personalized dashboard is ready', 'success')
+        setTimeout(() => {
+          window.location.href = '/user/dashboard'
+        }, 2000)
       } else {
         const error = await response.json()
         console.error('Error saving fitness data:', error)
-        alert('There was an error saving your data. Please try again.')
+        showToast('There was an error saving your data. Please try again.', 'error')
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      alert('There was an error saving your data. Please try again.')
+      showToast('There was an error saving your data. Please try again.', 'error')
     }
   }
 
@@ -208,7 +213,10 @@ export default function OnboardingForm() {
   }
 
   const handleSkip = () => {
-    alert('No worries! You can complete this anytime from Settings.')
+    showToast('Welcome to Level Up! Your personalized dashboard is ready', 'info')
+        setTimeout(() => {
+          window.location.href = '/user/dashboard'
+        }, 2000)
   }
 
   const updateFormData = (key: string, value: any) => {
@@ -233,28 +241,35 @@ export default function OnboardingForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-orange-500/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-2xl relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome to Level Up, <span className="text-orange-500">{userInitial}</span> !
+            Welcome to Level Up, <span className="text-orange-500">{userName}</span>!
           </h1>
-          <p className="text-gray-400">Let's personalize your fitness journey</p>
-          <p className="text-sm text-gray-500 mt-1">(Takes just 60 seconds)</p>
+          <p className="text-gray-300">Let's personalize your fitness journey</p>
+          <p className="text-sm text-gray-400 mt-1">(Takes just 60 seconds)</p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-400">Progress</span>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-gray-300">Progress</span>
+            <span className="text-sm text-gray-300">
               {step} of {totalSteps}
             </span>
           </div>
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div className="h-2 backdrop-blur-md bg-white/10 rounded-full overflow-hidden border border-white/10">
             <div
-              className="h-full bg-orange-500 transition-all duration-300 ease-out"
+              className="h-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-300 ease-out shadow-lg shadow-orange-500/50"
               style={{ width: `${(step / totalSteps) * 100}%` }}
             />
           </div>
@@ -262,20 +277,23 @@ export default function OnboardingForm() {
             {[1, 2, 3, 4, 5].map((i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full ${i <= step ? 'bg-orange-500' : 'bg-gray-600'}`}
+                className={`w-2 h-2 rounded-full transition-all ${i <= step ? 'bg-orange-500 shadow-lg shadow-orange-500/50' : 'bg-white/20'}`}
               />
             ))}
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="bg-gray-800 rounded-2xl p-8 shadow-2xl border border-gray-700">
+        <div className="backdrop-blur-xl bg-white/5 rounded-2xl p-8 shadow-2xl border border-white/10 relative overflow-hidden">
+          {/* Glassmorphism effect overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+
           {/* Step 1: Primary Goal */}
           {step === 1 && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative z-10">
               <div>
                 <h2 className="text-2xl font-bold mb-2">What's your primary goal?</h2>
-                <p className="text-gray-400 text-sm">This helps us customize everything for you</p>
+                <p className="text-gray-300 text-sm">This helps us customize everything for you</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -283,15 +301,15 @@ export default function OnboardingForm() {
                   <button
                     key={goal.id}
                     onClick={() => updateFormData('goal', goal.id)}
-                    className={`p-6 rounded-xl border-2 transition-all text-left ${
+                    className={`p-6 rounded-xl border-2 transition-all text-left backdrop-blur-md ${
                       formData.goal === goal.id
-                        ? 'border-orange-500 bg-orange-500/10'
-                        : 'border-gray-600 hover:border-gray-500 bg-gray-700/50'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'
                     }`}
                   >
                     <div className="text-4xl mb-3">{goal.icon}</div>
                     <h3 className="font-bold mb-1">{goal.label}</h3>
-                    <p className="text-sm text-gray-400">{goal.desc}</p>
+                    <p className="text-sm text-gray-300">{goal.desc}</p>
                   </button>
                 ))}
               </div>
@@ -300,10 +318,10 @@ export default function OnboardingForm() {
 
           {/* Step 2: Basic Metrics */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative z-10">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Tell us about yourself</h2>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-300 text-sm">
                   We'll use this to calculate your BMI and calorie needs
                 </p>
               </div>
@@ -317,9 +335,9 @@ export default function OnboardingForm() {
                       value={formData.currentWeight}
                       onChange={(e) => updateFormData('currentWeight', e.target.value)}
                       placeholder="70"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                      className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
-                    <span className="absolute right-4 top-3 text-gray-400">kg</span>
+                    <span className="absolute right-4 top-3 text-gray-300">kg</span>
                   </div>
                 </div>
 
@@ -331,9 +349,9 @@ export default function OnboardingForm() {
                       value={formData.height}
                       onChange={(e) => updateFormData('height', e.target.value)}
                       placeholder="175"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                      className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
-                    <span className="absolute right-4 top-3 text-gray-400">cm</span>
+                    <span className="absolute right-4 top-3 text-gray-300">cm</span>
                   </div>
                 </div>
               </div>
@@ -347,9 +365,9 @@ export default function OnboardingForm() {
                       value={formData.targetWeight}
                       onChange={(e) => updateFormData('targetWeight', e.target.value)}
                       placeholder="65"
-                      className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                      className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
-                    <span className="absolute right-4 top-3 text-gray-400">kg</span>
+                    <span className="absolute right-4 top-3 text-gray-300">kg</span>
                   </div>
                 </div>
 
@@ -360,7 +378,7 @@ export default function OnboardingForm() {
                     value={formData.age}
                     onChange={(e) => updateFormData('age', e.target.value)}
                     placeholder="25"
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   />
                 </div>
               </div>
@@ -372,10 +390,10 @@ export default function OnboardingForm() {
                     <button
                       key={gender}
                       onClick={() => updateFormData('gender', gender.toLowerCase())}
-                      className={`py-3 rounded-lg border-2 transition-all ${
+                      className={`py-3 rounded-lg border-2 transition-all backdrop-blur-md ${
                         formData.gender === gender.toLowerCase()
-                          ? 'border-orange-500 bg-orange-500/10'
-                          : 'border-gray-600 hover:border-gray-500 bg-gray-700/50'
+                          ? 'border-orange-500 bg-orange-500/20'
+                          : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'
                       }`}
                     >
                       {gender}
@@ -388,10 +406,10 @@ export default function OnboardingForm() {
 
           {/* Step 3: Activity & Commitment */}
           {step === 3 && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative z-10">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Your workout commitment</h2>
-                <p className="text-gray-400 text-sm">How much time can you dedicate?</p>
+                <p className="text-gray-300 text-sm">How much time can you dedicate?</p>
               </div>
 
               <div>
@@ -403,21 +421,21 @@ export default function OnboardingForm() {
                     max="5"
                     value={formData.activityLevel}
                     onChange={(e) => updateFormData('activityLevel', parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
                     style={{
-                      background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 ${((formData.activityLevel - 1) / 4) * 100}%, #374151 100%)`,
+                      background: `linear-gradient(to right, #f97316 0%, #f97316 ${((formData.activityLevel - 1) / 4) * 100}%, rgba(255,255,255,0.1) ${((formData.activityLevel - 1) / 4) * 100}%, rgba(255,255,255,0.1) 100%)`,
                     }}
                   />
-                  <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <div className="flex justify-between text-xs text-gray-400 mt-2">
                     <span>Sedentary</span>
                     <span>Very Active</span>
                   </div>
                 </div>
-                <div className="mt-3 p-3 bg-gray-700/50 rounded-lg">
+                <div className="mt-3 p-3 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
                   <p className="text-sm font-medium">
                     {activityLevels[formData.activityLevel - 1].label}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-300">
                     {activityLevels[formData.activityLevel - 1].desc}
                   </p>
                 </div>
@@ -429,14 +447,14 @@ export default function OnboardingForm() {
                   <select
                     value={formData.hoursPerDay}
                     onChange={(e) => updateFormData('hoursPerDay', e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   >
-                    <option value="">Select</option>
-                    <option value="0.5">30 mins</option>
-                    <option value="1">1 hour</option>
-                    <option value="1.5">1.5 hours</option>
-                    <option value="2">2 hours</option>
-                    <option value="2.5">2+ hours</option>
+                    <option value="" className="bg-gray-900">Select</option>
+                    <option value="0.5" className="bg-gray-900">30 mins</option>
+                    <option value="1" className="bg-gray-900">1 hour</option>
+                    <option value="1.5" className="bg-gray-900">1.5 hours</option>
+                    <option value="2" className="bg-gray-900">2 hours</option>
+                    <option value="2.5" className="bg-gray-900">2+ hours</option>
                   </select>
                 </div>
 
@@ -445,11 +463,11 @@ export default function OnboardingForm() {
                   <select
                     value={formData.daysPerWeek}
                     onChange={(e) => updateFormData('daysPerWeek', e.target.value)}
-                    className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                    className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   >
-                    <option value="">Select</option>
+                    <option value="" className="bg-gray-900">Select</option>
                     {[1, 2, 3, 4, 5, 6, 7].map((day) => (
-                      <option key={day} value={day}>
+                      <option key={day} value={day} className="bg-gray-900">
                         {day} {day === 1 ? 'day' : 'days'}
                       </option>
                     ))}
@@ -457,7 +475,7 @@ export default function OnboardingForm() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+              <div className="flex items-start gap-3 p-4 backdrop-blur-md bg-blue-500/10 border border-blue-500/30 rounded-lg">
                 <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-blue-300">
                   <strong>Pro tip:</strong> Consistency beats intensity. Start with what you can
@@ -469,10 +487,10 @@ export default function OnboardingForm() {
 
           {/* Step 4: Dietary Preferences */}
           {step === 4 && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative z-10">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Dietary preferences</h2>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-300 text-sm">
                   Help us create the perfect meal plan for you
                 </p>
               </div>
@@ -484,10 +502,10 @@ export default function OnboardingForm() {
                     <button
                       key={diet.id}
                       onClick={() => updateFormData('dietType', diet.id)}
-                      className={`p-4 rounded-lg border-2 transition-all ${
+                      className={`p-4 rounded-lg border-2 transition-all backdrop-blur-md ${
                         formData.dietType === diet.id
-                          ? 'border-orange-500 bg-orange-500/10'
-                          : 'border-gray-600 hover:border-gray-500 bg-gray-700/50'
+                          ? 'border-orange-500 bg-orange-500/20'
+                          : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'
                       }`}
                     >
                       <div className="text-2xl mb-1">{diet.icon}</div>
@@ -499,27 +517,27 @@ export default function OnboardingForm() {
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Allergies or Restrictions <span className="text-gray-500">(Optional)</span>
+                  Allergies or Restrictions <span className="text-gray-400">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   value={formData.allergies}
                   onChange={(e) => updateFormData('allergies', e.target.value)}
                   placeholder="e.g., Peanuts, Dairy, Gluten"
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 text-white"
+                  className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Food Preferences <span className="text-gray-500">(Optional)</span>
+                  Food Preferences <span className="text-gray-400">(Optional)</span>
                 </label>
                 <textarea
                   value={formData.preferences}
                   onChange={(e) => updateFormData('preferences', e.target.value)}
                   placeholder="Tell us what you love or avoid..."
                   rows={3}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 resize-none text-white"
+                  className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 resize-none text-white transition-all"
                 />
               </div>
             </div>
@@ -527,10 +545,10 @@ export default function OnboardingForm() {
 
           {/* Step 5: Profile Picture */}
           {step === 5 && (
-            <div className="space-y-6">
+            <div className="space-y-6 relative z-10">
               <div>
                 <h2 className="text-2xl font-bold mb-2">Show us your best smile! 📸</h2>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-300 text-sm">
                   Add a profile picture to personalize your experience
                 </p>
               </div>
@@ -545,8 +563,8 @@ export default function OnboardingForm() {
                         alt="Profile preview"
                         width={160}
                         height={160}
-                        className="w-full h-full object-cover"
-                        unoptimized // Required for blob URLs
+                        className="w-40 h-40 rounded-full object-cover border-4 border-white/20"
+                        unoptimized
                       />
                       <button
                         onClick={() =>
@@ -556,21 +574,21 @@ export default function OnboardingForm() {
                             profilePicturePreview: '',
                           }))
                         }
-                        className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors"
+                        className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition-colors shadow-lg"
                       >
                         ✕
                       </button>
                     </div>
                   ) : (
-                    <div className="w-40 h-40 rounded-full bg-gray-700 border-4 border-dashed border-gray-600 flex items-center justify-center">
-                      <Camera className="w-12 h-12 text-gray-500" />
+                    <div className="w-40 h-40 rounded-full backdrop-blur-md bg-white/5 border-4 border-dashed border-white/20 flex items-center justify-center">
+                      <Camera className="w-12 h-12 text-gray-400" />
                     </div>
                   )}
                 </div>
 
                 {/* Upload Button */}
                 <label className="cursor-pointer">
-                  <div className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors flex items-center gap-2 text-white font-medium">
+                  <div className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors flex items-center gap-2 text-white font-medium shadow-lg">
                     <Upload className="w-5 h-5" />
                     {formData.profilePicturePreview ? 'Change Picture' : 'Upload Picture'}
                   </div>
@@ -582,14 +600,14 @@ export default function OnboardingForm() {
                   />
                 </label>
 
-                <p className="text-xs text-gray-500 mt-4 text-center">
+                <p className="text-xs text-gray-400 mt-4 text-center">
                   Recommended: Square image, max 5MB
                   <br />
                   Formats: JPG, PNG, GIF
                 </p>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+              <div className="flex items-start gap-3 p-4 backdrop-blur-md bg-purple-500/10 border border-purple-500/30 rounded-lg">
                 <AlertCircle className="w-5 h-5 text-purple-400 mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-purple-300">
                   Don't worry! You can always add or change your profile picture later from
@@ -600,10 +618,10 @@ export default function OnboardingForm() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-700">
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10 relative z-10">
             <button
               onClick={handleSkip}
-              className="text-gray-400 hover:text-gray-300 transition-colors text-sm"
+              className="text-gray-300 hover:text-white transition-colors text-sm"
             >
               Skip for now
             </button>
@@ -612,7 +630,7 @@ export default function OnboardingForm() {
               {step > 1 && (
                 <button
                   onClick={handleBack}
-                  className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2"
+                  className="px-6 py-3 backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all flex items-center gap-2"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -625,8 +643,8 @@ export default function OnboardingForm() {
                   disabled={!isStepValid()}
                   className={`px-6 py-3 rounded-lg transition-all flex items-center gap-2 ${
                     isStepValid()
-                      ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20'
+                      : 'bg-white/5 text-gray-500 cursor-not-allowed border border-white/10'
                   }`}
                 >
                   Next
@@ -638,8 +656,8 @@ export default function OnboardingForm() {
                   disabled={!isStepValid()}
                   className={`px-8 py-3 rounded-lg transition-all flex items-center gap-2 ${
                     isStepValid()
-                      ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20'
+                      : 'bg-white/5 text-gray-500 cursor-not-allowed border border-white/10'
                   }`}
                 >
                   <Check className="w-4 h-4" />
@@ -651,10 +669,19 @@ export default function OnboardingForm() {
         </div>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-gray-400 mt-6">
           Don't worry, you can change these settings anytime
         </p>
       </div>
+
+      {/* Toast Component */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }
