@@ -246,7 +246,7 @@ export default async function HomePage() {
 
           {/* Description */}
           <p className="Sansation-regular text-gray-700 text-lg leading-[1.5] max-w-5xl">
-            At Level Up Gym, we offer personalized fitness services to help you reach your goals.
+            At Level Up, we offer personalized fitness services to help you reach your goals.
             From one-on-one training to high-energy classes and recovery sessions, we provide
             everything you need to succeed in your fitness journey.
           </p>
