@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-// import { Subscription } from './Subscription'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -58,7 +57,6 @@ export const Users: CollectionConfig = {
       access: {
         update: ({ req: { user }, id }) => {
           if (user?.role === 'admin') return true
-
           return user?.id === id
         },
       },
@@ -122,21 +120,27 @@ export const Users: CollectionConfig = {
       ],
       defaultValue: 'user',
       required: true,
-      // Prevent users from changing their own role
       access: {
         update: ({ req: { user } }) => user?.role === 'admin',
       },
     },
-    // {
-    //   name: 'subscription',
-    //   type: 'relationship',
-    //   relationTo: 'subscriptions',
-    //   label: 'Subscription Plan',
-    //   required: false,
-    //   access: {
-    //     update: ({ req: { user } }) => user?.role === 'admin',
-    //   },
-    // },
+    {
+      name: 'plan',
+      type: 'select',
+      label: 'Membership Plan',
+      options: [
+        { label: 'Essential', value: 'essential' },
+        { label: 'Premium', value: 'premium' },
+        { label: 'Elite', value: 'elite' },
+      ],
+      required: false,
+      access: {
+        update: ({ req: { user }, id }) => {
+          if (user?.role === 'admin') return true
+          return user?.id === id
+        },
+      },
+    },
     {
       name: 'OTP',
       type: 'text',
@@ -148,9 +152,111 @@ export const Users: CollectionConfig = {
       required: false,
       access: {
         read: () => true,
-        update: () => true, // Allow OTP clearing during signup
+        update: () => true,
       },
     },
-    // ...existing code...
+    {
+      name: 'email_verified',
+      type: 'checkbox',
+      label: 'Email Verified',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'password_set',
+      type: 'checkbox',
+      label: 'Password Set',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'otpflag',
+      type: 'checkbox',
+      label: 'OTP Verified Flag',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'payment',
+      type: 'checkbox',
+      label: 'Payment Completed Flag',
+      defaultValue: false,
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'khaltiPidx',
+      type: 'text',
+      label: 'Khalti Pidx',
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'paymentOrderId',
+      type: 'text',
+      label: 'Payment Order ID',
+      admin: {
+        readOnly: true,
+      },
+      access: {
+        read: () => true,
+        update: () => true,
+      },
+    },
+    {
+      name: 'passwordResetToken',
+      type: 'text',
+      label: 'Password Reset Token',
+      admin: {
+        hidden: true,
+      },
+      required: false,
+      access: {
+        read: () => false,
+        update: () => true,
+      },
+    },
+    {
+      name: 'passwordResetExpiry',
+      type: 'date',
+      label: 'Password Reset Token Expiry',
+      admin: {
+        hidden: true,
+      },
+      required: false,
+      access: {
+        read: () => false,
+        update: () => true,
+      },
+    },
+    
   ],
 }

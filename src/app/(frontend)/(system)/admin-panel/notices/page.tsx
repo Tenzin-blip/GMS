@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Bell, Plus, Pencil, Trash2, X } from 'lucide-react'
+import Toast from '@/components/website/toast'
 
 type NoticeType = 'important' | 'warning' | 'reminder'
 
@@ -45,6 +46,24 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
     type: 'reminder',
     description: ''
   })
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
+
+  const toastNode =
+    toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(null)}
+        duration={3000}
+      />
+    )
 
   // Fetch logged-in user
   useEffect(() => {
@@ -170,7 +189,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
       closeModal()
     } catch (err) {
       console.error(err)
-      alert(`Error ${editingNotice ? 'updating' : 'creating'} notice. Please try again.`)
+      showToast(`Error ${editingNotice ? 'updating' : 'creating'} notice. Please try again.`, 'error')
     } finally {
       setSubmitting(false)
     }
@@ -182,12 +201,13 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
       const res = await fetch(`/api/notices/${id}`, { method: 'DELETE' })
       if (res.ok) {
         setNotices((prev) => prev.filter((n) => n.id !== id))
+        showToast('Notice deleted successfully.', 'success')
       } else {
-        alert('Failed to delete notice.')
+        showToast('Failed to delete notice.', 'error')
       }
     } catch (err) {
       console.error(err)
-      alert('Error deleting notice.')
+      showToast('Error deleting notice.', 'error')
     }
   }
 
@@ -196,34 +216,40 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
 
   if (loading) {
     return (
-      <div className="bg-black flex items-center justify-center p-4 min-h-screen">
-        <div className="w-full max-w-md backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-          <div className="relative z-10 flex items-center justify-center gap-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-            <p className="text-gray-300">Loading notices...</p>
+      <>
+        <div className="bg-black flex items-center justify-center p-4 min-h-screen">
+          <div className="w-full max-w-md backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+            <div className="relative z-10 flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+              <p className="text-gray-300">Loading notices...</p>
+            </div>
           </div>
         </div>
-      </div>
+        {toastNode}
+      </>
     )
   }
 
   if (error) {
     return (
-      <div className="bg-black flex items-center justify-center p-4 min-h-screen">
-        <div className="w-full max-w-md backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-          <div className="relative z-10">
-            <p className="text-red-400 mb-3">Error: {error}</p>
-            <button
-              onClick={fetchNotices}
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm transition-colors"
-            >
-              Retry
-            </button>
+      <>
+        <div className="bg-black flex items-center justify-center p-4 min-h-screen">
+          <div className="w-full max-w-md backdrop-blur-xl bg-white/5 rounded-2xl border border-white/10 shadow-2xl p-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+            <div className="relative z-10">
+              <p className="text-red-400 mb-3">Error: {error}</p>
+              <button
+                onClick={fetchNotices}
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm transition-colors"
+              >
+                Retry
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+        {toastNode}
+      </>
     )
   }
 
@@ -409,6 +435,7 @@ const Notices: React.FC<NoticesProps> = ({ showAdminControls = true }) => {
           </div>
         </div>
       )}
+      {toastNode}
     </>
   )
 }

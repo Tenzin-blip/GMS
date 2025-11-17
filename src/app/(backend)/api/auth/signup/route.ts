@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 
-// Helper to generate HTML email template
 function getOTPEmailTemplate(name: string, otp: string): string {
   return `
     <!DOCTYPE html>
@@ -21,7 +20,7 @@ function getOTPEmailTemplate(name: string, otp: string): string {
               <tr>
                 <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
                   <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; letter-spacing: 1px;">
-                    🏋️ GYM SYSTEM
+                    LEVEL UP FITNESS
                   </h1>
                   <p style="margin: 10px 0 0 0; color: #f0f0f0; font-size: 14px;">
                     Your Fitness Journey Starts Here
@@ -33,7 +32,7 @@ function getOTPEmailTemplate(name: string, otp: string): string {
               <tr>
                 <td style="padding: 40px 30px;">
                   <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px;">
-                    Welcome, ${name}! 👋
+                    Welcome, ${name}! 
                   </h2>
                   
                   <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
@@ -95,7 +94,6 @@ function getOTPEmailTemplate(name: string, otp: string): string {
   `
 }
 
-// helper to send email
 async function sendEmail(to: string, subject: string, text: string, html?: string) {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -143,6 +141,10 @@ export async function POST(req: NextRequest) {
         plan: plan || 'monthly',
         OTP: otp,
         role: 'user',
+        email_verified: false,
+        password_set: false,
+        otpflag: false,
+        payment: false,
       }),
     })
 
@@ -163,14 +165,12 @@ export async function POST(req: NextRequest) {
 
     const newUser = await payloadRes.json()
     console.log('New user created:', newUser)
-
-    // Send email with fancy HTML template
     const htmlTemplate = getOTPEmailTemplate(name, otp)
     await sendEmail(
       email,
-      '🔐 Verify Your Gym System Account',
+      'Verify Your Gym System Account',
       `Hello ${name},\n\nYour verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.\n\nBest regards,\nGym System Team`,
-      htmlTemplate
+      htmlTemplate,
     )
 
     return NextResponse.json({

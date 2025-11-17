@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
             },
             body: JSON.stringify({
                 password: password,
+                password_set: true,
             }),
         })
 

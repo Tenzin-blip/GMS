@@ -1,8 +1,10 @@
 'use client'
-import React, { useState, KeyboardEvent, ChangeEvent } from 'react'
+import React, { useState, KeyboardEvent, ChangeEvent, useEffect } from 'react'
 import { Eye, EyeOff, Mail, Loader2 } from 'lucide-react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Toast from '@/components/website/toast'
+import { SectionFade } from '@/components/animations/SectionFade'
 
 interface FormData {
   email: string
@@ -18,6 +20,7 @@ interface FormErrors {
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login')
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -29,11 +32,52 @@ export default function LoginPage() {
     rememberMe: false,
   })
   const [errors, setErrors] = useState<FormErrors>({})
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+  const [blockedReason, setBlockedReason] = useState<'otp' | 'payment' | null>(null)
+  const [blockedEmail, setBlockedEmail] = useState<string>('')  
+  
+  // Forgot password state
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState<string>('')
+  const [forgotPasswordError, setForgotPasswordError] = useState<string>('')
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState<boolean>(false)
+  const [isSendingReset, setIsSendingReset] = useState<boolean>(false)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
+
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment')
+    if (paymentStatus === 'success') {
+      showToast('Payment completed. Please login.', 'success')
+    } else if (paymentStatus === 'failed') {
+      showToast('Payment could not be completed.', 'error')
+    } else if (paymentStatus === 'cancelled') {
+      showToast('Payment was cancelled.', 'info')
+    }
+  }, [searchParams])
+
+  const toastNode =
+    toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(null)}
+        duration={3000}
+      />
+    )
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData({ ...formData, [field]: value })
     if (errors[field as keyof FormErrors]) {
       setErrors({ ...errors, [field]: '' })
+    }
+    if (field === 'email' || field === 'password') {
+      setBlockedReason(null)
+      setBlockedEmail('')
     }
   }
 
@@ -52,12 +96,38 @@ export default function LoginPage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+  
+  const ensurePaymentStatus = async (user: any): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/payment/status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user?.id || user?._id,
+          email: user?.email,
+        }),
+      })
+
+      if (!res.ok) {
+        return false
+      }
+
+      const data = await res.json()
+      return Boolean(data.payment)
+    } catch (error) {
+      console.error('Payment status check failed:', error)
+      return false
+    }
+  }
 
   const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) return
 
     setIsLoading(true)
     setErrors({})
+    setBlockedReason(null)
 
     try {
       const response = await fetch('/api/users/login', {
@@ -74,149 +144,340 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (response.ok) {
-        console.log('Login successful:', data)
-        if (data.token) {
-          sessionStorage.setItem('token', data.token)
-        }
+        const user = data.user
+        const token = data.token
+        const emailVerified = Boolean(user?.otpflag ?? user?.email_verified ?? false)
+        const passwordReady = Boolean(user?.password_set ?? false)
+        let paymentDone = Boolean(user?.payment)
+        const userEmail = user?.email || formData.email
 
-        //CHECK USER ROLE
-        if (data.user.role === 'admin') {
-          window.location.href = 'admin-panel/admin-dash'
+        if (!emailVerified || !passwordReady) {
+          showToast('Email not verified.', 'error')
+          setBlockedReason('otp')
+          setBlockedEmail(userEmail)
           return
         }
 
-        // Check if user has fitness profile
+        if (!paymentDone) {
+          const verified = await ensurePaymentStatus(user)
+          if (verified) {
+            paymentDone = true
+          }
+        }
+
+        if (!paymentDone) {
+          showToast('Payment not completed.', 'info')
+          setBlockedReason('payment')
+          setBlockedEmail(userEmail)
+          return
+        }
+
+        if (token) {
+          sessionStorage.setItem('token', token)
+        }
+
+        if (user.role === 'admin') {
+          router.push('/admin-panel/admin-dash')
+          return
+        }
+
+        if (!token) {
+          showToast('Missing session token.', 'error')
+          return
+        }
+
         const profileCheck = await fetch('/api/user-fitness', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${data.token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
 
         const profileData = await profileCheck.json()
 
-        // Route based on profile existence
         if (profileData.exists) {
-          window.location.href = 'user/dashboard'
+          router.push('/user/dashboard')
         } else {
-          window.location.href = 'user/setup'
+          router.push('/user/setup')
         }
       } else {
-        setErrors({
-          general: data.message || 'Invalid email or password. Please try again.',
-        })
+        showToast(data.message || 'Invalid email or password.', 'error')
       }
     } catch (error) {
       console.error('Login error:', error)
-      setErrors({
-        general: 'An error occurred. Please try again later.',
-      })
+      showToast('Could not sign in. Please try again.', 'error')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter' && !isLoading) {
-      handleSubmit()
+  const handleBlockedAction = async (): Promise<void> => {
+    if (!blockedReason || !blockedEmail) return
+
+    if (blockedReason === 'otp') {
+      try {
+        const response = await fetch('/api/auth/resend-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: blockedEmail }),
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          showToast('OTP sent again.', 'success')
+          router.push(`/signup?step=3&email=${encodeURIComponent(blockedEmail)}`)
+        } else {
+          showToast(data.message || 'Could not resend OTP.', 'error')
+        }
+      } catch (error) {
+        console.error('Resend OTP error:', error)
+        showToast('Could not resend OTP.', 'error')
+      }
+    } else if (blockedReason === 'payment') {
+      showToast('Finish your payment to continue.', 'info')
+      router.push(`/signup?step=4&email=${encodeURIComponent(blockedEmail)}`)
     }
   }
 
+  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter' && !isLoading) {
+      if (blockedReason) {
+        handleBlockedAction()
+      } else {
+        handleSubmit()
+      }
+    }
+  }
+
+  const validateForgotPasswordEmail = (): boolean => {
+    if (!forgotPasswordEmail.trim()) {
+      setForgotPasswordError('Email is required')
+      return false
+    }
+    if (!/\S+@\S+\.\S+/.test(forgotPasswordEmail)) {
+      setForgotPasswordError('Invalid email address')
+      return false
+    }
+    return true
+  }
+
+  const handleForgotPasswordSubmit = async (): Promise<void> => {
+    if (!validateForgotPasswordEmail()) return
+
+    setIsSendingReset(true)
+    setForgotPasswordError('')
+
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: forgotPasswordEmail,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok || response.status === 200) {
+        setForgotPasswordSuccess(true)
+      } else {
+        setForgotPasswordError(data.message || 'An error occurred. Please try again.')
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error)
+      setForgotPasswordError('Network error. Please try again later.')
+    } finally {
+      setIsSendingReset(false)
+    }
+  }
+
+  const handleForgotPasswordKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter' && !isSendingReset) {
+      handleForgotPasswordSubmit()
+    }
+  }
+
+  const resetForgotPasswordState = () => {
+    setShowForgotPassword(false)
+    setForgotPasswordEmail('')
+    setForgotPasswordError('')
+    setForgotPasswordSuccess(false)
+  }
+
   if (showForgotPassword) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <button
-            onClick={() => setShowForgotPassword(false)}
-            className="mb-6 text-white/80 hover:text-orange-500 flex items-center gap-2 text-sm backdrop-blur-xl bg-white/5 px-4 py-2 rounded-lg border border-white/10 transition-colors"
-          >
-            ← Back to Login
-          </button>
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8">
-            <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>
-            <p className="text-white/60 text-sm mb-6">
-              Enter your email address and we will send you instructions to reset your password.
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
-                  <input
-                    type="email"
-                    className="w-full pl-10 pr-4 py-3 backdrop-blur-xl bg-white/5 border border-white/10 text-white placeholder-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-              </div>
-
-              <button className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg">
-                Send Reset Link
+    if (forgotPasswordSuccess) {
+      return (
+        <>
+          <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+            <div className="w-full max-w-md">
+              <button
+                onClick={resetForgotPasswordState}
+                className="mb-6 text-white/80 hover:text-orange-500 flex items-center gap-2 text-sm backdrop-blur-xl bg-white/5 px-4 py-2 rounded-lg border border-white/10 transition-colors"
+              >
+                ← Back to Login
               </button>
+              <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 text-center">
+                <div className="w-20 h-20 mx-auto mb-6 backdrop-blur-xl bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center">
+                  <span className="text-4xl">✉️</span>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-3">Check Your Email</h2>
+                <p className="text-white/60 text-sm mb-6">
+                  We've sent password reset instructions to
+                  <br />
+                  <span className="font-semibold text-white">{forgotPasswordEmail}</span>
+                </p>
+                <p className="text-sm text-white/60 mb-6">
+                  The link will expire in 1 hour. If you don't see the email, check your spam folder.
+                </p>
+                <button
+                  onClick={resetForgotPasswordState}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg"
+                >
+                  Back to Login
+                </button>
+              </div>
+            </div>
+          </SectionFade>
+          {toastNode}
+        </>
+      )
+    }
+
+    return (
+      <>
+        <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+          <div className="w-full max-w-md">
+            <button
+              onClick={resetForgotPasswordState}
+              className="mb-6 text-white/80 hover:text-orange-500 flex items-center gap-2 text-sm backdrop-blur-xl bg-white/5 px-4 py-2 rounded-lg border border-white/10 transition-colors"
+            >
+              ← Back to Login
+            </button>
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8">
+              <div className="w-20 h-20 mx-auto mb-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center">
+                <span className="text-4xl">🔑</span>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>
+              <p className="text-white/60 text-sm mb-6">
+                Enter your email address and we'll send you instructions to reset your password.
+              </p>
+
+              {forgotPasswordError && (
+                <div className="mb-4 p-4 backdrop-blur-xl bg-red-500/10 border border-red-500/30 rounded-xl">
+                  <p className="text-red-400 text-sm text-center">{forgotPasswordError}</p>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-white mb-2">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/40" />
+                    <input
+                      type="email"
+                      value={forgotPasswordEmail}
+                      onChange={(e) => {
+                        setForgotPasswordEmail(e.target.value)
+                        setForgotPasswordError('')
+                      }}
+                      onKeyPress={handleForgotPasswordKeyPress}
+                      disabled={isSendingReset}
+                      className={`w-full pl-10 pr-4 py-3 backdrop-blur-xl bg-white/5 border rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all ${
+                        forgotPasswordError ? 'border-red-500/50' : 'border-white/10'
+                      } ${isSendingReset ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleForgotPasswordSubmit}
+                  disabled={isSendingReset}
+                  className="w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSendingReset ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Reset Link'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </SectionFade>
+        {toastNode}
+      </>
     )
   }
 
   if (showTerms) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center px-4">
-        <div className="w-full max-w-2xl">
-          <button
-            onClick={() => setShowTerms(false)}
-            className="mb-6 text-white/80 hover:text-orange-500 flex items-center gap-2 text-sm backdrop-blur-xl bg-white/5 px-4 py-2 rounded-lg border border-white/10 transition-colors"
-          >
-            ← Back
-          </button>
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Terms of Service & Privacy Policy
-            </h2>
-
-            <h3 className="text-lg font-semibold text-white mt-6 mb-2">Terms of Service</h3>
-            <p className="text-white/60 text-sm mb-4">
-              By using this fitness platform, you agree to comply with all applicable laws and
-              regulations. You are responsible for maintaining the confidentiality of your account
-              credentials and for all activities under your account. We reserve the right to suspend
-              or terminate access for violations of these terms.
-            </p>
-
-            <h3 className="text-lg font-semibold text-white mt-6 mb-2">Privacy Policy</h3>
-            <p className="text-white/60 text-sm mb-4">
-              We collect personal information to provide and improve our services. Your data is
-              protected with industry-standard security measures. We do not share your personal
-              information with third parties without your consent, except as required by law. You
-              have the right to access, modify, or delete your personal data at any time.
-            </p>
-
-            <h3 className="text-lg font-semibold text-white mt-6 mb-2">Data Protection</h3>
-            <p className="text-white/60 text-sm mb-4">
-              Your fitness data, including workout history and personal metrics, is stored securely
-              and encrypted. We use cookies and similar technologies to enhance your experience. You
-              can manage your preferences in your account settings.
-            </p>
-
+      <>
+        <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+          <div className="w-full max-w-2xl">
             <button
               onClick={() => setShowTerms(false)}
-              className="mt-6 w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg"
+              className="mb-6 text-white/80 hover:text-orange-500 flex items-center gap-2 text-sm backdrop-blur-xl bg-white/5 px-4 py-2 rounded-lg border border-white/10 transition-colors"
             >
-              I Agree & Accept
+              ← Back
             </button>
+            <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-2xl p-8 max-h-[80vh] overflow-y-auto">
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Terms of Service & Privacy Policy
+              </h2>
+
+              <h3 className="text-lg font-semibold text-white mt-6 mb-2">Terms of Service</h3>
+              <p className="text-white/60 text-sm mb-4">
+                By using this fitness platform, you agree to comply with all applicable laws and
+                regulations. You are responsible for maintaining the confidentiality of your account
+                credentials and for all activities under your account. We reserve the right to suspend
+                or terminate access for violations of these terms.
+              </p>
+
+              <h3 className="text-lg font-semibold text-white mt-6 mb-2">Privacy Policy</h3>
+              <p className="text-white/60 text-sm mb-4">
+                We collect personal information to provide and improve our services. Your data is
+                protected with industry-standard security measures. We do not share your personal
+                information with third parties without your consent, except as required by law. You
+                have the right to access, modify, or delete your personal data at any time.
+              </p>
+
+              <h3 className="text-lg font-semibold text-white mt-6 mb-2">Data Protection</h3>
+              <p className="text-white/60 text-sm mb-4">
+                Your fitness data, including workout history and personal metrics, is stored securely
+                and encrypted. We use cookies and similar technologies to enhance your experience. You
+                can manage your preferences in your account settings.
+              </p>
+
+              <button
+                onClick={() => setShowTerms(false)}
+                className="mt-6 w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg"
+              >
+                I Agree & Accept
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </SectionFade>
+        {toastNode}
+      </>
     )
   }
 
   return (
-    <div className="h-[100vh] md:min-h-screen bg-black flex w-screen p-1 items-center justify-center">
-      <div className="h-full md:w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl">
+    <>
+    <SectionFade className="h-[100vh] md:min-h-screen bg-black flex w-screen p-1 items-center justify-center">
+      <div className=" h-full md:w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl">
         {/* Left Side - Login Form */}
         <div className="backdrop-blur-xl bg-white/5 py-10 p-8 md:p-10 flex flex-col justify-center text-white border-r border-white/10">
           <div className="mb-8">
@@ -226,12 +487,6 @@ export default function LoginPage() {
             <h1 className="text-3xl bebas mb-2">Welcome Back</h1>
             <p className="font-regular text-white/60">Please enter your Login information.</p>
           </div>
-
-          {errors.general && (
-            <div className="mb-5 p-4 backdrop-blur-xl bg-red-500/10 border border-red-500/30 rounded-xl">
-              <p className="text-red-400 text-sm text-center">{errors.general}</p>
-            </div>
-          )}
 
           <div className="space-y-5">
             <div className="flex gap-3 mb-6">
@@ -305,7 +560,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={blockedReason ? handleBlockedAction : handleSubmit}
               disabled={isLoading}
               className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
             >
@@ -314,6 +569,10 @@ export default function LoginPage() {
                   <Loader2 className="w-5 h-5 animate-spin" />
                   Signing in...
                 </>
+              ) : blockedReason === 'otp' ? (
+                'Verify email'
+              ) : blockedReason === 'payment' ? (
+                'Complete payment'
               ) : (
                 'Login'
               )}
@@ -348,7 +607,7 @@ export default function LoginPage() {
             backgroundImage: 'url(/api/media/file/individual-doing-sport-healthy-lifestyle.jpg)',
           }}
         >
-          <div className="absolute inset-0 backdrop-blur-[2px] bg-black/40"></div>
+          
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
               <p className="text-white text-4xl font-semibold bebas">Build Your Strength</p>
@@ -357,6 +616,8 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </SectionFade>
+    {toastNode}
+    </>
   )
 }

@@ -9,6 +9,7 @@ import Plans from '@/components/website/Plans'
 import MasonryGrid from '@/components/website/Masonry-Grid'
 import Reviews from '@/components/website/Reviews'
 import Footer from '@/components/website/Footer'
+import { SectionFade } from '@/components/animations/SectionFade'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -17,17 +18,21 @@ export default async function HomePage() {
   const { user } = await payload.auth({ headers })
   const homeData = await payload.findGlobal({ slug: 'home' })
   const heroSection = homeData?.heroSection
+  const heroImage = heroSection?.backgroundImage
+  const heroImageUrl = typeof heroImage === 'string' ? heroImage : heroImage?.url
+  const heroImageAlt =
+    typeof heroImage === 'string' ? 'Hero image' : heroImage?.alt || 'Hero image'
   console.log({ user, homeData })
 
   return (
     <main className=" scroll-behavior-smooth flex flex-col gap-[10px] w-full">
       {/* HERO SECTION */}
-      {heroSection && (
-        <section className="relative w-full h-[88vh] ">
+      {heroSection && heroImageUrl && (
+        <SectionFade className="relative w-full h-[88vh] ">
           {/* Background Image */}
           <Image
-            src={heroSection.backgroundImage?.url}
-            alt={heroSection.backgroundImage?.alt || 'Hero image'}
+            src={heroImageUrl}
+            alt={heroImageAlt}
             fill
             priority
             className="object-cover rounded-2xl"
@@ -59,11 +64,11 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-        </section>
+        </SectionFade>
       )}
 
       {/* ABOUT SECTION */}
-      <section className="text-white w-full flex flex-col gap-[10px]">
+      <SectionFade className="text-white w-full flex flex-col gap-[10px]">
         {/* Heading */}
         <div className="py-[8~12] px-4 sm:px-6 md:px-6 flex flex-col gap-[10px] min-h-[20vh~50vh] bg-neutral-800 rounded-2xl w-full text-center justify-center items-center">
           <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold Sansation-bold mb-3 uppercase">
@@ -135,10 +140,10 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </SectionFade>
 
       {/* TRAINERS SECTION */}
-      <section className="text-black w-full">
+      <SectionFade className="text-black w-full">
         <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
 
@@ -187,9 +192,9 @@ export default async function HomePage() {
             />
           </div>
         </div>
-      </section>
+      </SectionFade>
       {/* PLAN SECTION */}
-      <section className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
+      <SectionFade className="pt-15 bg-neutral-800 rounded-t-2xl text-black w-full ">
         <div className=" px-2 md:px-24 flex flex-col justify-between items-center">
           {/* Heading */}
           <div>
@@ -223,10 +228,10 @@ export default async function HomePage() {
             ></path>
           </svg>
         </div>
-      </section>
+      </SectionFade>
 
       {/* SERVICES SECTION */}
-      <section className="text-black w-full">
+      <SectionFade className="text-black w-full">
         <div className=" px-[1~24] flex flex-col">
           {/* Heading */}
           <div>
@@ -249,10 +254,12 @@ export default async function HomePage() {
 
         {/*Services grid*/}
         <MasonryGrid />
-      </section>
+      </SectionFade>
 
       {/*Review Section*/}
-      <Reviews />
+      <SectionFade>
+        <Reviews />
+      </SectionFade>
 
       {/* Footer Section */}
       <Footer />

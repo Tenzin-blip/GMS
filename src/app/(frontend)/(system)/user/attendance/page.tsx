@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Sparkles,
 } from 'lucide-react'
+import Toast from '@/components/website/toast'
+import { SectionFade } from '@/components/animations/SectionFade'
 
 export default function AttendancePage() {
   type AttendanceRecord = {
@@ -46,6 +48,14 @@ export default function AttendancePage() {
   const [motivationalMessage, setMotivationalMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [hasData, setHasData] = useState(false)
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
 
   useEffect(() => {
     fetchAttendanceData()
@@ -168,7 +178,7 @@ export default function AttendancePage() {
 
   const handleManualCheckIn = async () => {
     if (!reason.trim()) {
-      alert('Please provide a reason for manual check-in')
+      showToast('Please provide a reason for manual check-in.', 'error')
       return
     }
 
@@ -186,15 +196,15 @@ export default function AttendancePage() {
       const result = await response.json()
 
       if (result.success) {
-        alert('Manual check-in request submitted! Waiting for admin approval.')
+        showToast('Manual check-in request submitted. Waiting for approval.', 'success')
         setShowManualModal(false)
         setReason('')
       } else {
-        alert(result.message || 'Failed to submit request')
+        showToast(result.message || 'Failed to submit request.', 'error')
       }
     } catch (error) {
       console.error('Manual check-in error:', error)
-      alert('Failed to submit request')
+      showToast('Failed to submit request.', 'error')
     }
   }
 
@@ -202,46 +212,60 @@ export default function AttendancePage() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
   }
 
+  const toastNode =
+    toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(null)}
+        duration={3000}
+      />
+    )
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your attendance data...</p>
+      <>
+        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading your attendance data...</p>
+          </div>
         </div>
-      </div>
+        {toastNode}
+      </>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-orange-500">Attendance</h1>
-            <p className="text-gray-400 mt-1">Track your gym visits and maintain your streak</p>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white p-6">
+        <SectionFade className="max-w-7xl mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-orange-500">Attendance</h1>
+              <p className="text-gray-400 mt-1">Track your gym visits and maintain your streak</p>
+            </div>
+            <button
+              onClick={() => setShowManualModal(true)}
+              className="px-6 py-3 bg-orange-600/20 hover:bg-orange-600/30 backdrop-blur-xl border border-orange-500/30 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-orange-500/10"
+            >
+              <AlertCircle className="w-5 h-5" />
+              Manual Check-in
+            </button>
           </div>
-          <button
-            onClick={() => setShowManualModal(true)}
-            className="px-6 py-3 bg-orange-600/20 hover:bg-orange-600/30 backdrop-blur-xl border border-orange-500/30 rounded-xl font-medium transition-all flex items-center gap-2 shadow-lg shadow-orange-500/10"
-          >
-            <AlertCircle className="w-5 h-5" />
-            Manual Check-in
-          </button>
-        </div>
 
-        {!hasData && motivationalMessage && (
-          <div className="bg-orange-900/10 backdrop-blur-xl border border-orange-700/30 rounded-2xl p-8 text-center shadow-2xl shadow-orange-500/5">
-            <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-orange-400 mb-2">Ready to Begin?</h2>
-            <p className="text-gray-300 text-lg mb-4">{motivationalMessage}</p>
-            <p className="text-gray-400 text-sm">
-              Check in at the gym to start tracking your progress!
-            </p>
-          </div>
-        )}
+          {!hasData && motivationalMessage && (
+            <div className="bg-orange-900/10 backdrop-blur-xl border border-orange-700/30 rounded-2xl p-8 text-center shadow-2xl shadow-orange-500/5">
+              <Sparkles className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-orange-400 mb-2">Ready to Begin?</h2>
+              <p className="text-gray-300 text-lg mb-4">{motivationalMessage}</p>
+              <p className="text-gray-400 text-sm">
+                Check in at the gym to start tracking your progress!
+              </p>
+            </div>
+          )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-gray-400 text-sm">Attendance</h3>
@@ -281,9 +305,9 @@ export default function AttendancePage() {
             <p className="text-4xl font-bold">{stats.totalHours}h</p>
             <p className="text-gray-400 text-sm mt-1">This month</p>
           </div>
-        </div>
+        </SectionFade>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <SectionFade delay={0.1} className="grid lg:grid-cols-2 gap-6">
           <div className="bg-gray-900/40 backdrop-blur-xl rounded-xl p-6 border border-gray-700/50 shadow-xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">
@@ -386,7 +410,8 @@ export default function AttendancePage() {
               )}
             </div>
           </div>
-        </div>
+        </SectionFade>
+        </SectionFade>
       </div>
 
       {showManualModal && (
@@ -451,6 +476,7 @@ export default function AttendancePage() {
           </div>
         </div>
       )}
-    </div>
+      {toastNode}
+    </>
   )
 }

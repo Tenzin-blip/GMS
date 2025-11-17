@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import Notices from '@/components/system/dashboard/Notices'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
+import AttendanceStatCard from '@/components/system/attendance/AttendanceStatCard'
+import { SectionFade } from '@/components/animations/SectionFade'
 import {
   Calendar,
   Flame,
@@ -107,12 +109,6 @@ export default function Dashboard() {
     },
   ]
 
-  const notices = [
-    { title: 'Gym Closed - Public Holiday', date: 'Oct 10, 2025', type: 'important' },
-    { title: 'Equipment Maintenance', date: 'Oct 13, 2025', type: 'warning' },
-    { title: 'Shivapuri Hiking', date: 'Oct 25, 2025', type: 'reminder' },
-  ]
-
   const mealPlan = [
     {
       name: 'Power Protein',
@@ -182,10 +178,12 @@ export default function Dashboard() {
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         {/* Header */}
-        <DashboardHeader />
+        <SectionFade>
+          <DashboardHeader />
+        </SectionFade>
 
         {/* Top Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Attendance Card */}
           <div className="backdrop-blur-xl bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
@@ -270,10 +268,10 @@ export default function Dashboard() {
               </p>
             </div>
           </div>
-        </div>
+        </SectionFade>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <SectionFade delay={0.1} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Notice Board + Calendar */}
           <div className="space-y-6">
             {/* Notice Board */}
@@ -488,7 +486,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </SectionFade>
       </div>
     </div>
   )

@@ -91,12 +91,12 @@ export default function OnboardingForm() {
     const file = e.target.files?.[0]
     if (file) {
       if (!file.type.startsWith('image/')) {
-        alert('Please upload an image file')
+        showToast('Please upload an image file.', 'error')
         return
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB')
+        showToast('Image size should be less than 5MB.', 'error')
         return
       }
 

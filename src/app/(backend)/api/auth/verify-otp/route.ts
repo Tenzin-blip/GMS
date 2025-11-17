@@ -34,10 +34,20 @@ export async function POST(req: NextRequest) {
 
     // Check OTP
     if (user.OTP !== otp) {
+      await fetch(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          otpflag: false,
+          payment: false,
+        }),
+      })
       return NextResponse.json({ message: 'Invalid OTP' }, { status: 400 })
     }
 
-    // Clear OTP after verification
+    // Clear OTP after verification & mark flags
     const updateRes = await fetch(`${process.env.PAYLOAD_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
       method: 'PATCH',
       headers: {
@@ -45,6 +55,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         OTP: null,
+        email_verified: true,
+        otpflag: true,
       }),
     })
 

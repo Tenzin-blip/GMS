@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { Camera, Edit2, Save, X, Mail, Phone, Calendar, User, Scale, Ruler, Target, Utensils, Dumbbell, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
+import Toast from '@/components/website/toast'
 
 interface UserProfile {
   // Basic Info
@@ -39,6 +40,14 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
 
   useEffect(() => {
     fetchProfile()
@@ -183,13 +192,13 @@ export default function ProfilePage() {
       setProfile({ ...editData })
       setIsEditing(false)
       setActiveSection(null)
-      alert('Profile updated successfully!')
+      showToast('Profile updated successfully!', 'success')
       
       // Refresh the data from server
       fetchProfile()
     } catch (error) {
       console.error('Error saving profile:', error)
-      alert('Failed to update profile. Please try again.')
+      showToast('Failed to update profile. Please try again.', 'error')
     } finally {
       setSaving(false)
     }
@@ -199,14 +208,27 @@ export default function ProfilePage() {
     setEditData(prev => prev ? { ...prev, [field]: value } : null)
   }
 
+  const toastNode =
+    toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(null)}
+        duration={3000}
+      />
+    )
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0f1e] text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading profile...</p>
+      <>
+        <div className="min-h-screen bg-[#0a0f1e] text-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading profile...</p>
+          </div>
         </div>
-      </div>
+        {toastNode}
+      </>
     )
   }
 
@@ -226,6 +248,7 @@ export default function ProfilePage() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-[#0a0f1e] text-white p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
@@ -655,5 +678,7 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    {toastNode}
+    </>
   )
 }

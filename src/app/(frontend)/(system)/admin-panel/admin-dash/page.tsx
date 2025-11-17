@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
+import Toast from '@/components/website/toast'
+import { SectionFade } from '@/components/animations/SectionFade'
 
 interface User {
   id: string
@@ -49,6 +51,14 @@ export default function Admin_dash() {
     dob: '',
     gender: 'other',
   })
+  const [toast, setToast] = useState<{
+    message: string
+    type: 'success' | 'error' | 'info'
+  } | null>(null)
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setToast({ message, type })
+  }
 
   useEffect(() => {
     fetchGymData()
@@ -141,14 +151,14 @@ export default function Admin_dash() {
       })
 
       if (response.ok) {
-        alert('User deleted successfully')
+        showToast('User deleted successfully.', 'success')
         fetchGymData()
       } else {
-        alert('Failed to delete user')
+        showToast('Failed to delete user.', 'error')
       }
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert('Error deleting user')
+      showToast('Error deleting user.', 'error')
     }
   }
 
@@ -171,16 +181,16 @@ export default function Admin_dash() {
       })
 
       if (response.ok) {
-        alert(`User ${modalMode === 'create' ? 'created' : 'updated'} successfully`)
+        showToast(`User ${modalMode === 'create' ? 'created' : 'updated'} successfully.`, 'success')
         setShowModal(false)
         fetchGymData()
       } else {
         const errorData = await response.json()
-        alert(`Failed to ${modalMode} user: ${errorData.message || 'Unknown error'}`)
+        showToast(`Failed to ${modalMode} user: ${errorData.message || 'Unknown error'}`, 'error')
       }
     } catch (error) {
       console.error(`Error ${modalMode}ing user:`, error)
-      alert(`Error ${modalMode}ing user`)
+      showToast(`Error ${modalMode}ing user.`, 'error')
     }
   }
 
@@ -191,25 +201,44 @@ export default function Admin_dash() {
     })
   }
 
+  const toastNode =
+    toast && (
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast(null)}
+        duration={3000}
+      />
+    )
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-        <p>Loading...</p>
-      </div>
+      <>
+        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+          <p>Loading...</p>
+        </div>
+        {toastNode}
+      </>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-        <p className="text-red-500">{error}</p>
-      </div>
+      <>
+        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+          <p className="text-red-500">{error}</p>
+        </div>
+        {toastNode}
+      </>
     )
   }
 
   return (
-    <div className="min-h-screen text-white p-4 md:p-6 pt-20 md:pt-6">
-      <DashboardHeader />
-    </div>
+    <>
+      <SectionFade className="min-h-screen text-white p-4 md:p-6 pt-20 md:pt-6">
+        <DashboardHeader />
+      </SectionFade>
+      {toastNode}
+    </>
   )
 }
