@@ -3,7 +3,7 @@ import '../../css/styles.css'
 import { Suspense } from 'react'
 import MotionProvider from '@/components/animations/MotionProvider'
 
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
+export default function ResetPasswordLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-gray-100 ">

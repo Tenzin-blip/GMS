@@ -240,7 +240,7 @@ export const Users: CollectionConfig = {
       },
       required: false,
       access: {
-        read: () => false,
+        read: () => true,
         update: () => true,
       },
     },
