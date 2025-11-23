@@ -481,7 +481,7 @@ export default function LoginPage() {
         {/* Left Side - Login Form */}
         <div className="backdrop-blur-xl bg-white/5 py-10 p-8 md:p-10 flex flex-col justify-center text-white border-r border-white/10">
           <div className="mb-8">
-            <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex items-center justify-center gap-2 mb-16">
               <Image src={'/api/media/file/Logo-2.png'} alt={'Logo'} width={142} height={27} />
             </div>
             <h1 className="text-3xl bebas mb-2">Welcome Back</h1>
