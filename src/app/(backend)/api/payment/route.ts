@@ -6,11 +6,15 @@ const PLAN_FEES_NRP: Record<string, number> = {
   elite: 6500,
 }
 
-const getBaseUrl = () =>
-  process.env.NEXT_PUBLIC_APP_URL ||
-  process.env.APP_URL ||
-  process.env.PAYLOAD_PUBLIC_FRONTEND_URL ||
-  'http://localhost:3000'
+const getBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    process.env.PAYLOAD_PUBLIC_FRONTEND_URL ||
+    'http://localhost:3000'
+  
+  console.log('Base URL being used:', url)
+  return url
+}
 
 const getPayloadServer = () => process.env.PAYLOAD_PUBLIC_SERVER_URL
 
@@ -26,22 +30,19 @@ export async function POST(req: NextRequest) {
     }
 
     const payloadServer = getPayloadServer()
-
     if (!payloadServer) {
       return NextResponse.json({ message: 'Payload server URL not configured' }, { status: 500 })
     }
 
     const khaltiSecret = process.env.KHALTI_SECRET_KEY
-
     if (!khaltiSecret) {
       return NextResponse.json({ message: 'Khalti secret key missing' }, { status: 500 })
     }
 
+    // Fetch user
     const userRes = await fetch(`${payloadServer}/api/users/${userId}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     })
 
     if (!userRes.ok) {
@@ -64,13 +65,33 @@ export async function POST(req: NextRequest) {
     const amountPaisa = amountNpr * 100
     const purchaseOrderId = `ORDER-${userId}-${Date.now()}`
 
+    // Check if this is a signup payment or renewal
+    const isSignup = !user.payment
+    const paymentType = isSignup ? 'signup' : 'renewal'
+
+    console.log(`\n=== PAYMENT INITIATION ===`)
+    console.log(`Payment Type: ${paymentType}`)
+    console.log(`User ID: ${userId}`)
+    console.log(`User Email: ${user.email}`)
+    console.log(`Plan: ${planKey}`)
+    console.log(`Amount: NPR ${amountNpr} (${amountPaisa} paisa)`)
+    console.log(`Order ID: ${purchaseOrderId}`)
+
     const baseUrl = getBaseUrl()
+    
+    // CRITICAL: Make sure these URLs are ABSOLUTE and PUBLICLY ACCESSIBLE
+    const returnUrl = `${baseUrl}/api/payment/callback`
+    const websiteUrl = baseUrl
+
+    console.log(`Return URL: ${returnUrl}`)
+    console.log(`Website URL: ${websiteUrl}`)
+
     const khaltiInitPayload = {
-      return_url: `${baseUrl}/api/payment/callback`,
-      website_url: baseUrl,
+      return_url: returnUrl,
+      website_url: websiteUrl,
       amount: amountPaisa,
       purchase_order_id: purchaseOrderId,
-      purchase_order_name: `${planKey}-plan`,
+      purchase_order_name: `${planKey}-plan-${paymentType}`,
       customer_info: {
         name: user.name || 'Gym Member',
         email: user.email,
@@ -78,6 +99,10 @@ export async function POST(req: NextRequest) {
       },
     }
 
+    console.log('Khalti payload:', JSON.stringify(khaltiInitPayload, null, 2))
+
+    // Initiate Khalti payment
+    console.log('Calling Khalti API...')
     const khaltiRes = await fetch(getKhaltiUrl('/epayment/initiate/'), {
       method: 'POST',
       headers: {
@@ -89,30 +114,65 @@ export async function POST(req: NextRequest) {
 
     const khaltiData = await khaltiRes.json()
 
+    console.log('Khalti response status:', khaltiRes.status)
+    console.log('Khalti response:', JSON.stringify(khaltiData, null, 2))
+
     if (!khaltiRes.ok || !khaltiData.payment_url) {
       const errorMessage = khaltiData.detail || 'Unable to start Khalti payment.'
+      console.error('Khalti initiation failed:', errorMessage, khaltiData)
       return NextResponse.json({ message: errorMessage }, { status: khaltiRes.status || 500 })
     }
 
-    const resetRes = await fetch(`${payloadServer}/api/users/${userId}`, {
+    console.log(`Khalti payment initiated - PIDX: ${khaltiData.pidx}`)
+
+    // Create payment record in Payments collection
+    const paymentRecord = {
+      user: userId,
+      orderId: purchaseOrderId,
+      khaltiPidx: khaltiData.pidx,
+      plan: planKey,
+      amount: amountNpr,
+      status: 'initiated',
+      paymentMethod: 'khalti',
+      paymentType: paymentType,
+    }
+
+    console.log('Creating payment record:', JSON.stringify(paymentRecord, null, 2))
+
+    const createPaymentRes = await fetch(`${payloadServer}/api/payments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(paymentRecord),
+    })
+
+    if (!createPaymentRes.ok) {
+      const errorText = await createPaymentRes.text()
+      console.error('Failed to create payment record:', errorText)
+    } else {
+      const createdPayment = await createPaymentRes.json()
+      console.log(`Payment record created - ID: ${createdPayment.doc?.id || createdPayment.id}`)
+    }
+
+    // Update user with khaltiPidx
+    console.log('Updating user with PIDX...')
+    const updateUserRes = await fetch(`${payloadServer}/api/users/${userId}`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         payment: false,
         khaltiPidx: khaltiData.pidx,
+        paymentOrderId: purchaseOrderId,
       }),
     })
 
-    if (!resetRes.ok) {
-      const errBody = await resetRes.json().catch(() => ({}))
-      console.error('Failed to persist payment intent', errBody)
-      return NextResponse.json(
-        { message: 'Unable to persist payment intent. Please try again.' },
-        { status: 500 },
-      )
+    if (!updateUserRes.ok) {
+      const errorText = await updateUserRes.text()
+      console.error('Failed to update user with pidx:', errorText)
+    } else {
+      console.log('User updated with PIDX successfully')
     }
+
+    console.log('=== PAYMENT INITIATION COMPLETE ===\n')
 
     return NextResponse.json({
       message: 'Payment initiated',
@@ -120,7 +180,8 @@ export async function POST(req: NextRequest) {
       pidx: khaltiData.pidx,
     })
   } catch (err: any) {
-    console.error(err)
+    console.error('Payment initiation error:', err)
+    console.error('Error stack:', err.stack)
     return NextResponse.json(
       { message: 'Unable to initiate payment', error: err.message },
       { status: 500 },

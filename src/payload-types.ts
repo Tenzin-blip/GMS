@@ -75,6 +75,7 @@ export interface Config {
     notices: Notice;
     subscription: Subscription;
     transaction: Transaction;
+    payments: Payment;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     notices: NoticesSelect<false> | NoticesSelect<true>;
     subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
     transaction: TransactionSelect<false> | TransactionSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -146,6 +148,7 @@ export interface User {
   gender?: ('male' | 'female' | 'other') | null;
   role: 'admin' | 'trainer' | 'user';
   plan?: ('essential' | 'premium' | 'elite') | null;
+  nextPaymentDate?: string | null;
   OTP?: string | null;
   email_verified?: boolean | null;
   password_set?: boolean | null;
@@ -331,6 +334,27 @@ export interface Transaction {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: string;
+  user: string | User;
+  orderId: string;
+  khaltiPidx?: string | null;
+  plan: 'essential' | 'premium' | 'elite';
+  amount: number;
+  status: 'pending' | 'initiated' | 'completed' | 'failed' | 'refunded';
+  paymentMethod?: ('khalti' | 'cash' | 'bank_transfer') | null;
+  paymentType: 'signup' | 'renewal';
+  paidAt?: string | null;
+  validUntil?: string | null;
+  khaltiTransactionId?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -367,6 +391,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'transaction';
         value: string | Transaction;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: string | Payment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -422,6 +450,7 @@ export interface UsersSelect<T extends boolean = true> {
   gender?: T;
   role?: T;
   plan?: T;
+  nextPaymentDate?: T;
   OTP?: T;
   email_verified?: T;
   password_set?: T;
@@ -577,6 +606,26 @@ export interface TransactionSelect<T extends boolean = true> {
   notes?: T;
   createdAt?: T;
   updatedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  user?: T;
+  orderId?: T;
+  khaltiPidx?: T;
+  plan?: T;
+  amount?: T;
+  status?: T;
+  paymentMethod?: T;
+  paymentType?: T;
+  paidAt?: T;
+  validUntil?: T;
+  khaltiTransactionId?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

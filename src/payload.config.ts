@@ -18,6 +18,7 @@ import { GymCounts } from './collections/GymCount'
 import { Notices } from './collections/Notices'
 import { Subscription } from './collections/Subscription'
 import { Transaction } from './collections/Transaction'
+import { Payments } from './collections/Payments'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -38,6 +39,7 @@ export default buildConfig({
     Notices,
     Subscription,
     Transaction,
+    Payments,
   ],
   globals: [Home, Navbar, Reviews],
   editor: lexicalEditor(),

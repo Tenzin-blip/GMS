@@ -6,18 +6,16 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
   },
   auth: {
-    tokenExpiration: 7200, // 2 hours
+    tokenExpiration: 7200,
     verify: false,
     maxLoginAttempts: 5,
-    lockTime: 600000, // 10 minutes
+    lockTime: 600000,
   },
 
   access: {
-    create: () => true, // Anyone can create a user (signup)
+    create: () => true,
     read: ({ req: { user } }) => {
-      // Admins can read all users
       if (user?.role === 'admin') return true
-
       if (!user) return true
       if (user) {
         return {
@@ -28,7 +26,7 @@ export const Users: CollectionConfig = {
       }
       return false
     },
-    update: () => true, // Allow all updates, but restrict via field-level access
+    update: () => true,
     delete: ({ req: { user } }) => {
       return user?.role === 'admin'
     },
@@ -37,11 +35,9 @@ export const Users: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
-        // Force admin@gms.com to have role 'admin'
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
         }
-
         return data
       },
     ],
@@ -139,6 +135,22 @@ export const Users: CollectionConfig = {
           if (user?.role === 'admin') return true
           return user?.id === id
         },
+      },
+    },
+    {
+      name: 'nextPaymentDate',
+      type: 'date',
+      label: 'Next Payment Due Date',
+      required: false,
+      admin: {
+        readOnly: true,
+        date: {
+          displayFormat: 'MMM d, yyyy',
+        },
+      },
+      access: {
+        read: () => true,
+        update: () => true,
       },
     },
     {
@@ -257,6 +269,5 @@ export const Users: CollectionConfig = {
         update: () => true,
       },
     },
-    
   ],
 }
