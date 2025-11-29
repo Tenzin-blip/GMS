@@ -185,22 +185,9 @@ export default function Dashboard() {
         {/* Top Stats Grid */}
         <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {/* Attendance Card */}
-          <div className="backdrop-blur-xl bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-gray-300">Attendance</span>
-                <Calendar className="w-5 h-5 text-orange-500" />
-              </div>
-              <div className="text-3xl font-bold mb-1">
-                {attendance.current}/{attendance.total}
-              </div>
-              <p className="text-sm text-gray-400">Days this month</p>
-            </div>
-          </div>
 
           {/* Streak Card */}
-          <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
+          {/* <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -210,7 +197,7 @@ export default function Dashboard() {
               <div className="text-3xl font-bold mb-1">{streak} days</div>
               <p className="text-sm text-gray-400">Current active streak</p>
             </div>
-          </div>
+          </div> */}
 
           {/* Active Members */}
           <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
@@ -278,7 +265,7 @@ export default function Dashboard() {
             <Notices/>
 
             {/* Calendar */}
-            <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
+            {/* <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
@@ -322,7 +309,7 @@ export default function Dashboard() {
                   })}
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Middle Column - Leaderboard */}
