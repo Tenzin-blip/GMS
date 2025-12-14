@@ -1,23 +1,15 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Notices from '@/components/system/dashboard/Notices'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 import AttendanceStatCard from '@/components/system/attendance/AttendanceStatCard'
 import { SectionFade } from '@/components/animations/SectionFade'
-import {
-  Calendar,
-  Flame,
-  Users,
-  TrendingUp,
-  Bell,
-  ChevronLeft,
-  ChevronRight,
-  Trophy,
-} from 'lucide-react'
+import { Calendar, Flame, Clock, Users, TrendingUp, Trophy } from 'lucide-react'
 
 interface UserFitnessData {
   user: string
+  plan?: 'essential' | 'premium' | 'elite'
   goal: string
   bodyMetrics: {
     height: number
@@ -44,9 +36,12 @@ interface UserFitnessData {
 
 export default function Dashboard() {
   const [fitnessData, setFitnessData] = useState<UserFitnessData | null>(null)
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [attendance, setAttendance] = useState({ current: 0, total: 22 })
-  const [streak, setStreak] = useState(0)
+  const [attendance] = useState({ current: 12, total: 22 })
+  const [streak] = useState(5)
+  const [mealCompletion, setMealCompletion] = useState<Set<number>>(new Set())
+  const [workoutCompletion, setWorkoutCompletion] = useState<Set<number>>(new Set())
+  const [planTier, setPlanTier] = useState<'essential' | 'premium' | 'elite'>('premium')
+  const [showGenericToast, setShowGenericToast] = useState(false)
 
   useEffect(() => {
     fetchFitnessData()
@@ -58,16 +53,13 @@ export default function Dashboard() {
       if (response.ok) {
         const data = await response.json()
         setFitnessData(data.data)
+        if (data?.data?.plan) {
+          setPlanTier(data.data.plan)
+        }
       }
     } catch (error) {
       console.error('Error fetching fitness data:', error)
     }
-  }
-
-  const calculateBMI = () => {
-    if (!fitnessData) return 0
-    const heightInMeters = fitnessData.bodyMetrics.height / 100
-    return (fitnessData.bodyMetrics.currentWeight / (heightInMeters * heightInMeters)).toFixed(1)
   }
 
   const leaderboardData = [
@@ -113,58 +105,108 @@ export default function Dashboard() {
     {
       name: 'Power Protein',
       time: 'Breakfast',
-      intensity: 'Medium',
-      calories: 1800,
-      description: 'Scrambled eggs with sauted spinach',
+      calories: 650,
+      description: 'Scrambled eggs with avocado toast and berries',
     },
     {
       name: 'Vegan Energy Boost',
       time: 'Lunch',
-      intensity: 'Medium',
-      calories: 1800,
-      description: 'Scrambled eggs with sauted spinach',
+      calories: 650,
+      description: 'Grilled tofu bowl with veggies',
     },
     {
       name: 'Fruits & Nuts',
       time: 'Snacks',
-      intensity: 'Medium',
-      calories: 1800,
-      description: 'Scrambled eggs with sauted spinach',
+      calories: 350,
+      description: 'Mixed berries, almonds, and yogurt',
     },
     {
       name: 'Lean & Green',
       time: 'Dinner',
-      intensity: 'Medium',
-      calories: 1800,
-      description: 'Scrambled eggs with sauted spinach',
+      calories: 750,
+      description: 'Chicken breast with quinoa and greens',
     },
   ]
 
   const workoutPlan = [
-    { name: 'Warmup', duration: '25 min', completed: true },
-    { name: 'Shoulder Press', sets: '4x8', completed: false },
-    { name: 'Bench Press', sets: '3x10', completed: false },
-    { name: 'Pull-Ups', sets: '3x12', completed: false },
-    { name: 'Pull-Ups', sets: '3x12', completed: false },
-    { name: 'Pull-Ups', sets: '3x12', completed: false },
+    { name: 'Warmup', sets: '10 min' },
+    { name: 'Bench Press', sets: '4 x 8' },
+    { name: 'Shoulder Press', sets: '3 x 10' },
+    { name: 'Push Up', sets: '3 x 12' },
+    { name: 'Pull Ups', sets: '3 x 12' },
+    { name: 'Bicep Curls', sets: '3 x 15' },
   ]
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear()
-    const month = date.getMonth()
-    const firstDay = new Date(year, month, 1).getDay()
-    const daysInMonth = new Date(year, month + 1, 0).getDate()
-    return { firstDay, daysInMonth }
+  const attendanceRatio = attendance.total ? attendance.current / attendance.total : 0
+  const mealRatio = mealPlan.length ? mealCompletion.size / mealPlan.length : 0
+  const workoutRatio = workoutPlan.length ? workoutCompletion.size / workoutPlan.length : 0
+  const overallProgress = Math.round(((attendanceRatio + mealRatio + workoutRatio) / 3) * 100)
+  const isEssential = planTier === 'essential'
+
+  const attendanceStats = [
+    {
+      title: 'Attendance',
+      value: `${attendance.current}/${attendance.total}`,
+      subtitle: 'Days this month',
+      icon: Calendar,
+    },
+    {
+      title: 'Streak',
+      value: `${streak} days`,
+      subtitle: 'Current active streak',
+      icon: Flame,
+    },
+    {
+      title: 'Avg duration',
+      value: '1h 12m',
+      subtitle: 'Per session',
+      icon: Clock,
+    },
+    {
+      title: 'Total hours',
+      value: '28h',
+      subtitle: 'This month',
+      icon: TrendingUp,
+    },
+  ]
+
+  const todayLabel = useMemo(
+    () =>
+      new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(
+        new Date(),
+      ),
+    [],
+  )
+
+  useEffect(() => {
+    if ((planTier === 'premium' || planTier === 'elite') && !showGenericToast) {
+      setShowGenericToast(true)
+      const toastEvent = new CustomEvent('toast', {
+        detail: {
+          message: 'You are viewing a generic plan. Your trainer will update this soon.',
+          type: 'info',
+        },
+      })
+      window.dispatchEvent(toastEvent)
+    }
+  }, [planTier, showGenericToast])
+
+  const toggleMeal = (idx: number) => {
+    setMealCompletion((prev) => {
+      const next = new Set(prev)
+      if (next.has(idx)) next.delete(idx)
+      else next.add(idx)
+      return next
+    })
   }
 
-  const { firstDay, daysInMonth } = getDaysInMonth(currentDate)
-
-  const previousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))
-  }
-
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))
+  const toggleWorkout = (idx: number) => {
+    setWorkoutCompletion((prev) => {
+      const next = new Set(prev)
+      if (next.has(idx)) next.delete(idx)
+      else next.add(idx)
+      return next
+    })
   }
 
   return (
@@ -182,134 +224,43 @@ export default function Dashboard() {
           <DashboardHeader />
         </SectionFade>
 
-        {/* Top Stats Grid */}
-        <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          {/* Attendance Card */}
-
-          {/* Streak Card */}
-          {/* <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-gray-300">Streak</span>
-                <Flame className="w-5 h-5 text-orange-500" />
-              </div>
-              <div className="text-3xl font-bold mb-1">{streak} days</div>
-              <p className="text-sm text-gray-400">Current active streak</p>
-            </div>
-          </div> */}
-
-          {/* Active Members */}
-          <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-5 h-5 text-orange-500" />
-                    <span className="text-gray-300">Active members</span>
-                  </div>
-                  <div className="text-2xl font-bold mb-1">32</div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span className="text-gray-300">Trainers available</span>
-                  </div>
-                  <div className="mt-2 space-y-1 text-sm text-gray-300">
-                    <div>Hari Bohot</div>
-                    <div>Peter Guru</div>
-                    <div>Stephan Guru</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Weight/BMI Card */}
-          <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-gray-300">Weight</span>
-                <select className="backdrop-blur-md bg-white/10 border border-white/10 text-white text-sm px-2 py-1 rounded focus:outline-none focus:border-orange-500">
-                  <option className="bg-gray-900">Kg</option>
-                  <option className="bg-gray-900">Lbs</option>
-                </select>
-              </div>
-              <div className="flex gap-8 mb-4">
-                {[55, 60, 65, 70, 75].map((weight, idx) => (
-                  <div key={idx} className="flex flex-col items-center">
-                    <div className="text-xs text-gray-400 mb-2">{weight}</div>
-                    <div className="flex gap-0.5">
-                      {[1, 2, 3, 4, 5].map((bar) => (
-                        <div
-                          key={bar}
-                          className={`w-0.5 rounded ${weight === 70 ? 'bg-orange-500 h-12' : 'bg-white/20 h-8'}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-gray-300">
-                BMI Status: <span className="text-white">{calculateBMI()} BMI</span>
-              </p>
-            </div>
-          </div>
+        <SectionFade
+          delay={0.05}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+        >
+          {attendanceStats.map((stat) => (
+            <AttendanceStatCard
+              key={stat.title}
+              title={stat.title}
+              value={stat.value}
+              subtitle={stat.subtitle}
+              icon={stat.icon}
+            />
+          ))}
         </SectionFade>
 
         {/* Main Content Grid */}
-        <SectionFade delay={0.1} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <SectionFade delay={0.1} className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Notice Board + Calendar */}
           <div className="space-y-6">
             {/* Notice Board */}
-            <Notices/>
+            <Notices />
 
-            {/* Calendar */}
-            {/* <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
+            <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold">
-                    {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
-                  </h2>
-                  <div className="flex gap-2">
-                    <button onClick={previousMonth} className="p-1 hover:bg-white/10 rounded transition-colors">
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button onClick={nextMonth} className="p-1 hover:bg-white/10 rounded transition-colors">
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-5 h-5 text-orange-500" />
+                  <h2 className="text-lg font-bold">Active members</h2>
                 </div>
-
-                <div className="grid grid-cols-7 gap-2">
-                  {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day) => (
-                    <div key={day} className="text-center text-xs text-gray-400 font-medium py-2">
-                      {day}
-                    </div>
-                  ))}
-                  {Array.from({ length: firstDay === 0 ? 6 : firstDay - 1 }).map((_, idx) => (
-                    <div key={`empty-${idx}`} />
-                  ))}
-                  {Array.from({ length: daysInMonth }).map((_, idx) => {
-                    const day = idx + 1
-                    const isToday = day === 18
-                    return (
-                      <button
-                        key={day}
-                        className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-colors ${
-                          isToday
-                            ? 'bg-orange-500 text-white font-bold'
-                            : 'hover:bg-white/10 text-gray-300'
-                        }`}
-                      >
-                        {day}
-                      </button>
-                    )
-                  })}
+                <p className="text-sm text-gray-400 mb-4">Trainers available</p>
+                <div className="space-y-1 text-sm text-gray-300">
+                  <div>Hari Bohot</div>
+                  <div>Peter Guru</div>
+                  <div>Stephan Guru</div>
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
 
           {/* Middle Column - Leaderboard */}
@@ -323,7 +274,10 @@ export default function Dashboard() {
 
               <div className="space-y-4">
                 {leaderboardData.map((member, idx) => (
-                  <div key={idx} className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div
+                    key={idx}
+                    className="backdrop-blur-md bg-white/5 border border-white/10 rounded-xl p-4"
+                  >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold">
@@ -397,83 +351,125 @@ export default function Dashboard() {
 
           {/* Right Column - Meal & Workout Plans */}
           <div className="space-y-6">
-            {/* Meal Plan */}
-            <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold">Meal plan</h2>
-                  <span className="text-sm text-gray-300">Thu, 18 May</span>
-                </div>
+            {isEssential ? (
+              <UpgradeCard />
+            ) : (
+              <>
+                <PlanSnippet
+                  title="Today • Meal plan"
+                  subtitle={todayLabel}
+                  items={mealPlan.map((m) => ({
+                    title: m.name,
+                    meta: `🔥 ${m.calories} cal • ${m.time}`,
+                    detail: m.description,
+                  }))}
+                  progress={mealRatio}
+                  completion={mealCompletion}
+                  onToggle={toggleMeal}
+                />
 
-                <div className="space-y-3">
-                  {mealPlan.map((meal, idx) => (
-                    <div key={idx} className="p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-bold text-sm mb-1">{meal.name}</h3>
-                          <div className="flex items-center gap-2 text-xs">
-                            <span className="text-orange-500">■ {meal.intensity}</span>
-                            <span className="text-orange-500">🔥 {meal.calories} Calories</span>
-                          </div>
-                        </div>
-                        <span className="text-xs px-3 py-1 backdrop-blur-md bg-white/10 rounded-full">
-                          {meal.time}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-400">{meal.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Workout Plan */}
-            <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold">Workout plan</h2>
-                  <span className="text-sm text-gray-300">Thu, 18 May</span>
-                </div>
-
-                <div className="mb-4">
-                  <h3 className="font-bold mb-3">Upper Body Strength</h3>
-                  <div className="space-y-2">
-                    {workoutPlan.map((exercise, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={exercise.completed}
-                            className="w-4 h-4 rounded border-white/20 text-orange-500 focus:ring-orange-500"
-                            readOnly
-                          />
-                          <span className={exercise.completed ? 'line-through text-gray-500' : ''}>
-                            {exercise.name}
-                          </span>
-                        </div>
-                        <span className="text-sm text-gray-400">
-                          {exercise.duration || exercise.sets}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-bold mb-2">Progress for today</h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-300">25%</span>
-                    <div className="flex-1 h-2 backdrop-blur-md bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full w-1/4 bg-orange-500 rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                <PlanSnippet
+                  title="Today • Workout plan"
+                  subtitle={todayLabel}
+                  items={workoutPlan.map((w) => ({
+                    title: w.name,
+                    meta: w.sets,
+                    detail: '',
+                  }))}
+                  progress={workoutRatio}
+                  completion={workoutCompletion}
+                  onToggle={toggleWorkout}
+                />
+              </>
+            )}
           </div>
         </SectionFade>
+      </div>
+    </div>
+  )
+}
+
+type SnippetItem = { title: string; meta: string; detail?: string }
+
+function PlanSnippet({
+  title,
+  subtitle,
+  items,
+  progress,
+  completion,
+  onToggle,
+}: {
+  title: string
+  subtitle: string
+  items: SnippetItem[]
+  progress: number
+  completion: Set<number>
+  onToggle: (idx: number) => void
+}) {
+  const percent = Math.round(progress * 100)
+  return (
+    <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden flex flex-col gap-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
+      <div className="relative z-10 flex-1 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold">{title}</h2>
+          <span className="text-sm text-gray-300">{subtitle}</span>
+        </div>
+
+        <div className="space-y-3">
+          {items.map((item, idx) => {
+            const checked = completion.has(idx)
+            return (
+              <div
+                key={idx}
+                className="p-4 backdrop-blur-md bg-white/5 border border-white/10 rounded-lg flex items-start justify-between"
+              >
+                <div>
+                  <h3
+                    className={`font-bold text-sm mb-1 ${checked ? 'line-through text-gray-500' : ''}`}
+                  >
+                    {item.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-xs text-orange-400">{item.meta}</div>
+                  {item.detail ? <p className="text-xs text-gray-400 mt-1">{item.detail}</p> : null}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => onToggle(idx)}
+                    className="w-4 h-4 rounded border-white/20 text-orange-500 focus:ring-orange-500"
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-300">{percent}%</span>
+          <div className="flex-1 h-2 backdrop-blur-md bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-orange-500 rounded-full" style={{ width: `${percent}%` }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function UpgradeCard() {
+  return (
+    <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent pointer-events-none" />
+      <div className="relative z-10 space-y-3">
+        <h2 className="text-xl font-bold">Unlock personalized plans</h2>
+        <p className="text-sm text-gray-300">
+          Upgrade from Essential to Premium/Elite to get trainer-created workout and meal plans
+          tailored to you.
+        </p>
+        <button className="px-4 py-2 rounded-xl bg-orange-500 text-white font-semibold hover:bg-orange-600 transition">
+          Upgrade plan
+        </button>
       </div>
     </div>
   )
