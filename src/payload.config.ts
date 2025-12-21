@@ -12,6 +12,7 @@ import { Media } from './collections/Media'
 import { Home } from './globals/Home'
 import { Navbar } from './globals/Navbar'
 import { Reviews } from './globals/Reviews'
+import { DefaultPlans } from './globals/DefaultPlans'
 import { UserFitness } from './collections/UserFitness'
 import { Attendance } from './collections/Attendance'
 import { GymCounts } from './collections/GymCount'
@@ -49,7 +50,7 @@ export default buildConfig({
     TraineeAssignments,
     PlanVersions,
   ],
-  globals: [Home, Navbar, Reviews],
+  globals: [Home, Navbar, Reviews, DefaultPlans],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

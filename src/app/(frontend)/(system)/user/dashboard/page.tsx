@@ -34,6 +34,43 @@ interface UserFitnessData {
   }
 }
 
+interface MealPlanItem {
+  name: string
+  time: string
+  calories: number
+  description: string
+}
+
+interface WorkoutPlanItem {
+  name: string
+  sets: string
+}
+
+interface WeeklyMealPlan {
+  [key: string]: Array<{
+    name: string
+    slot: string
+    calories: number
+    protein: number
+    carbs: number
+    fats: number
+    description: string
+  }>
+}
+
+interface WeeklyWorkoutPlan {
+  [key: string]: {
+    title: string
+    duration: number
+    entries: Array<{
+      name: string
+      reps: string
+      sets: number
+      weight: string
+    }>
+  }
+}
+
 export default function Dashboard() {
   const [fitnessData, setFitnessData] = useState<UserFitnessData | null>(null)
   const [attendance] = useState({ current: 12, total: 22 })
@@ -42,9 +79,13 @@ export default function Dashboard() {
   const [workoutCompletion, setWorkoutCompletion] = useState<Set<number>>(new Set())
   const [planTier, setPlanTier] = useState<'essential' | 'premium' | 'elite'>('premium')
   const [showGenericToast, setShowGenericToast] = useState(false)
+  const [mealPlan, setMealPlan] = useState<MealPlanItem[]>([])
+  const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlanItem[]>([])
+  const [plansLoading, setPlansLoading] = useState(true)
 
   useEffect(() => {
     fetchFitnessData()
+    fetchActivePlans()
   }, [])
 
   const fetchFitnessData = async () => {
@@ -59,6 +100,78 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Error fetching fitness data:', error)
+    }
+  }
+
+  const getTodayDayKey = () => {
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+    const today = new Date().getDay()
+    return dayNames[today]
+  }
+
+  const fetchActivePlans = async () => {
+    try {
+      setPlansLoading(true)
+      const todayKey = getTodayDayKey()
+      
+      // Fetch meal plan
+      const mealResponse = await fetch('/api/active-plan?type=meal')
+      if (mealResponse.ok) {
+        const mealData = await mealResponse.json()
+        if (mealData.success && mealData.plan) {
+          const plan = mealData.plan
+          // Check if it's weekly structure (object) or old format (array)
+          if (typeof plan === 'object' && !Array.isArray(plan)) {
+            const weeklyPlan = plan as WeeklyMealPlan
+            const todayMeals = weeklyPlan[todayKey] || []
+            // Convert to dashboard format
+            const dashboardMeals: MealPlanItem[] = todayMeals.map((meal) => ({
+              name: meal.name,
+              time: meal.slot,
+              calories: meal.calories,
+              description: meal.description,
+            }))
+            setMealPlan(dashboardMeals)
+          } else if (Array.isArray(plan)) {
+            // Old format - use as is
+            setMealPlan(plan)
+          }
+        }
+      }
+
+      // Fetch workout plan
+      const workoutResponse = await fetch('/api/active-plan?type=workout')
+      if (workoutResponse.ok) {
+        const workoutData = await workoutResponse.json()
+        if (workoutData.success && workoutData.plan) {
+          const plan = workoutData.plan
+          // Check if it's weekly structure (object) or old format (array)
+          if (typeof plan === 'object' && !Array.isArray(plan)) {
+            const weeklyPlan = plan as WeeklyWorkoutPlan
+            const todayWorkout = weeklyPlan[todayKey]
+            // Convert to dashboard format
+            const dashboardWorkouts: WorkoutPlanItem[] = todayWorkout?.entries.map((entry) => {
+              // If it's a duration-based entry (like warmup with "10 min"), use reps directly
+              // Otherwise combine sets and reps (e.g., "4 x 8 rep")
+              const setsValue = entry.reps.includes('min') || entry.reps.includes('sec')
+                ? entry.reps
+                : `${entry.sets} x ${entry.reps}`
+              return {
+                name: entry.name,
+                sets: setsValue,
+              }
+            }) || []
+            setWorkoutPlan(dashboardWorkouts)
+          } else if (Array.isArray(plan)) {
+            // Old format - use as is
+            setWorkoutPlan(plan)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching active plans:', error)
+    } finally {
+      setPlansLoading(false)
     }
   }
 
@@ -101,41 +214,6 @@ export default function Dashboard() {
     },
   ]
 
-  const mealPlan = [
-    {
-      name: 'Power Protein',
-      time: 'Breakfast',
-      calories: 650,
-      description: 'Scrambled eggs with avocado toast and berries',
-    },
-    {
-      name: 'Vegan Energy Boost',
-      time: 'Lunch',
-      calories: 650,
-      description: 'Grilled tofu bowl with veggies',
-    },
-    {
-      name: 'Fruits & Nuts',
-      time: 'Snacks',
-      calories: 350,
-      description: 'Mixed berries, almonds, and yogurt',
-    },
-    {
-      name: 'Lean & Green',
-      time: 'Dinner',
-      calories: 750,
-      description: 'Chicken breast with quinoa and greens',
-    },
-  ]
-
-  const workoutPlan = [
-    { name: 'Warmup', sets: '10 min' },
-    { name: 'Bench Press', sets: '4 x 8' },
-    { name: 'Shoulder Press', sets: '3 x 10' },
-    { name: 'Push Up', sets: '3 x 12' },
-    { name: 'Pull Ups', sets: '3 x 12' },
-    { name: 'Bicep Curls', sets: '3 x 15' },
-  ]
 
   const attendanceRatio = attendance.total ? attendance.current / attendance.total : 0
   const mealRatio = mealPlan.length ? mealCompletion.size / mealPlan.length : 0
@@ -353,6 +431,10 @@ export default function Dashboard() {
           <div className="space-y-6">
             {isEssential ? (
               <UpgradeCard />
+            ) : plansLoading ? (
+              <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 text-center text-gray-400">
+                Loading plans...
+              </div>
             ) : (
               <>
                 <PlanSnippet
