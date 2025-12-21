@@ -358,7 +358,7 @@ export default function LoginPage() {
                   <span className="font-semibold text-white">{forgotPasswordEmail}</span>
                 </p>
                 <p className="text-sm text-white/60 mb-6">
-                  The link will expire in 1 hour. If you don't see the email, check your spam folder.
+                  The link will expire in 1 hour. If you do not see the email, check your spam folder.
                 </p>
                 <button
                   onClick={resetForgotPasswordState}
@@ -390,7 +390,7 @@ export default function LoginPage() {
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">Reset Password</h2>
               <p className="text-white/60 text-sm mb-6">
-                Enter your email address and we'll send you instructions to reset your password.
+                Enter your email address and we will send you instructions to reset your password.
               </p>
 
               {forgotPasswordError && (
