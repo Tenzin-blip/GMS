@@ -28,7 +28,7 @@ export default function QRScanner() {
         if (decodedText !== lastResult) {
           lastResult = decodedText
           setResult(decodedText)
-          setStatus('✅ QR Code detected! Marking attendance...')
+          setStatus('QR Code detected! Marking attendance...')
 
           if (navigator.vibrate) {
             navigator.vibrate(200)
@@ -49,13 +49,13 @@ export default function QRScanner() {
             const data = await response.json()
 
             if (data.success) {
-              setStatus('✅ Attendance marked successfully!')
+              setStatus('Attendance marked successfully!')
               setCopied(true)
             } else {
-              setStatus('❌ ' + data.message)
+              setStatus('' + data.message)
             }
           } catch (err) {
-            setStatus('❌ Failed to mark attendance')
+            setStatus('Failed to mark attendance')
           }
         }
       }
@@ -88,12 +88,12 @@ export default function QRScanner() {
             onScanFailure,
           )
 
-          setStatus('🎯 Point camera at QR code')
+          setStatus('Point camera at QR code')
         } else {
-          setStatus('❌ No camera found')
+          setStatus('No camera found')
         }
       } catch (err) {
-        setStatus('❌ Camera error: ' + err.message)
+        setStatus('Camera error: ' + err.message)
       }
     }
 
@@ -107,19 +107,19 @@ export default function QRScanner() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center p-5">
+    <div className="min-h-screen bg-black flex items-center justify-center p-5">
       <div className="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📷 QR Code Scanner</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">QR Code Scanner</h1>
         <div id="reader" ref={readerRef} className="rounded-xl overflow-hidden mb-5"></div>
         <div className="text-center text-gray-600 text-sm mb-4">{status}</div>
-        {result && (
+        {/* {result && (
           <div className="bg-gray-50 rounded-xl p-5 mt-5">
             <h3 className="text-purple-600 font-semibold mb-3">Scanned Content:</h3>
             <div className="bg-white p-4 rounded-lg font-mono text-sm text-gray-800 max-h-48 overflow-y-auto break-all">
               {result}
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )

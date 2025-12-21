@@ -27,11 +27,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/user/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: 'Workout plan', href: '/user/workout-plan', icon: <Dumbbell className="w-5 h-5" /> },
-  { label: 'Meal Plan', href: '/user/meal-plan', icon: <UtensilsCrossed className="w-5 h-5" /> },
+  { label: 'Workout plan', href: '/user/workoutplan', icon: <Dumbbell className="w-5 h-5" /> },
+  { label: 'Meal Plan', href: '/user/mealplan', icon: <UtensilsCrossed className="w-5 h-5" /> },
   {
     label: 'Track-progress',
-    href: '/user/track-progress',
+    href: '/user/progress',
     icon: <TrendingUp className="w-5 h-5" />,
   },
   { label: 'Attendance', href: '/user/attendance', icon: <Calendar className="w-5 h-5" /> },
@@ -72,13 +72,7 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <div className="p-6 flex  items-center gap-3 bg-white/10 backdrop-blur-md">
-          <Image
-              src="/api/media/file/logo-2.png"
-              alt={'Logo'}
-              priority
-              width={120}
-              height={27}
-          />
+          <Image src="/api/media/file/logo-2.png" alt={'Logo'} priority width={120} height={27} />
         </div>
 
         {/* Main Navigation */}

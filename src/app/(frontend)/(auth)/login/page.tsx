@@ -37,6 +37,7 @@ export default function LoginPage() {
     type: 'success' | 'error' | 'info'
   } | null>(null)
   const [blockedReason, setBlockedReason] = useState<'otp' | 'payment' | null>(null)
+  const [blockedIsTrainer, setBlockedIsTrainer] = useState<boolean>(false)
   const [blockedEmail, setBlockedEmail] = useState<string>('')  
   
   // Forgot password state
@@ -150,24 +151,40 @@ export default function LoginPage() {
         const passwordReady = Boolean(user?.password_set ?? false)
         let paymentDone = Boolean(user?.payment)
         const userEmail = user?.email || formData.email
+        const isTrainer = user?.role === 'trainer'
 
         if (!emailVerified || !passwordReady) {
+          if (isTrainer) {
+            // Send trainer verify email with CTA
+            await fetch('/api/auth/send-trainer-verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: userEmail }),
+            })
+            showToast('Trainer email not verified. Check your inbox to verify.', 'error')
+            setBlockedReason('otp')
+            setBlockedIsTrainer(true)
+            setBlockedEmail(userEmail)
+            return
+          }
           showToast('Email not verified.', 'error')
           setBlockedReason('otp')
+          setBlockedIsTrainer(false)
           setBlockedEmail(userEmail)
           return
         }
 
-        if (!paymentDone) {
+        if (!isTrainer && !paymentDone) {
           const verified = await ensurePaymentStatus(user)
           if (verified) {
             paymentDone = true
           }
         }
 
-        if (!paymentDone) {
+        if (!isTrainer && !paymentDone) {
           showToast('Payment not completed.', 'info')
           setBlockedReason('payment')
+          setBlockedIsTrainer(false)
           setBlockedEmail(userEmail)
           return
         }
@@ -178,6 +195,11 @@ export default function LoginPage() {
 
         if (user.role === 'admin') {
           router.push('/admin-panel/admin-dash')
+          return
+        }
+
+        if (isTrainer) {
+          router.push('/trainer/onboarding')
           return
         }
 
@@ -217,7 +239,8 @@ export default function LoginPage() {
 
     if (blockedReason === 'otp') {
       try {
-        const response = await fetch('/api/auth/resend-otp', {
+        const endpoint = blockedIsTrainer ? '/api/auth/send-trainer-verify' : '/api/auth/resend-otp'
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -228,8 +251,10 @@ export default function LoginPage() {
         const data = await response.json()
 
         if (response.ok) {
-          showToast('OTP sent again.', 'success')
-          router.push(`/signup?step=3&email=${encodeURIComponent(blockedEmail)}`)
+          showToast(blockedIsTrainer ? 'Verification email sent.' : 'OTP sent again.', 'success')
+          if (!blockedIsTrainer) {
+            router.push(`/signup?step=3&email=${encodeURIComponent(blockedEmail)}`)
+          }
         } else {
           showToast(data.message || 'Could not resend OTP.', 'error')
         }
@@ -328,7 +353,7 @@ export default function LoginPage() {
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-3">Check Your Email</h2>
                 <p className="text-white/60 text-sm mb-6">
-                  We've sent password reset instructions to
+                  We have sent password reset instructions to
                   <br />
                   <span className="font-semibold text-white">{forgotPasswordEmail}</span>
                 </p>

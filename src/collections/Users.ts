@@ -35,8 +35,13 @@ export const Users: CollectionConfig = {
   hooks: {
     beforeChange: [
       ({ data }) => {
+        // If admin email, set role and bypass all verification
         if (data.email === 'admin@gms.com') {
           data.role = 'admin'
+          data.email_verified = true
+          data.password_set = true
+          data.otpflag = true
+          data.payment = true
         }
         return data
       },
@@ -133,6 +138,23 @@ export const Users: CollectionConfig = {
       access: {
         update: ({ req: { user }, id }) => {
           if (user?.role === 'admin') return true
+          return user?.id === id
+        },
+      },
+    },
+    {
+      name: 'currentTrainer',
+      type: 'relationship',
+      relationTo: 'users',
+      label: 'Assigned Trainer',
+      required: false,
+      access: {
+        update: ({ req: { user }, id }) => {
+          if (user?.role === 'admin') return true
+          // allow trainer to assign themselves when handling a request
+          if (user?.role === 'trainer') {
+            return true
+          }
           return user?.id === id
         },
       },

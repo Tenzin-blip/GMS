@@ -19,6 +19,10 @@ import { Notices } from './collections/Notices'
 import { Subscription } from './collections/Subscription'
 import { Transaction } from './collections/Transaction'
 import { Payments } from './collections/Payments'
+import { TrainerProfiles } from './collections/TrainerProfiles'
+import { PlanRequests } from './collections/PlanRequests'
+import { TraineeAssignments } from './collections/TraineeAssignments'
+import { PlanVersions } from './collections/PlanVersions'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -40,6 +44,10 @@ export default buildConfig({
     Subscription,
     Transaction,
     Payments,
+    TrainerProfiles,
+    PlanRequests,
+    TraineeAssignments,
+    PlanVersions,
   ],
   globals: [Home, Navbar, Reviews],
   editor: lexicalEditor(),
