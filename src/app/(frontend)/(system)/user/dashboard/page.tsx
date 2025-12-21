@@ -241,7 +241,7 @@ export default function Dashboard() {
 
         {/* Main Content Grid */}
         <SectionFade delay={0.1} className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          {/* Left Column - Notice Board + Calendar */}
+          {/* Left Column - Notice Board */}
           <div className="space-y-6">
             {/* Notice Board */}
             <Notices />

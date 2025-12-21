@@ -36,13 +36,8 @@ export default function TrainerRequests() {
       <SectionFade className="max-w-5xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer</p>
             <h1 className="text-4xl font-bold">Requests</h1>
             <p className="text-gray-400 mt-2">Accept or reject members auto-matched to your specialization.</p>
-          </div>
-          <div className="px-3 py-2 rounded-lg bg-white/10 border border-white/10 text-xs flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-orange-400" />
-            <span>Auto routed from non-essential tiers</span>
           </div>
         </div>
 

@@ -39,13 +39,8 @@ export default function TrainerDashboard() {
       <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer</p>
             <h1 className="text-4xl font-bold">Dashboard</h1>
             <p className="text-gray-400 mt-2">Manage incoming requests, active members, and plan actions.</p>
-          </div>
-          <div className="px-4 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-orange-400" />
-            <span className="text-sm text-gray-200">Glassmorphism mode</span>
           </div>
         </div>
 

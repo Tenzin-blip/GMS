@@ -43,10 +43,9 @@ export default function TrainerOnboarding() {
       <SectionFade className="max-w-5xl mx-auto relative z-10 space-y-8">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer onboarding</p>
             <h1 className="text-4xl font-bold mt-2">Tune your availability</h1>
             <p className="text-gray-400 mt-2 max-w-2xl">
-              Set your speciality, preferred days, and weekly hours so member requests can be matched to you
+              Set your speciality, preferred days and weekly hours so member requests can be matched to you
               automatically.
             </p>
           </div>

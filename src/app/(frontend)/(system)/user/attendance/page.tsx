@@ -100,9 +100,9 @@ export default function AttendancePage() {
 
     return { daysInMonth, startingDayOfWeek, year, month }
   }
-  
+
   const { daysInMonth } = getDaysInMonth(currentDate)
-  
+
   const getAttendanceStatus = (day: number) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
@@ -212,15 +212,14 @@ export default function AttendancePage() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
   }
 
-  const toastNode =
-    toast && (
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast(null)}
-        duration={3000}
-      />
-    )
+  const toastNode = toast && (
+    <Toast
+      message={toast.message}
+      type={toast.type}
+      onClose={() => setToast(null)}
+      duration={3000}
+    />
+  )
 
   if (loading) {
     return (
@@ -279,7 +278,10 @@ export default function AttendancePage() {
             </div>
           )}
 
-          <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <SectionFade
+            delay={0.05}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          >
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
               <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300">
@@ -416,10 +418,7 @@ export default function AttendancePage() {
                     </div>
                   ) : (
                     attendanceData.map((record) => (
-                      <div
-                        key={record.id}
-                        className="relative group/item"
-                      >
+                      <div key={record.id} className="relative group/item">
                         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent rounded-xl opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" />
                         <div className="relative bg-white/5 backdrop-blur-sm rounded-xl p-4 flex items-center justify-between border border-white/10 hover:border-orange-500/30 transition-all duration-300">
                           <div className="flex items-start gap-3">
@@ -446,8 +445,8 @@ export default function AttendancePage() {
                             <p className="text-gray-400 text-sm">Duration</p>
                             <span
                               className={`inline-block mt-1 px-3 py-1 text-white text-xs rounded-full backdrop-blur-sm ${
-                                record.status === 'completed' 
-                                  ? 'bg-orange-500/20 border border-orange-400/30' 
+                                record.status === 'completed'
+                                  ? 'bg-orange-500/20 border border-orange-400/30'
                                   : 'bg-blue-500/20 border border-blue-400/30'
                               }`}
                             >
