@@ -14,9 +14,30 @@ type Member = {
 }
 
 const initialMembers: Member[] = [
-  { id: '1', name: 'Hari Bohot', goal: 'Muscle building', tier: 'elite', status: 'active', specialization: 'Muscle building' },
-  { id: '2', name: 'Peter Guru', goal: 'Strength', tier: 'premium', status: 'active', specialization: 'Strength' },
-  { id: '3', name: 'Stephan Guru', goal: 'Mobility', tier: 'premium', status: 'paused', specialization: 'Mobility' },
+  {
+    id: '1',
+    name: 'Hari Bohot',
+    goal: 'Muscle building',
+    tier: 'elite',
+    status: 'active',
+    specialization: 'Muscle building',
+  },
+  {
+    id: '2',
+    name: 'Peter Guru',
+    goal: 'Strength',
+    tier: 'premium',
+    status: 'active',
+    specialization: 'Strength',
+  },
+  {
+    id: '3',
+    name: 'Stephan Guru',
+    goal: 'Mobility',
+    tier: 'premium',
+    status: 'paused',
+    specialization: 'Mobility',
+  },
 ]
 
 export default function TrainerClientList() {
@@ -24,7 +45,12 @@ export default function TrainerClientList() {
   const [members] = useState<Member[]>(initialMembers)
 
   const filtered = useMemo(
-    () => members.filter((m) => m.name.toLowerCase().includes(search.toLowerCase()) || m.goal.toLowerCase().includes(search.toLowerCase())),
+    () =>
+      members.filter(
+        (m) =>
+          m.name.toLowerCase().includes(search.toLowerCase()) ||
+          m.goal.toLowerCase().includes(search.toLowerCase()),
+      ),
     [members, search],
   )
 
@@ -36,16 +62,12 @@ export default function TrainerClientList() {
       </div>
 
       <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer</p>
-            <h1 className="text-4xl font-bold">Members</h1>
-            <p className="text-gray-400 mt-2">Active roster with quick access to member detail view.</p>
-          </div>
-          <div className="px-3 py-2 rounded-lg bg-white/10 border border-white/10 text-xs flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-orange-400" />
-            <span>AI plan trigger inside details</span>
-          </div>
+        <div className="items-center justify-between">
+          <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer</p>
+          <h1 className="text-4xl font-bold">Members</h1>
+          <p className="text-gray-400 mt-2">
+            Active roster with quick access to member detail view.
+          </p>
         </div>
 
         <div className="flex items-center gap-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl px-4 py-3">
@@ -107,4 +129,3 @@ export default function TrainerClientList() {
     </div>
   )
 }
-

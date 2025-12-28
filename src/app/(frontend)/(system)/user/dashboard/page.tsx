@@ -113,7 +113,7 @@ export default function Dashboard() {
     try {
       setPlansLoading(true)
       const todayKey = getTodayDayKey()
-      
+
       // Fetch meal plan
       const mealResponse = await fetch('/api/active-plan?type=meal')
       if (mealResponse.ok) {
@@ -150,17 +150,19 @@ export default function Dashboard() {
             const weeklyPlan = plan as WeeklyWorkoutPlan
             const todayWorkout = weeklyPlan[todayKey]
             // Convert to dashboard format
-            const dashboardWorkouts: WorkoutPlanItem[] = todayWorkout?.entries.map((entry) => {
-              // If it's a duration-based entry (like warmup with "10 min"), use reps directly
-              // Otherwise combine sets and reps (e.g., "4 x 8 rep")
-              const setsValue = entry.reps.includes('min') || entry.reps.includes('sec')
-                ? entry.reps
-                : `${entry.sets} x ${entry.reps}`
-              return {
-                name: entry.name,
-                sets: setsValue,
-              }
-            }) || []
+            const dashboardWorkouts: WorkoutPlanItem[] =
+              todayWorkout?.entries.map((entry) => {
+                // If it's a duration-based entry (like warmup with "10 min"), use reps directly
+                // Otherwise combine sets and reps (e.g., "4 x 8 rep")
+                const setsValue =
+                  entry.reps.includes('min') || entry.reps.includes('sec')
+                    ? entry.reps
+                    : `${entry.sets} x ${entry.reps}`
+                return {
+                  name: entry.name,
+                  sets: setsValue,
+                }
+              }) || []
             setWorkoutPlan(dashboardWorkouts)
           } else if (Array.isArray(plan)) {
             // Old format - use as is
@@ -213,7 +215,6 @@ export default function Dashboard() {
       progress: 5,
     },
   ]
-
 
   const attendanceRatio = attendance.total ? attendance.current / attendance.total : 0
   const mealRatio = mealPlan.length ? mealCompletion.size / mealPlan.length : 0
@@ -341,7 +342,61 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Middle Column - Leaderboard */}
+          {/* Right Column - Meal & Workout Plans */}
+          <div className="space-y-6">
+            {isEssential ? (
+              <UpgradeCard />
+            ) : plansLoading ? (
+              <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 text-center text-gray-400">
+                Loading plans...
+              </div>
+            ) : (
+      
+                <PlanSnippet
+                  title="Meal plan"
+                  subtitle={todayLabel}
+                  items={mealPlan.map((m) => ({
+                    title: m.name,
+                    meta: `🔥 ${m.calories} cal • ${m.time}`,
+                    detail: m.description,
+                  }))}
+                  progress={mealRatio}
+                  completion={mealCompletion}
+                  onToggle={toggleMeal}
+                />
+
+                
+            )}
+          </div>
+
+          <div className="space-y-6">
+            {isEssential ? (
+              <UpgradeCard />
+            ) : plansLoading ? (
+              <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 text-center text-gray-400">
+                Loading plans...
+              </div>
+            ) : (
+              
+
+                <PlanSnippet
+                  title="Workout plan"
+                  subtitle={todayLabel}
+                  items={workoutPlan.map((w) => ({
+                    title: w.name,
+                    meta: w.sets,
+                    detail: '',
+                  }))}
+                  progress={workoutRatio}
+                  completion={workoutCompletion}
+                  onToggle={toggleWorkout}
+                />
+              
+            )}
+          </div>
+        </SectionFade>
+      </div>
+      {/* Middle Column - Leaderboard */}
           <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] to-transparent pointer-events-none" />
             <div className="relative z-10">
@@ -350,7 +405,7 @@ export default function Dashboard() {
                 <h2 className="text-xl font-bold">Leaderboard</h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 flex justify-content ">
                 {leaderboardData.map((member, idx) => (
                   <div
                     key={idx}
@@ -426,47 +481,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-
-          {/* Right Column - Meal & Workout Plans */}
-          <div className="space-y-6">
-            {isEssential ? (
-              <UpgradeCard />
-            ) : plansLoading ? (
-              <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 text-center text-gray-400">
-                Loading plans...
-              </div>
-            ) : (
-              <>
-                <PlanSnippet
-                  title="Today • Meal plan"
-                  subtitle={todayLabel}
-                  items={mealPlan.map((m) => ({
-                    title: m.name,
-                    meta: `🔥 ${m.calories} cal • ${m.time}`,
-                    detail: m.description,
-                  }))}
-                  progress={mealRatio}
-                  completion={mealCompletion}
-                  onToggle={toggleMeal}
-                />
-
-                <PlanSnippet
-                  title="Today • Workout plan"
-                  subtitle={todayLabel}
-                  items={workoutPlan.map((w) => ({
-                    title: w.name,
-                    meta: w.sets,
-                    detail: '',
-                  }))}
-                  progress={workoutRatio}
-                  completion={workoutCompletion}
-                  onToggle={toggleWorkout}
-                />
-              </>
-            )}
-          </div>
-        </SectionFade>
-      </div>
     </div>
   )
 }

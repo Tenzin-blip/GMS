@@ -214,9 +214,9 @@ export default function OnboardingForm() {
 
   const handleSkip = () => {
     showToast('Welcome to Level Up! Your personalized dashboard is ready', 'info')
-        setTimeout(() => {
-          window.location.href = '/user/dashboard'
-        }, 2000)
+    setTimeout(() => {
+      window.location.href = '/user/dashboard'
+    }, 2000)
   }
 
   const updateFormData = (key: string, value: any) => {
@@ -334,11 +334,21 @@ export default function OnboardingForm() {
                       type="number"
                       value={formData.currentWeight}
                       onChange={(e) => updateFormData('currentWeight', e.target.value)}
+                      onBlur={(e) => {
+                        const value = parseFloat(e.target.value)
+                        if (e.target.value && (value < 30 || value > 300)) {
+                          showToast('Please enter a weight between 30-300 kg', 'error')
+                          updateFormData('currentWeight', '')
+                        }
+                      }}
                       placeholder="70"
+                      min="30"
+                      max="300"
                       className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
                     <span className="absolute right-4 top-3 text-gray-300">kg</span>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1">Range: 30-300 kg</p>
                 </div>
 
                 <div>
@@ -348,11 +358,21 @@ export default function OnboardingForm() {
                       type="number"
                       value={formData.height}
                       onChange={(e) => updateFormData('height', e.target.value)}
+                      onBlur={(e) => {
+                        const value = parseFloat(e.target.value)
+                        if (e.target.value && (value < 100 || value > 250)) {
+                          showToast('Please enter a height between 100-250 cm', 'error')
+                          updateFormData('height', '')
+                        }
+                      }}
                       placeholder="175"
+                      min="100"
+                      max="250"
                       className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
                     <span className="absolute right-4 top-3 text-gray-300">cm</span>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1">Range: 100-250 cm</p>
                 </div>
               </div>
 
@@ -364,11 +384,21 @@ export default function OnboardingForm() {
                       type="number"
                       value={formData.targetWeight}
                       onChange={(e) => updateFormData('targetWeight', e.target.value)}
+                      onBlur={(e) => {
+                        const value = parseFloat(e.target.value)
+                        if (e.target.value && (value < 30 || value > 300)) {
+                          showToast('Please enter a target weight between 30-300 kg', 'error')
+                          updateFormData('targetWeight', '')
+                        }
+                      }}
                       placeholder="65"
+                      min="30"
+                      max="300"
                       className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                     />
                     <span className="absolute right-4 top-3 text-gray-300">kg</span>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1">Range: 30-300 kg</p>
                 </div>
 
                 <div>
@@ -377,9 +407,19 @@ export default function OnboardingForm() {
                     type="number"
                     value={formData.age}
                     onChange={(e) => updateFormData('age', e.target.value)}
+                    onBlur={(e) => {
+                      const value = parseInt(e.target.value)
+                      if (e.target.value && (value < 13 || value > 100)) {
+                        showToast('Please enter an age between 13-100 years', 'error')
+                        updateFormData('age', '')
+                      }
+                    }}
                     placeholder="25"
+                    min="13"
+                    max="100"
                     className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   />
+                  <p className="text-xs text-gray-400 mt-1">Range: 13-100 years</p>
                 </div>
               </div>
 
@@ -449,12 +489,24 @@ export default function OnboardingForm() {
                     onChange={(e) => updateFormData('hoursPerDay', e.target.value)}
                     className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   >
-                    <option value="" className="bg-gray-900">Select</option>
-                    <option value="0.5" className="bg-gray-900">30 mins</option>
-                    <option value="1" className="bg-gray-900">1 hour</option>
-                    <option value="1.5" className="bg-gray-900">1.5 hours</option>
-                    <option value="2" className="bg-gray-900">2 hours</option>
-                    <option value="2.5" className="bg-gray-900">2+ hours</option>
+                    <option value="" className="bg-gray-900">
+                      Select
+                    </option>
+                    <option value="0.5" className="bg-gray-900">
+                      30 mins
+                    </option>
+                    <option value="1" className="bg-gray-900">
+                      1 hour
+                    </option>
+                    <option value="1.5" className="bg-gray-900">
+                      1.5 hours
+                    </option>
+                    <option value="2" className="bg-gray-900">
+                      2 hours
+                    </option>
+                    <option value="2.5" className="bg-gray-900">
+                      2+ hours
+                    </option>
                   </select>
                 </div>
 
@@ -465,7 +517,9 @@ export default function OnboardingForm() {
                     onChange={(e) => updateFormData('daysPerWeek', e.target.value)}
                     className="w-full backdrop-blur-md bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:bg-white/10 text-white transition-all"
                   >
-                    <option value="" className="bg-gray-900">Select</option>
+                    <option value="" className="bg-gray-900">
+                      Select
+                    </option>
                     {[1, 2, 3, 4, 5, 6, 7].map((day) => (
                       <option key={day} value={day} className="bg-gray-900">
                         {day} {day === 1 ? 'day' : 'days'}
@@ -675,13 +729,7 @@ export default function OnboardingForm() {
       </div>
 
       {/* Toast Component */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   )
 }
