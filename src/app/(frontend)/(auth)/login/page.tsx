@@ -501,10 +501,10 @@ export default function LoginPage() {
 
   return (
     <>
-    <SectionFade className="h-[100vh] md:min-h-screen bg-black flex w-screen p-1 items-center justify-center">
-      <div className=" h-full md:w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-0 rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl">
+    <SectionFade className="h-[100vh] md:min-h-screen bg-black flex w-full p-1 items-center justify-center">
+      <div className=" max-h-screen md:w-full max-w-xl  rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 ">
         {/* Left Side - Login Form */}
-        <div className="backdrop-blur-xl bg-white/5 py-10 p-8 md:p-10 flex flex-col justify-center text-white border-r border-white/10">
+        <div className="backdrop-blur-xl bg-white/5 py-10 p-8 md:p-10 flex flex-col justify-center text-white border-r border-white/10 rounded-2xl">
           <div className="mb-8">
             <div className="flex items-center justify-center gap-2 mb-16">
               <Image src={'/api/media/file/Logo-2.png'} alt={'Logo'} width={142} height={27} />
@@ -623,22 +623,6 @@ export default function LoginPage() {
               Privacy Policy
             </button>
           </p>
-        </div>
-
-        {/* Right Side - Image */}
-        <div
-          className="hidden md:block bg-cover bg-center bg-no-repeat relative overflow-hidden"
-          style={{
-            backgroundImage: 'url(/api/media/file/individual-doing-sport-healthy-lifestyle.jpg)',
-          }}
-        >
-          
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
-              <p className="text-white text-4xl font-semibold bebas">Build Your Strength</p>
-              <p className="text-white/80 text-2xl mt-2 bebas">Transform Your Body</p>
-            </div>
-          </div>
         </div>
       </div>
     </SectionFade>

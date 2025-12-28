@@ -52,20 +52,23 @@ export async function GET(req: NextRequest) {
 
     if (!defaultPlans) {
       return NextResponse.json(
-        { error: 'Default plans not configured. Please initialize the Default Plans global in the admin panel.' },
+        {
+          error:
+            'Default plans not configured. Please initialize the Default Plans global in the admin panel.',
+        },
         { status: 500 },
       )
     }
 
     // Get default plan from Global (contains all 7 days: sunday through saturday)
     const defaultPlan =
-      planType === 'meal'
-        ? defaultPlans.defaultMealPlan
-        : defaultPlans.defaultWorkoutPlan
+      planType === 'meal' ? defaultPlans.defaultMealPlan : defaultPlans.defaultWorkoutPlan
 
     if (!defaultPlan) {
       return NextResponse.json(
-        { error: `Default ${planType} plan not found in Global. Please configure it in the admin panel.` },
+        {
+          error: `Default ${planType} plan not found in Global. Please configure it in the admin panel.`,
+        },
         { status: 404 },
       )
     }
@@ -78,10 +81,6 @@ export async function GET(req: NextRequest) {
     })
   } catch (error: any) {
     console.error('Error fetching active plan:', error)
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 }
-
