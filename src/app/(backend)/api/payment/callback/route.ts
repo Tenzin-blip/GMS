@@ -11,8 +11,10 @@ const getPayloadServer = () => process.env.PAYLOAD_PUBLIC_SERVER_URL
 const getKhaltiUrl = (path: string) =>
   `${process.env.KHALTI_API_BASE?.replace(/\/$/, '') || 'https://a.khalti.com/api/v2'}${path}`
 
-const redirectWithStatus = (status: 'success' | 'failed' | 'cancelled', isRenewal: boolean = false) => {
-
+const redirectWithStatus = (
+  status: 'success' | 'failed' | 'cancelled',
+  isRenewal: boolean = false,
+) => {
   const redirectPath = isRenewal ? '/user/payment' : '/login'
   return NextResponse.redirect(`${getBaseUrl()}${redirectPath}?payment=${status}`, 302)
 }
@@ -64,12 +66,12 @@ export async function GET(req: NextRequest) {
 
     // Try multiple possible status formats from Khalti
     const paymentState = (
-      lookupData?.state?.name || 
-      lookupData?.status || 
+      lookupData?.state?.name ||
+      lookupData?.status ||
       lookupData?.transaction?.state?.name ||
       ''
     ).toLowerCase()
-    
+
     const isCompleted = paymentState === 'completed' || paymentState === 'complete'
 
     console.log('Khalti payment state:', paymentState)
@@ -91,7 +93,7 @@ export async function GET(req: NextRequest) {
     if (paymentRecordRes.ok) {
       const paymentData = await paymentRecordRes.json()
       paymentRecord = paymentData.docs?.[0]
-      
+
       if (paymentRecord) {
         isRenewalPayment = paymentRecord.paymentType === 'renewal'
         console.log('Payment record found:', paymentRecord.id)
@@ -130,26 +132,51 @@ export async function GET(req: NextRequest) {
     console.log('User found:', user.id, user.email)
 
     // Calculate validUntil date (31 days from now)
-    const now = new Date()
-    const validUntil = new Date(now)
-    validUntil.setDate(validUntil.getDate() + 31)
+    // Calculate dates
+    // Calculate dates
+    const paidAt = new Date() // Current payment date
+    const validUntil = new Date(paidAt)
+    validUntil.setDate(validUntil.getDate() + 31) // Subscription valid for 31 days
+
+    // Calculate next payment date
+    let nextPaymentDate = new Date(validUntil)
+
+    // For renewals, check if they're paying early and extend accordingly
+    if (isRenewalPayment && user.nextPaymentDate) {
+      const currentValidUntil = new Date(user.nextPaymentDate)
+      const today = new Date()
+
+      // If paying before expiry, extend from current expiry date
+      if (currentValidUntil > today) {
+        nextPaymentDate = new Date(currentValidUntil)
+        nextPaymentDate.setDate(nextPaymentDate.getDate() + 31)
+
+        validUntil.setTime(currentValidUntil.getTime())
+        validUntil.setDate(validUntil.getDate() + 31)
+      }
+    }
+
+    console.log('Payment date:', paidAt.toISOString())
+    console.log('Valid until:', validUntil.toISOString())
+    console.log('Next payment date:', nextPaymentDate.toISOString())
 
     // Update payment record in Payments collection FIRST
     if (paymentRecord) {
       const paymentPatchBody = isCompleted
         ? {
             status: 'completed',
-            paidAt: new Date().toISOString(),
+            paidAt: paidAt.toISOString(),
             validUntil: validUntil.toISOString(),
             khaltiTransactionId: lookupData.transaction_id || lookupData.idx || pidx,
           }
         : {
-            status: paymentState === 'initiated' || paymentState === 'pending' ? 'pending' : 'failed',
+            status:
+              paymentState === 'initiated' || paymentState === 'pending' ? 'pending' : 'failed',
           }
 
       console.log('Updating payment record with status:', paymentPatchBody.status)
       console.log('Payment update body:', JSON.stringify(paymentPatchBody, null, 2))
-      
+
       const updatePaymentRes = await fetch(`${payloadServer}/api/payments/${paymentRecord.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -170,16 +197,16 @@ export async function GET(req: NextRequest) {
 
     // Update user collection
     const userPatchBody = isCompleted
-      ? { 
-          payment: true, 
+      ? {
+          payment: true,
           khaltiPidx: null,
-          nextPaymentDate: validUntil.toISOString()
+          nextPaymentDate: nextPaymentDate.toISOString(),
         }
       : { payment: false }
 
     console.log('Updating user with payment status...')
     console.log('User update body:', JSON.stringify(userPatchBody, null, 2))
-    
+
     const updateUserRes = await fetch(`${payloadServer}/api/users/${user.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

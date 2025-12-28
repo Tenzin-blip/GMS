@@ -1,99 +1,108 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { CreditCard, Calendar, AlertCircle, CheckCircle, Loader2, Trash2, Plus, Receipt, TrendingUp, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import {
+  CreditCard,
+  Calendar,
+  AlertCircle,
+  CheckCircle,
+  Loader2,
+  Trash2,
+  Plus,
+  Receipt,
+  TrendingUp,
+  Clock,
+} from 'lucide-react'
 
 const PaymentPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [dataLoading, setDataLoading] = useState(true);
-  
-  const [userData, setUserData] = useState(null);
-  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const [verifying, setVerifying] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [dataLoading, setDataLoading] = useState(true)
+
+  const [userData, setUserData] = useState(null)
+  const [transactions, setTransactions] = useState([])
   const [stats, setStats] = useState({
     totalPaid: 0,
     nextPayment: null,
-    upcomingAmount: 0
-  });
+    upcomingAmount: 0,
+  })
 
   const planPrices = {
     essential: 3500,
     premium: 5000,
-    elite: 6500
-  };
+    elite: 6500,
+  }
 
-  const PAYLOAD_SERVER = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
+  const PAYLOAD_SERVER = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
   // Check for payment status in URL on mount
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const paymentStatus = params.get('payment');
-    
+    const params = new URLSearchParams(window.location.search)
+    const paymentStatus = params.get('payment')
+
     if (paymentStatus === 'success') {
-      setSuccess('Payment completed successfully! 🎉');
+      setSuccess('Payment completed successfully! 🎉')
       // Remove the query param
-      window.history.replaceState({}, '', '/payment');
+      window.history.replaceState({}, '', '/payment')
     } else if (paymentStatus === 'failed') {
-      setError('Payment failed. Please try again.');
-      window.history.replaceState({}, '', '/payment');
+      setError('Payment failed. Please try again.')
+      window.history.replaceState({}, '', '/payment')
     } else if (paymentStatus === 'cancelled') {
-      setError('Payment was cancelled.');
-      window.history.replaceState({}, '', '/payment');
+      setError('Payment was cancelled.')
+      window.history.replaceState({}, '', '/payment')
     }
-  }, []);
+  }, [])
 
   // Fetch user data and payment history
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    fetchUserData()
+  }, [])
 
   const fetchUserData = async () => {
     try {
       // Use Payload's built-in /api/users/me endpoint
       const response = await fetch(`${PAYLOAD_SERVER}/api/users/me`, {
         credentials: 'include', // Important: includes cookies
-      });
+      })
 
       if (!response.ok) {
-        setError('Please login to view payment details');
-        setDataLoading(false);
-        return;
+        setError('Please login to view payment details')
+        setDataLoading(false)
+        return
       }
 
-      const data = await response.json();
-      const user = data.user;
-      
+      const data = await response.json()
+      const user = data.user
+
       if (!user) {
-        setError('Please login to view payment details');
-        setDataLoading(false);
-        return;
+        setError('Please login to view payment details')
+        setDataLoading(false)
+        return
       }
 
-      setUserData(user);
-      
+      setUserData(user)
+
       // Calculate next payment date
-      const nextPaymentDate = user.nextPaymentDate 
-        ? new Date(user.nextPaymentDate) 
-        : null;
-      
-      setStats(prev => ({
+      const nextPaymentDate = user.nextPaymentDate ? new Date(user.nextPaymentDate) : null
+
+      setStats((prev) => ({
         ...prev,
         nextPayment: nextPaymentDate,
-        upcomingAmount: planPrices[user.plan?.toLowerCase()] || 5000
-      }));
+        upcomingAmount: planPrices[user.plan?.toLowerCase()] || 5000,
+      }))
 
       // Fetch payment history after we have user data
-      fetchPaymentHistory(user.id);
+      fetchPaymentHistory(user.id)
 
-      setDataLoading(false);
+      setDataLoading(false)
     } catch (err) {
-      console.error('Error fetching user data:', err);
-      setError('Failed to load user data');
-      setDataLoading(false);
+      console.error('Error fetching user data:', err)
+      setError('Failed to load user data')
+      setDataLoading(false)
     }
-  };
+  }
 
   const fetchPaymentHistory = async (userId) => {
     try {
@@ -101,115 +110,115 @@ const PaymentPage = () => {
       const response = await fetch(
         `${PAYLOAD_SERVER}/api/payments?where[user][equals]=${userId}&where[status][equals]=completed&sort=-paidAt&limit=100`,
         {
-          credentials: 'include'
-        }
-      );
+          credentials: 'include',
+        },
+      )
 
       if (response.ok) {
-        const data = await response.json();
-        const payments = data.docs || [];
-        
-        console.log('Payment history fetched:', payments.length, 'payments');
-        setTransactions(payments);
-        
+        const data = await response.json()
+        const payments = data.docs || []
+
+        console.log('Payment history fetched:', payments.length, 'payments')
+        setTransactions(payments)
+
         // Calculate total paid from all completed payments
-        const total = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-        console.log('Total paid calculated:', total);
-        
-        setStats(prev => ({
+        const total = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0)
+        console.log('Total paid calculated:', total)
+
+        setStats((prev) => ({
           ...prev,
-          totalPaid: total
-        }));
+          totalPaid: total,
+        }))
       } else {
-        console.error('Failed to fetch payment history:', response.status);
+        console.error('Failed to fetch payment history:', response.status)
       }
     } catch (err) {
-      console.error('Error fetching payment history:', err);
+      console.error('Error fetching payment history:', err)
     }
-  };
+  }
 
   const handleInitiatePayment = async () => {
     if (!userData) {
-      setError('Please login first');
-      return;
+      setError('Please login first')
+      return
     }
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
+    setLoading(true)
+    setError('')
+    setSuccess('')
 
     try {
       const response = await fetch(`${PAYLOAD_SERVER}/api/payment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ userId: userData.id })
-      });
+        body: JSON.stringify({ userId: userData.id }),
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok && data.paymentUrl) {
         // Redirect to Khalti
-        window.location.href = data.paymentUrl;
+        window.location.href = data.paymentUrl
       } else {
-        setError(data.message || 'Failed to initiate payment');
+        setError(data.message || 'Failed to initiate payment')
       }
     } catch (err) {
-      setError('Unable to connect to payment service');
+      setError('Unable to connect to payment service')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleVerifyPayment = async () => {
     if (!userData) {
-      setError('Please login first');
-      return;
+      setError('Please login first')
+      return
     }
 
-    setVerifying(true);
-    setError('');
-    setSuccess('');
+    setVerifying(true)
+    setError('')
+    setSuccess('')
 
     try {
       const response = await fetch(`${PAYLOAD_SERVER}/api/payment/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ userId: userData.id })
-      });
+        body: JSON.stringify({ userId: userData.id }),
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (response.ok) {
         if (data.payment) {
-          setSuccess('Payment verified successfully!');
+          setSuccess('Payment verified successfully!')
           // Refresh data
-          fetchUserData();
+          fetchUserData()
         } else {
-          setError('Payment not completed yet');
+          setError('Payment not completed yet')
         }
       } else {
-        setError(data.message || 'Verification failed');
+        setError(data.message || 'Verification failed')
       }
     } catch (err) {
-      setError('Unable to verify payment status');
+      setError('Unable to verify payment status')
     } finally {
-      setVerifying(false);
+      setVerifying(false)
     }
-  };
+  }
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
+    if (!dateString) return 'N/A'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
 
   const formatMonth = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
+    if (!dateString) return 'N/A'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  }
 
   if (dataLoading) {
     return (
@@ -224,7 +233,7 @@ const PaymentPage = () => {
           <p className="text-gray-400">Loading payment details...</p>
         </div>
       </div>
-    );
+    )
   }
 
   if (!userData) {
@@ -239,15 +248,18 @@ const PaymentPage = () => {
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Authentication Required</h2>
           <p className="text-gray-400 mb-6">Please login to view your payment details</p>
-          <a href="/login" className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl font-medium transition-colors inline-block">
+          <a
+            href="/login"
+            className="px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl font-medium transition-colors inline-block"
+          >
             Go to Login
           </a>
         </div>
       </div>
-    );
+    )
   }
 
-  const isPaymentDue = stats.nextPayment ? new Date() >= new Date(stats.nextPayment) : false;
+  const isPaymentDue = stats.nextPayment ? new Date() >= new Date(stats.nextPayment) : false
 
   return (
     <div className="min-h-screen bg-black text-white relative">
@@ -274,7 +286,7 @@ const PaymentPage = () => {
             <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 backdrop-blur-xl flex items-start gap-3 shadow-lg shadow-red-500/5">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <p className="text-red-400 text-sm">{error}</p>
-              <button 
+              <button
                 onClick={() => setError('')}
                 className="ml-auto text-red-400 hover:text-red-300"
               >
@@ -287,7 +299,7 @@ const PaymentPage = () => {
             <div className="mb-6 p-4 rounded-2xl bg-green-500/10 border border-green-500/30 backdrop-blur-xl flex items-start gap-3 shadow-lg shadow-green-500/5">
               <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
               <p className="text-green-400 text-sm">{success}</p>
-              <button 
+              <button
                 onClick={() => setSuccess('')}
                 className="ml-auto text-green-400 hover:text-green-300"
               >
@@ -358,7 +370,9 @@ const PaymentPage = () => {
                   <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-400">Plan</span>
-                      <span className="text-white font-medium capitalize">{userData.plan || 'N/A'}</span>
+                      <span className="text-white font-medium capitalize">
+                        {userData.plan || 'N/A'}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Due Date</span>
@@ -403,7 +417,7 @@ const PaymentPage = () => {
                     Payment Method
                   </h3>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="bg-white/5 border border-white/20 rounded-xl p-4 hover:bg-white/10 hover:border-orange-500/50 transition-all duration-300">
                     <div className="flex items-center justify-between">
@@ -458,18 +472,20 @@ const PaymentPage = () => {
                     <p className="text-sm text-gray-400">All your completed payments</p>
                   </div>
                 </div>
-                
+
                 {transactions.length === 0 ? (
                   <div className="text-center py-12">
                     <Receipt className="w-16 h-16 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-500">No payment history yet</p>
-                    <p className="text-gray-600 text-sm mt-2">Your completed payments will appear here</p>
+                    <p className="text-gray-600 text-sm mt-2">
+                      Your completed payments will appear here
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {transactions.map((transaction, index) => (
-                      <div 
-                        key={transaction.id} 
+                      <div
+                        key={transaction.id}
                         className="bg-white/5 backdrop-blur-sm border border-white/20 rounded-xl p-5 hover:bg-white/10 hover:border-orange-500/50 transition-all duration-300 group shadow-lg"
                       >
                         <div className="flex items-center justify-between">
@@ -479,17 +495,16 @@ const PaymentPage = () => {
                             </div>
                             <div>
                               <p className="font-semibold text-lg capitalize">
-                                {transaction.paymentType === 'signup' ? 'Initial Signup' : 'Monthly Renewal'}
+                                {transaction.paymentType === 'signup'
+                                  ? 'Initial Signup'
+                                  : 'Monthly Renewal'}
                               </p>
                               <p className="text-sm text-gray-400 mt-0.5">
                                 {formatMonth(transaction.paidAt)} • {formatDate(transaction.paidAt)}
                               </p>
-                              <div className="flex items-center gap-2 mt-2">
+                              <div className="items-centermt-2">
                                 <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded border border-white/10 capitalize">
                                   {transaction.paymentMethod || 'Khalti'}
-                                </span>
-                                <span className="text-xs text-gray-600">
-                                  {transaction.orderId}
                                 </span>
                               </div>
                             </div>
@@ -513,7 +528,7 @@ const PaymentPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PaymentPage;
+export default PaymentPage
