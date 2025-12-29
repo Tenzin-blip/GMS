@@ -14,7 +14,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { specializations, workingDays, workingHours, notes } = body || {}
 
-    if (!Array.isArray(specializations) || !Array.isArray(workingDays) || !workingHours?.start || !workingHours?.end) {
+    if (
+      !Array.isArray(specializations) ||
+      !Array.isArray(workingDays) ||
+      !workingHours?.start ||
+      !workingHours?.end
+    ) {
       return NextResponse.json({ error: 'Missing required onboarding fields' }, { status: 400 })
     }
 
@@ -59,4 +64,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error?.message || 'Internal error' }, { status: 500 })
   }
 }
-

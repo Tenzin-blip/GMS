@@ -1,19 +1,48 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Clock, Dumbbell, Sparkles, CheckCircle, CalendarCheck, AlertCircle } from 'lucide-react'
-import { SectionFade } from '@/components/animations/SectionFade'
+import { useRouter } from 'next/navigation'
 
 const specializations = ['Muscle building', 'Strength', 'Weight loss', 'Mobility', 'Conditioning']
 const workingDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function TrainerOnboarding() {
+  const router = useRouter()
   const [selectedSpec, setSelectedSpec] = useState<string>('Muscle building')
   const [selectedDays, setSelectedDays] = useState<string[]>(['Mon', 'Wed', 'Fri'])
   const [startTime, setStartTime] = useState('07:00')
   const [endTime, setEndTime] = useState('19:00')
   const [note, setNote] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  // Check if trainer has already completed onboarding
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      try {
+        const response = await fetch('/api/trainer/profile', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          // If profile exists with required data, redirect to dashboard
+          if (data?.profile && data.profile.specializations && data.profile.workingDays) {
+            router.push('/trainer/dashboard')
+            return
+          }
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('Error checking onboarding status:', error)
+        setLoading(false)
+      }
+    }
+
+    checkOnboardingStatus()
+  }, [router])
 
   const weeklyHours = useMemo(() => {
     const start = parseInt(startTime.split(':')[0])
@@ -26,11 +55,46 @@ export default function TrainerOnboarding() {
     setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
-    // Placeholder for API integration (PATCH /api/trainer/onboarding)
-    // fetch('/api/trainer/onboarding', { method: 'POST', body: JSON.stringify({ ... }) })
+
+    try {
+      const response = await fetch('/api/trainer/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          specializations: [selectedSpec],
+          workingDays: selectedDays,
+          workingHours: { start: startTime, end: endTime },
+          notes: note,
+        }),
+      })
+
+      if (response.ok) {
+        // Redirect to dashboard after successful submission
+        setTimeout(() => {
+          router.push('/trainer/dashboard')
+        }, 1500)
+      } else {
+        console.error('Failed to save onboarding data')
+        setSubmitted(false)
+      }
+    } catch (error) {
+      console.error('Error submitting onboarding:', error)
+      setSubmitted(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -40,13 +104,13 @@ export default function TrainerOnboarding() {
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/25 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-5xl mx-auto relative z-10 space-y-8">
-        <div className="flex items-start justify-between gap-4">
+      <div className="relative max-w-7xl mx-auto">
+        <div className="flex items-start justify-between gap-4 mb-8">
           <div>
             <h1 className="text-4xl font-bold mt-2">Tune your availability</h1>
             <p className="text-gray-400 mt-2 max-w-2xl">
-              Set your speciality, preferred days and weekly hours so member requests can be matched to you
-              automatically.
+              Set your speciality, preferred days and weekly hours so member requests can be matched
+              to you automatically.
             </p>
           </div>
           {submitted && (
@@ -172,21 +236,22 @@ export default function TrainerOnboarding() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-orange-400 mt-0.5" />
                 <div className="text-sm text-gray-300">
-                  You can update this later from trainer settings. Admins can also adjust on your behalf.
+                  You can update this later from trainer settings. Admins can also adjust on your
+                  behalf.
                 </div>
               </div>
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-500 transition-all shadow-lg shadow-orange-500/25 font-semibold"
+              disabled={submitted}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-500 transition-all shadow-lg shadow-orange-500/25 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save and start taking requests
+              {submitted ? 'Saving...' : 'Save and start taking requests'}
             </button>
           </div>
         </form>
-      </SectionFade>
+      </div>
     </div>
   )
 }
-
