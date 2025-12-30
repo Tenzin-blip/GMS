@@ -236,8 +236,7 @@ export default function TrainerOnboarding() {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-orange-400 mt-0.5" />
                 <div className="text-sm text-gray-300">
-                  You can update this later from trainer settings. Admins can also adjust on your
-                  behalf.
+                  You can update this later from your profile.
                 </div>
               </div>
             </div>
@@ -247,7 +246,7 @@ export default function TrainerOnboarding() {
               disabled={submitted}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-500 transition-all shadow-lg shadow-orange-500/25 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitted ? 'Saving...' : 'Save and start taking requests'}
+              {submitted ? 'Saving...' : 'Save and Continue'}
             </button>
           </div>
         </form>
