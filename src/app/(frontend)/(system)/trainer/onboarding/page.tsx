@@ -4,12 +4,32 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { Clock, Dumbbell, Sparkles, CheckCircle, CalendarCheck, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-const specializations = ['Muscle building', 'Strength', 'Weight loss', 'Mobility', 'Conditioning']
-const workingDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+// Map display names to backend values
+const specializationMap = {
+  'Muscle building': 'muscle_building',
+  'Strength': 'strength',
+  'Weight loss': 'weight_loss',
+  'Mobility': 'mobility',
+  'Conditioning': 'conditioning',
+} as const
+
+const specializations = Object.keys(specializationMap)
+
+const dayMap = {
+  'Mon': 'mon',
+  'Tue': 'tue',
+  'Wed': 'wed',
+  'Thu': 'thu',
+  'Fri': 'fri',
+  'Sat': 'sat',
+  'Sun': 'sun',
+} as const
+
+const workingDays = Object.keys(dayMap)
 
 export default function TrainerOnboarding() {
   const router = useRouter()
-  const [selectedSpec, setSelectedSpec] = useState<string>('Muscle building')
+  const [selectedSpecs, setSelectedSpecs] = useState<string[]>(['Muscle building'])
   const [selectedDays, setSelectedDays] = useState<string[]>(['Mon', 'Wed', 'Fri'])
   const [startTime, setStartTime] = useState('07:00')
   const [endTime, setEndTime] = useState('19:00')
@@ -55,17 +75,36 @@ export default function TrainerOnboarding() {
     setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]))
   }
 
+  const toggleSpec = (spec: string) => {
+    setSelectedSpecs((prev) => (prev.includes(spec) ? prev.filter((s) => s !== spec) : [...prev, spec]))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (selectedSpecs.length === 0) {
+      alert('Please select at least one specialization')
+      return
+    }
+    
+    if (selectedDays.length === 0) {
+      alert('Please select at least one working day')
+      return
+    }
+    
     setSubmitted(true)
 
     try {
+      // Convert frontend values to backend format
+      const backendSpecs = selectedSpecs.map(spec => specializationMap[spec as keyof typeof specializationMap])
+      const backendDays = selectedDays.map(day => dayMap[day as keyof typeof dayMap])
+
       const response = await fetch('/api/trainer/onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          specializations: [selectedSpec],
-          workingDays: selectedDays,
+          specializations: backendSpecs,
+          workingDays: backendDays,
           workingHours: { start: startTime, end: endTime },
           notes: note,
         }),
@@ -77,11 +116,14 @@ export default function TrainerOnboarding() {
           router.push('/trainer/dashboard')
         }, 1500)
       } else {
-        console.error('Failed to save onboarding data')
+        const errorData = await response.json()
+        console.error('Failed to save onboarding data:', errorData)
+        alert(errorData.error || 'Failed to save profile')
         setSubmitted(false)
       }
     } catch (error) {
       console.error('Error submitting onboarding:', error)
+      alert('An error occurred while saving your profile')
       setSubmitted(false)
     }
   }
@@ -109,7 +151,7 @@ export default function TrainerOnboarding() {
           <div>
             <h1 className="text-4xl font-bold mt-2">Tune your availability</h1>
             <p className="text-gray-400 mt-2 max-w-2xl">
-              Set your speciality, preferred days and weekly hours so member requests can be matched
+              Set your specialties, preferred days and weekly hours so member requests can be matched
               to you automatically.
             </p>
           </div>
@@ -129,23 +171,27 @@ export default function TrainerOnboarding() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Dumbbell className="w-5 h-5 text-orange-400" />
-                <h2 className="text-xl font-semibold">Specialization</h2>
+                <h2 className="text-xl font-semibold">Specializations</h2>
+                <span className="text-sm text-gray-400">(select one or more)</span>
               </div>
               <div className="flex flex-wrap gap-3">
-                {specializations.map((spec) => (
-                  <button
-                    key={spec}
-                    type="button"
-                    onClick={() => setSelectedSpec(spec)}
-                    className={`px-4 py-2 rounded-xl border text-sm transition-all ${
-                      selectedSpec === spec
-                        ? 'bg-orange-500/20 border-orange-400/40 text-orange-100'
-                        : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
-                    }`}
-                  >
-                    {spec}
-                  </button>
-                ))}
+                {specializations.map((spec) => {
+                  const isSelected = selectedSpecs.includes(spec)
+                  return (
+                    <button
+                      key={spec}
+                      type="button"
+                      onClick={() => toggleSpec(spec)}
+                      className={`px-4 py-2 rounded-xl border text-sm transition-all ${
+                        isSelected
+                          ? 'bg-orange-500/20 border-orange-400/40 text-orange-100'
+                          : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                      }`}
+                    >
+                      {spec}
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
@@ -228,7 +274,7 @@ export default function TrainerOnboarding() {
                 </div>
               </div>
               <p className="text-sm text-gray-400">
-                We surface you to members who match your speciality and fit within these windows.
+                We surface you to members who match your specialties and fit within these windows.
               </p>
             </div>
 
