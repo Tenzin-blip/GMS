@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from 'react'
 import Notices from '@/components/system/dashboard/Notices'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 import AttendanceStatCard from '@/components/system/attendance/AttendanceStatCard'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Calendar, Flame, Clock, Users, TrendingUp, Trophy } from 'lucide-react'
 
 interface UserFitnessData {
@@ -299,14 +298,11 @@ export default function Dashboard() {
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         {/* Header */}
-        <SectionFade>
+        <div>
           <DashboardHeader />
-        </SectionFade>
+        </div>
 
-        <SectionFade
-          delay={0.05}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {attendanceStats.map((stat) => (
             <AttendanceStatCard
               key={stat.title}
@@ -316,10 +312,10 @@ export default function Dashboard() {
               icon={stat.icon}
             />
           ))}
-        </SectionFade>
+        </div>
 
         {/* Main Content Grid */}
-        <SectionFade delay={0.1} className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - Notice Board */}
           <div className="space-y-6">
             {/* Notice Board */}
@@ -394,7 +390,7 @@ export default function Dashboard() {
               
             )}
           </div>
-        </SectionFade>
+        </div>
       </div>
       {/* Middle Column - Leaderboard */}
           <div className="backdrop-blur-xl bg-white/5 rounded-xl p-6 border border-white/10 relative overflow-hidden">

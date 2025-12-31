@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Users, Search, Sparkles } from 'lucide-react'
 
 type Member = {
@@ -61,7 +60,7 @@ export default function TrainerClientList() {
         <div className="absolute bottom-12 right-10 w-80 h-80 bg-purple-500/25 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="items-center justify-between">
           <p className="text-sm text-orange-400 uppercase tracking-wide">Trainer</p>
           <h1 className="text-4xl font-bold">Members</h1>
@@ -125,7 +124,7 @@ export default function TrainerClientList() {
             </div>
           ))}
         </div>
-      </SectionFade>
+      </div>
     </div>
   )
 }

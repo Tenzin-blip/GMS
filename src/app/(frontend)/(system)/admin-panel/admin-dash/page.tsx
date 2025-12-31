@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import DashboardHeader from '@/components/system/dashboard/DashboardHeader'
 import Toast from '@/components/website/toast'
-import { SectionFade } from '@/components/animations/SectionFade'
 
 interface User {
   id: string
@@ -235,9 +234,9 @@ export default function Admin_dash() {
 
   return (
     <>
-      <SectionFade className="min-h-screen text-white p-4 md:p-6 pt-20 md:pt-6">
+      <div className="min-h-screen text-white p-4 md:p-6 pt-20 md:pt-6">
         <DashboardHeader />
-      </SectionFade>
+      </div>
       {toastNode}
     </>
   )

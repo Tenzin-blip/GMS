@@ -1,7 +1,6 @@
 'use client'
 
 import React from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Settings } from 'lucide-react'
 
 export default function TrainerSettings() {
@@ -12,7 +11,7 @@ export default function TrainerSettings() {
         <div className="absolute bottom-12 right-10 w-80 h-80 bg-purple-500/25 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-4xl mx-auto relative z-10 space-y-6">
+      <div className="max-w-4xl mx-auto relative z-10 space-y-6">
         <div className="flex items-center gap-3">
           <Settings className="w-6 h-6 text-orange-400" />
           <div>
@@ -25,7 +24,7 @@ export default function TrainerSettings() {
             Configuration options for trainer notifications, availability sync, and integrations will live here.
           </p>
         </div>
-      </SectionFade>
+      </div>
     </div>
   )
 }

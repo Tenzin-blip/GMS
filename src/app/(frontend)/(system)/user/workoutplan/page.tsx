@@ -1,6 +1,5 @@
 'use client'
 import React, { useMemo, useState, useEffect } from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Clock3, Flame } from 'lucide-react'
 
 interface WorkoutEntry {
@@ -141,7 +140,7 @@ export default function WorkoutPlan() {
         <div className="absolute bottom-16 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-orange-400 uppercase tracking-wide">Workout Plan</p>
@@ -241,7 +240,7 @@ export default function WorkoutPlan() {
             </div>
           ))}
         </div>
-      </SectionFade>
+      </div>
     </div>
   )
 }

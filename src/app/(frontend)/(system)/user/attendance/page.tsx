@@ -13,7 +13,6 @@ import {
   Sparkles,
 } from 'lucide-react'
 import Toast from '@/components/website/toast'
-import { SectionFade } from '@/components/animations/SectionFade'
 
 export default function AttendancePage() {
   type AttendanceRecord = {
@@ -245,7 +244,7 @@ export default function AttendancePage() {
       </div>
 
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-white p-6">
-        <SectionFade className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-orange-500">Attendance</h1>
@@ -278,10 +277,7 @@ export default function AttendancePage() {
             </div>
           )}
 
-          <SectionFade
-            delay={0.05}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-orange-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
               <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300">
@@ -345,9 +341,9 @@ export default function AttendancePage() {
                 <p className="text-gray-400 text-sm mt-1">This month</p>
               </div>
             </div>
-          </SectionFade>
+          </div>
 
-          <SectionFade delay={0.1} className="grid lg:grid-cols-2 gap-6">
+          <div className="grid lg:grid-cols-2 gap-6">
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-2xl blur-xl transition-all duration-300" />
               <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-2xl">
@@ -460,8 +456,8 @@ export default function AttendancePage() {
                 </div>
               </div>
             </div>
-          </SectionFade>
-        </SectionFade>
+          </div>
+        </div>
       </div>
 
       {showManualModal && (

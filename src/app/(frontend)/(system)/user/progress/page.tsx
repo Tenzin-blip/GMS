@@ -1,6 +1,5 @@
 'use client'
 import React, { useMemo } from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Calendar, Utensils, Dumbbell, Gauge } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
@@ -71,7 +70,7 @@ export default function ProgressTracker() {
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-orange-400 uppercase tracking-wide">Progress</p>
@@ -82,7 +81,7 @@ export default function ProgressTracker() {
           </div>
         </div>
 
-        <SectionFade delay={0.05} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {cards.map((card) => (
             <div
               key={card.title}
@@ -104,9 +103,9 @@ export default function ProgressTracker() {
               </div>
             </div>
           ))}
-        </SectionFade>
+        </div>
 
-        <SectionFade delay={0.1} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
             <h3 className="text-lg font-semibold mb-4">Daily ticks</h3>
             <div className="space-y-3">
@@ -139,8 +138,8 @@ export default function ProgressTracker() {
               <li>Each day refreshes to the current plan automatically.</li>
             </ul>
           </div>
-        </SectionFade>
-      </SectionFade>
+        </div>
+      </div>
     </div>
   )
 }

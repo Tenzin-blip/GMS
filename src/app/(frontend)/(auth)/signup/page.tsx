@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { Check } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Toast from '@/components/website/toast'
-import { SectionFade } from '@/components/animations/SectionFade'
 
 const Plans = ({ onSelectPlan, selectedPlan }) => {
   const plans = [
@@ -706,7 +705,7 @@ export default function SignupForm() {
 
   return (
     <div className="min-h-screen bg-black py-6 px-4">
-      <SectionFade className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Progress Steps */}
         <div className="mb-6">
           <div className="flex items-start justify-between max-w-4xl mx-auto">
@@ -780,7 +779,7 @@ export default function SignupForm() {
             </button>
           </div>
         </div>
-      </SectionFade>
+      </div>
 
       {/* Toast Notification */}
       {toast && (

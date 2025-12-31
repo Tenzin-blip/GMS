@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Users, Check, XCircle, Sparkles } from 'lucide-react'
 
 type Request = {
@@ -33,7 +32,7 @@ export default function TrainerRequests() {
         <div className="absolute bottom-12 right-10 w-80 h-80 bg-purple-500/25 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-5xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-5xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">Requests</h1>
@@ -94,7 +93,7 @@ export default function TrainerRequests() {
             </div>
           ))}
         </div>
-      </SectionFade>
+      </div>
     </div>
   )
 }

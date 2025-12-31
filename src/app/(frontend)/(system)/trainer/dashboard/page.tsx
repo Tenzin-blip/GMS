@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { Users, ClipboardList, CheckCircle2, Clock4, Sparkles } from 'lucide-react'
 
 type Member = {
@@ -36,7 +35,7 @@ export default function TrainerDashboard() {
         <div className="absolute bottom-16 right-8 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">Dashboard</h1>
@@ -44,14 +43,14 @@ export default function TrainerDashboard() {
           </div>
         </div>
 
-        <SectionFade delay={0.05} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <MetricCard title="Active members" value={metrics.active} icon={<Users className="w-5 h-5 text-orange-400" />} />
           <MetricCard title="Pending requests" value={metrics.pending} icon={<ClipboardList className="w-5 h-5 text-orange-400" />} />
           <MetricCard title="Elite tier" value={metrics.elite} icon={<CheckCircle2 className="w-5 h-5 text-orange-400" />} />
           <MetricCard title="Avg response" value={metrics.avgResponse} icon={<Clock4 className="w-5 h-5 text-orange-400" />} />
-        </SectionFade>
+        </div>
 
-        <SectionFade delay={0.1} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -125,8 +124,8 @@ export default function TrainerDashboard() {
                 ))}
             </div>
           </div>
-        </SectionFade>
-      </SectionFade>
+        </div>
+      </div>
     </div>
   )
 }
