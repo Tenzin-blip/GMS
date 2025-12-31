@@ -1,13 +1,15 @@
 import type { CollectionConfig } from 'payload'
+import { FITNESS_GOALS } from '../globals/FitnessGoals'
+
 
 export const PlanRequests: CollectionConfig = {
   slug: 'plan-requests',
   admin: {
     useAsTitle: 'user',
-    defaultColumns: ['user', 'goal', 'tier', 'status', 'assignedTrainer'],
+    defaultColumns: ['user', 'goals', 'tier', 'status', 'assignedTrainer'],
   },
   access: {
-    create: ({ req: { user } }) => !!user, // created by system/admin/user flow
+    create: ({ req: { user } }) => !!user,
     read: ({ req: { user } }) => {
       if (!user) return false
       if (user.role === 'admin') return true
@@ -46,10 +48,20 @@ export const PlanRequests: CollectionConfig = {
       required: true,
     },
     {
-      name: 'goal',
-      type: 'text',
-      required: true,
+      name: 'userFitnessData',
+      type: 'relationship',
+      relationTo: 'user-fitness',
+      required: false,
+      admin: {
+        description: 'Reference to user fitness profile for trainer context',
+      },
     },
+    {
+      name: 'goals',
+      type: 'select',
+      hasMany: true,
+      options: FITNESS_GOALS, 
+    },    
     {
       name: 'tier',
       type: 'select',
@@ -60,9 +72,26 @@ export const PlanRequests: CollectionConfig = {
       required: true,
     },
     {
-      name: 'specializationMatch',
-      type: 'text',
-      required: false,
+      name: 'matchedSpecializations',
+      type: 'array',
+      fields: [
+        {
+          name: 'specialization',
+          type: 'text',
+        },
+      ],
+      admin: {
+        description: 'Trainer specializations that matched user goals',
+        readOnly: true,
+      },
+    },
+    {
+      name: 'matchScore',
+      type: 'number',
+      admin: {
+        description: 'Number of goals that matched trainer specializations',
+        readOnly: true,
+      },
     },
     {
       name: 'assignedTrainer',
@@ -84,6 +113,12 @@ export const PlanRequests: CollectionConfig = {
       name: 'respondedAt',
       type: 'date',
     },
+    {
+      name: 'rejectionReason',
+      type: 'textarea',
+      admin: {
+        condition: (data) => data.status === 'rejected',
+      },
+    },
   ],
 }
-

@@ -17,16 +17,39 @@ export default function ProgressTracker() {
   useEffect(() => {
     const fetchUserPlan = async () => {
       try {
-        const response = await fetch('/api/user/me', {
+        const token = sessionStorage.getItem('token')
+        if (!token) {
+          setUserPlan('essential')
+          setLoading(false)
+          return
+        }
+
+        const response = await fetch('/api/user-fitness', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
         })
 
         if (response.ok) {
           const data = await response.json()
-          setUserPlan(data.user?.plan || 'essential')
+          // Get user plan from active-plan API or default to essential
+          const planResponse = await fetch('/api/active-plan', {
+            method: 'GET',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+          })
+          
+          if (planResponse.ok) {
+            const planData = await planResponse.json()
+            setUserPlan((planData.plan || 'essential').toLowerCase() as 'essential' | 'premium' | 'elite')
+          } else {
+            setUserPlan('essential')
+          }
         } else {
-          // Default to essential if fetch fails
           setUserPlan('essential')
         }
       } catch (error) {
@@ -166,7 +189,7 @@ export default function ProgressTracker() {
             </p>
           </div>
           <div className="px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-xl">
-            <span className="text-sm text-orange-300 font-medium capitalize">{userPlan} Plan</span>
+            <span className="text-sm text-orange-300 font-medium capitalize">{userPlan || 'essential'} Plan</span>
           </div>
         </div>
 

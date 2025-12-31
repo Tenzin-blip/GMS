@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { FITNESS_GOALS } from '../globals/FitnessGoals'
 
 export const TrainerProfiles: CollectionConfig = {
   slug: 'trainer-profiles',
@@ -50,14 +51,7 @@ export const TrainerProfiles: CollectionConfig = {
       name: 'specializations',
       type: 'select',
       hasMany: true,
-      options: [
-        { label: 'Muscle building', value: 'muscle_building' },
-        { label: 'Strength', value: 'strength' },
-        { label: 'Weight loss', value: 'weight_loss' },
-        { label: 'Mobility', value: 'mobility' },
-        { label: 'Conditioning', value: 'conditioning' },
-      ],
-      required: true,
+      options: FITNESS_GOALS, 
     },
     {
       name: 'workingDays',

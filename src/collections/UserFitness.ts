@@ -1,4 +1,7 @@
 import type { CollectionConfig } from 'payload'
+import { FITNESS_GOALS } from '../globals/FitnessGoals'
+
+
 
 export const UserFitness: CollectionConfig = {
   slug: 'user-fitness',
@@ -42,17 +45,10 @@ export const UserFitness: CollectionConfig = {
 
     // Goal
     {
-      name: 'goal',
+      name: 'goals',
       type: 'select',
-      label: 'Fitness Goal',
-      options: [
-        { label: 'Weight Loss', value: 'weight_loss' },
-        { label: 'Weight Gain', value: 'weight_gain' },
-        { label: 'Muscle Building', value: 'muscle_building' },
-        { label: 'Toning', value: 'toning' },
-        { label: 'Maintenance', value: 'maintenance' },
-      ],
-      defaultValue: 'maintenance',
+      hasMany: true,
+      options: FITNESS_GOALS, 
     },
 
     // Body Metrics
