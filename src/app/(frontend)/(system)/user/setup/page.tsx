@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { ChevronRight, ChevronLeft, AlertCircle, Check, Upload, Camera } from 'lucide-react'
 import Toast from '@/components/website/toast'
+import { FITNESS_GOALS } from '@/globals/FitnessGoals'
 
 export default function OnboardingForm() {
   const [userData, setUserData] = useState<UserData | null>(null)
@@ -47,22 +48,21 @@ export default function OnboardingForm() {
 
   const totalSteps = 5
 
-  const goals = [
-    {
-      id: 'weight_loss',
-      label: 'Lose Weight & Burn Fat',
-      icon: '🔥',
-      desc: 'Shed fat, feel lighter',
-    },
-    {
-      id: 'muscle_building',
-      label: 'Build Muscle & Strength',
-      icon: '🏋️',
-      desc: 'Get stronger, bigger',
-    },
-    { id: 'toning', label: 'Tone & Define', icon: '💪', desc: 'Sculpt your physique' },
-    { id: 'maintenance', label: 'General Fitness', icon: '🎯', desc: 'Stay healthy, active' },
-  ]
+  // Map FITNESS_GOALS to include icons and descriptions
+  const goalIcons: Record<string, { icon: string; description: string }> = {
+    weight_loss: { icon: '🔥', description: 'Shed fat, feel lighter' },
+    muscle_building: { icon: '🏋️', description: 'Get stronger, bigger' },
+    toning: { icon: '💪', description: 'Sculpt your physique' },
+    conditioning: { icon: '🏃', description: 'Build endurance and stamina' },
+    mobility: { icon: '🧘', description: 'Improve range of motion' },
+    maintenance: { icon: '🎯', description: 'Stay healthy, active' },
+  }
+
+  const goals = FITNESS_GOALS.map((goal) => ({
+    ...goal,
+    ...goalIcons[goal.value],
+  }))
+  
 
   const activityLevels = [
     { value: 1, label: 'Sedentary', desc: 'Desk job, minimal activity' },
@@ -131,7 +131,7 @@ export default function OnboardingForm() {
       const submitData = new FormData()
 
       const fitnessData = {
-        goal: formData.goal,
+        goals: formData.goal ? [formData.goal] : [], // Send as array with single goal
         bodyMetrics: {
           height: parseFloat(formData.height),
           currentWeight: parseFloat(formData.currentWeight),
@@ -292,27 +292,53 @@ export default function OnboardingForm() {
           {step === 1 && (
             <div className="space-y-6 relative z-10">
               <div>
-                <h2 className="text-2xl font-bold mb-2">What's your primary goal?</h2>
-                <p className="text-gray-300 text-sm">This helps us customize everything for you</p>
+                <h2 className="text-2xl font-bold mb-2">What's your primary fitness goal?</h2>
+                <p className="text-gray-300 text-sm">
+                  Select one goal - we'll match you with the perfect trainer
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {goals.map((goal) => (
-                  <button
-                    key={goal.id}
-                    onClick={() => updateFormData('goal', goal.id)}
-                    className={`p-6 rounded-xl border-2 transition-all text-left backdrop-blur-md ${
-                      formData.goal === goal.id
-                        ? 'border-orange-500 bg-orange-500/20'
-                        : 'border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="text-4xl mb-3">{goal.icon}</div>
-                    <h3 className="font-bold mb-1">{goal.label}</h3>
-                    <p className="text-sm text-gray-300">{goal.desc}</p>
-                  </button>
-                ))}
+                {goals.map((goal) => {
+                  const isSelected = formData.goal === goal.value
+                  
+                  return (
+                    <button
+                      key={goal.value}
+                      type="button"
+                      onClick={() => updateFormData('goal', goal.value)}
+                      className={`
+                        relative p-6 rounded-2xl border-2 transition-all text-left
+                        ${isSelected 
+                          ? 'border-orange-500 bg-orange-500/10' 
+                          : 'border-white/10 bg-white/5 hover:border-white/20'
+                        }
+                      `}
+                    >
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                          <Check className="w-4 h-4 text-white" />
+                        </div>
+                      )}
+                      
+                      <div className="space-y-2">
+                        <div className="text-3xl">{goal.icon}</div>
+                        <h3 className="text-lg font-semibold">{goal.label}</h3>
+                        <p className="text-sm text-gray-400">{goal.description}</p>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
+
+              {formData.goal && (
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <p className="text-sm text-gray-300">
+                    <span className="font-semibold text-orange-400">Selected goal:</span>{' '}
+                    {goals.find(g => g.value === formData.goal)?.label}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

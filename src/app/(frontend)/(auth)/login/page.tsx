@@ -4,7 +4,6 @@ import { Eye, EyeOff, Mail, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Toast from '@/components/website/toast'
-import { SectionFade } from '@/components/animations/SectionFade'
 
 interface FormData {
   email: string
@@ -351,7 +350,7 @@ export default function LoginPage() {
     if (forgotPasswordSuccess) {
       return (
         <>
-          <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+          <div className="min-h-screen bg-black flex items-center justify-center px-4">
             <div className="w-full max-w-md">
               <button
                 onClick={resetForgotPasswordState}
@@ -381,7 +380,7 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-          </SectionFade>
+          </div>
           {toastNode}
         </>
       )
@@ -389,7 +388,7 @@ export default function LoginPage() {
 
     return (
       <>
-        <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+        <div className="min-h-screen bg-black flex items-center justify-center px-4">
           <div className="w-full max-w-md">
             <button
               onClick={resetForgotPasswordState}
@@ -451,7 +450,7 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-        </SectionFade>
+        </div>
         {toastNode}
       </>
     )
@@ -460,7 +459,7 @@ export default function LoginPage() {
   if (showTerms) {
     return (
       <>
-        <SectionFade className="min-h-screen bg-black flex items-center justify-center px-4">
+        <div className="min-h-screen bg-black flex items-center justify-center px-4">
           <div className="w-full max-w-2xl">
             <button
               onClick={() => setShowTerms(false)}
@@ -504,7 +503,7 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-        </SectionFade>
+        </div>
         {toastNode}
       </>
     )
@@ -512,7 +511,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <SectionFade className="h-[100vh] md:min-h-screen bg-black flex w-full p-1 items-center justify-center">
+      <div className="h-[100vh] md:min-h-screen bg-black flex w-full p-1 items-center justify-center">
         <div className=" max-h-screen md:w-full max-w-xl  rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 ">
           {/* Left Side - Login Form */}
           <div className="backdrop-blur-xl bg-white/5 py-10 p-8 md:p-10 flex flex-col justify-center text-white border-r border-white/10 rounded-2xl">
@@ -642,7 +641,7 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
-      </SectionFade>
+      </div>
       {toastNode}
     </>
   )

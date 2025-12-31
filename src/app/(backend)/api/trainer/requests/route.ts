@@ -1,3 +1,4 @@
+// app/api/trainer/requests/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
       collection: 'plan-requests',
       where,
       sort: '-createdAt',
-      depth: 1,
+      depth: 2,
     })
 
     return NextResponse.json({ success: true, data: results.docs })
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const { requestId, action } = await req.json()
+    const { requestId, action, rejectionReason } = await req.json()
     if (!requestId || !['accept', 'reject'].includes(action)) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
     }
@@ -62,34 +63,55 @@ export async function POST(req: NextRequest) {
 
     const newStatus = action === 'accept' ? 'accepted' : 'rejected'
 
+    const updateData: any = {
+      status: newStatus,
+      respondedAt: new Date().toISOString(),
+    }
+
+    if (action === 'reject' && rejectionReason) {
+      updateData.rejectionReason = rejectionReason
+    }
+
     const updated = await payload.update({
       collection: 'plan-requests',
       id: requestId,
-      data: {
-        status: newStatus,
-        respondedAt: new Date().toISOString(),
-      },
+      data: updateData,
     })
 
     let assignment = null
     if (newStatus === 'accepted') {
-      assignment = await payload.create({
+      const existingAssignment = await payload.find({
         collection: 'trainee-assignments',
-        data: {
-          trainer: user.id,
-          user: requestRecord.user,
-          status: 'active',
-          startedAt: new Date().toISOString(),
-        },
+        where: {
+          and: [
+            { user: { equals: requestRecord.user } },
+            { trainer: { equals: user.id } },
+            { status: { equals: 'active' } }
+          ]
+        }
       })
 
-      await payload.update({
-        collection: 'users',
-        id: requestRecord.user,
-        data: {
-          currentTrainer: user.id,
-        },
-      })
+      if (existingAssignment.docs.length === 0) {
+        assignment = await payload.create({
+          collection: 'trainee-assignments',
+          data: {
+            trainer: user.id,
+            user: requestRecord.user,
+            status: 'active',
+            startedAt: new Date().toISOString(),
+          },
+        })
+
+        await payload.update({
+          collection: 'users',
+          id: requestRecord.user,
+          data: {
+            currentTrainer: user.id,
+          },
+        })
+      } else {
+        assignment = existingAssignment.docs[0]
+      }
     }
 
     return NextResponse.json({ success: true, request: updated, assignment })
@@ -98,4 +120,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error?.message || 'Internal error' }, { status: 500 })
   }
 }
-

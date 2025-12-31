@@ -2,7 +2,6 @@
 
 import React, { useMemo } from 'react'
 import { useParams } from 'next/navigation'
-import { SectionFade } from '@/components/animations/SectionFade'
 import { BadgeCheck, Dumbbell, Utensils, Sparkles } from 'lucide-react'
 
 const memberProfiles = {
@@ -63,7 +62,7 @@ export default function MemberDetail() {
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
       </div>
 
-      <SectionFade className="max-w-6xl mx-auto relative z-10 space-y-8">
+      <div className="max-w-6xl mx-auto relative z-10 space-y-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-sm text-orange-400 uppercase tracking-wide">Member detail</p>
@@ -78,7 +77,7 @@ export default function MemberDetail() {
           </button>
         </div>
 
-        <SectionFade delay={0.05} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1 space-y-4">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-xl shadow-2xl">
               <div className="flex items-center gap-3 mb-4">
@@ -153,8 +152,8 @@ export default function MemberDetail() {
               </div>
             </div>
           </div>
-        </SectionFade>
-      </SectionFade>
+        </div>
+      </div>
     </div>
   )
 }

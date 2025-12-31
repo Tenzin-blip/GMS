@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
     let profilePictureId = null
     if (profilePictureFile && profilePictureFile.size > 0) {
       try {
-
         const bytes = await profilePictureFile.arrayBuffer()
         const buffer = Buffer.from(bytes)
 
@@ -103,10 +102,110 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    // ============================================
+    // AUTO-CREATE PLAN REQUEST FOR PREMIUM/ELITE
+    // ============================================
+    let planRequestResult = null
+    
+    if (user.plan === 'premium' || user.plan === 'elite') {
+      try {
+        // Check if user already has a pending or accepted request
+        const existingRequests = await payload.find({
+          collection: 'plan-requests',
+          where: {
+            and: [
+              { user: { equals: user.id } },
+              {
+                or: [
+                  { status: { equals: 'pending' } },
+                  { status: { equals: 'accepted' } }
+                ]
+              }
+            ]
+          }
+        })
+
+        if (existingRequests.docs.length === 0) {
+          // Get user's fitness goals from the data we just saved
+          const userGoals = fitnessData.goals || []
+
+          if (userGoals.length > 0) {
+            // Find best matching trainer based on specializations
+            const trainers = await payload.find({
+              collection: 'users',
+              where: {
+                role: { equals: 'trainer' }
+              },
+              depth: 1
+            })
+
+            let bestTrainer = null
+            let bestMatchScore = 0
+            let matchedSpecs: string[] = []
+
+            for (const trainer of trainers.docs) {
+              if (!trainer.trainerProfile?.specializations) continue
+
+              const trainerSpecs = trainer.trainerProfile.specializations
+              
+              // Calculate match score
+              const matches = userGoals.filter((goal: string) => 
+                trainerSpecs.includes(goal)
+              )
+
+              if (matches.length > bestMatchScore) {
+                bestMatchScore = matches.length
+                bestTrainer = trainer
+                matchedSpecs = matches
+              }
+            }
+
+            // If no perfect match, assign to first available trainer
+            if (!bestTrainer && trainers.docs.length > 0) {
+              bestTrainer = trainers.docs[0]
+              matchedSpecs = []
+            }
+
+            if (bestTrainer) {
+              // Create the plan request
+              planRequestResult = await payload.create({
+                collection: 'plan-requests',
+                data: {
+                  user: user.id,
+                  userFitnessData: result.id,
+                  goals: userGoals,
+                  tier: user.plan,
+                  assignedTrainer: bestTrainer.id,
+                  matchedSpecializations: matchedSpecs.map(spec => ({ specialization: spec })),
+                  matchScore: bestMatchScore,
+                  status: 'pending'
+                }
+              })
+
+              console.log('✅ Plan request created:', planRequestResult.id, 'assigned to:', bestTrainer.name)
+            } else {
+              console.warn('⚠️ No trainers available to create plan request')
+            }
+          }
+        } else {
+          console.log('ℹ️ User already has an active plan request')
+        }
+      } catch (planRequestError) {
+        console.error('❌ Error creating plan request:', planRequestError)
+        // Don't fail the whole onboarding if plan request fails
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: result,
       profilePictureUploaded: !!profilePictureId,
+      planRequestCreated: !!planRequestResult,
+      planRequest: planRequestResult ? {
+        id: planRequestResult.id,
+        status: planRequestResult.status,
+        trainer: planRequestResult.assignedTrainer
+      } : null
     })
   } catch (error: any) {
     console.error('Error in user-fitness API:', error)
@@ -139,7 +238,6 @@ export async function GET(req: NextRequest) {
       },
       limit: 1,
     })
-
 
     const userData = await payload.findByID({
       collection: 'users',
