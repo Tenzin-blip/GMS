@@ -17,39 +17,24 @@ export default function ProgressTracker() {
   useEffect(() => {
     const fetchUserPlan = async () => {
       try {
-        const token = sessionStorage.getItem('token')
-        if (!token) {
-          setUserPlan('essential')
-          setLoading(false)
-          return
-        }
-
-        const response = await fetch('/api/user-fitness', {
+        const response = await fetch('/api/users/me', {
           method: 'GET',
+          credentials: 'include',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
         })
 
         if (response.ok) {
           const data = await response.json()
-          // Get user plan from active-plan API or default to essential
-          const planResponse = await fetch('/api/active-plan', {
-            method: 'GET',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-          })
+          console.log('User data:', data) // Debug log
           
-          if (planResponse.ok) {
-            const planData = await planResponse.json()
-            setUserPlan((planData.plan || 'essential').toLowerCase() as 'essential' | 'premium' | 'elite')
-          } else {
-            setUserPlan('essential')
-          }
+          // Get plan from user.plan field, default to essential if not set
+          const plan = data.user?.plan || 'essential'
+          setUserPlan(plan.toLowerCase() as 'essential' | 'premium' | 'elite')
         } else {
+          console.error('Failed to fetch user data:', response.status)
+          // Default to essential if API fails
           setUserPlan('essential')
         }
       } catch (error) {

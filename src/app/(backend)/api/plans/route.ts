@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
+import { getPayload } from 'payload'
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     const { user } = await payload.auth({ headers: req.headers })
 
     if (!user || (user.role !== 'trainer' && user.role !== 'admin')) {
@@ -51,10 +51,64 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // If both workout and meal plans are active, update assignment planStatus to 'active'
+    if (planStatus === 'active' && user.role === 'trainer') {
+      try {
+        // Check if both plans exist and are active
+        const workoutPlan = await payload.find({
+          collection: 'plan-versions',
+          where: {
+            and: [
+              { user: { equals: userId } },
+              { type: { equals: 'workout' } },
+              { status: { equals: 'active' } },
+            ],
+          },
+          limit: 1,
+        })
+
+        const mealPlan = await payload.find({
+          collection: 'plan-versions',
+          where: {
+            and: [
+              { user: { equals: userId } },
+              { type: { equals: 'meal' } },
+              { status: { equals: 'active' } },
+            ],
+          },
+          limit: 1,
+        })
+
+        // If both plans are active, update assignment
+        if (workoutPlan.docs.length > 0 && mealPlan.docs.length > 0) {
+          const assignmentResults = await payload.find({
+            collection: 'trainee-assignments',
+            where: {
+              and: [{ user: { equals: userId } }, { trainer: { equals: user.id } }],
+            },
+            limit: 1,
+          })
+
+          if (assignmentResults.docs.length > 0) {
+            await payload.update({
+              collection: 'trainee-assignments',
+              id: assignmentResults.docs[0].id,
+              data: {
+                planStatus: 'active',
+                planSentAt: new Date().toISOString(),
+              },
+            })
+          }
+        }
+      } catch (err) {
+        console.error('Error updating assignment planStatus:', err)
+        // Don't fail the plan creation if this update fails
+      }
+    }
+
     return NextResponse.json({ success: true, plan: created })
   } catch (error: any) {
     console.error('Plan submit error', error)
     return NextResponse.json({ error: error?.message || 'Internal error' }, { status: 500 })
   }
 }
-

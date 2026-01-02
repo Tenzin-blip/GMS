@@ -1,26 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 
 export async function POST(req: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     const token = req.cookies.get('payload-token')?.value
-    
+
     if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { user } = await payload.auth({ headers: req.headers })
-    
+
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const contentType = req.headers.get('content-type') || ''
@@ -43,7 +37,7 @@ export async function POST(req: NextRequest) {
         const buffer = Buffer.from(bytes)
 
         const uploadedImage = await payload.create({
-          collection: 'media', 
+          collection: 'media',
           data: {
             alt: `${user.name || 'User'} profile picture`,
           },
@@ -106,7 +100,7 @@ export async function POST(req: NextRequest) {
     // AUTO-CREATE PLAN REQUEST FOR PREMIUM/ELITE
     // ============================================
     let planRequestResult = null
-    
+
     if (user.plan === 'premium' || user.plan === 'elite') {
       try {
         // Check if user already has a pending or accepted request
@@ -116,13 +110,10 @@ export async function POST(req: NextRequest) {
             and: [
               { user: { equals: user.id } },
               {
-                or: [
-                  { status: { equals: 'pending' } },
-                  { status: { equals: 'accepted' } }
-                ]
-              }
-            ]
-          }
+                or: [{ status: { equals: 'pending' } }, { status: { equals: 'accepted' } }],
+              },
+            ],
+          },
         })
 
         if (existingRequests.docs.length === 0) {
@@ -130,43 +121,45 @@ export async function POST(req: NextRequest) {
           const userGoals = fitnessData.goals || []
 
           if (userGoals.length > 0) {
-            // Find best matching trainer based on specializations
-            const trainers = await payload.find({
-              collection: 'users',
+            // Find trainer profiles with specializations (better than querying users)
+            const trainerProfiles = await payload.find({
+              collection: 'trainer-profiles',
               where: {
-                role: { equals: 'trainer' }
+                status: { equals: 'active' },
               },
-              depth: 1
+              depth: 1, // This will populate the user relationship
             })
 
-            let bestTrainer = null
+            let bestTrainerId = null
             let bestMatchScore = 0
             let matchedSpecs: string[] = []
 
-            for (const trainer of trainers.docs) {
-              if (!trainer.trainerProfile?.specializations) continue
+            for (const profile of trainerProfiles.docs) {
+              if (!profile.specializations || profile.specializations.length === 0) {
+                continue
+              }
 
-              const trainerSpecs = trainer.trainerProfile.specializations
-              
+              const trainerSpecs = profile.specializations
+
               // Calculate match score
-              const matches = userGoals.filter((goal: string) => 
-                trainerSpecs.includes(goal)
-              )
+              const matches = userGoals.filter((goal: string) => trainerSpecs.includes(goal))
 
               if (matches.length > bestMatchScore) {
                 bestMatchScore = matches.length
-                bestTrainer = trainer
+                bestTrainerId = typeof profile.user === 'string' ? profile.user : profile.user.id
                 matchedSpecs = matches
               }
             }
 
-            // If no perfect match, assign to first available trainer
-            if (!bestTrainer && trainers.docs.length > 0) {
-              bestTrainer = trainers.docs[0]
+            // If no perfect match, assign to first available trainer with a profile
+            if (!bestTrainerId && trainerProfiles.docs.length > 0) {
+              const firstProfile = trainerProfiles.docs[0]
+              bestTrainerId =
+                typeof firstProfile.user === 'string' ? firstProfile.user : firstProfile.user.id
               matchedSpecs = []
             }
 
-            if (bestTrainer) {
+            if (bestTrainerId) {
               // Create the plan request
               planRequestResult = await payload.create({
                 collection: 'plan-requests',
@@ -175,14 +168,19 @@ export async function POST(req: NextRequest) {
                   userFitnessData: result.id,
                   goals: userGoals,
                   tier: user.plan,
-                  assignedTrainer: bestTrainer.id,
-                  matchedSpecializations: matchedSpecs.map(spec => ({ specialization: spec })),
+                  assignedTrainer: bestTrainerId,
+                  matchedSpecializations: matchedSpecs.map((spec) => ({ specialization: spec })),
                   matchScore: bestMatchScore,
-                  status: 'pending'
-                }
+                  status: 'pending',
+                },
               })
 
-              console.log('✅ Plan request created:', planRequestResult.id, 'assigned to:', bestTrainer.name)
+              console.log(
+                '✅ Plan request created:',
+                planRequestResult.id,
+                'assigned to trainer:',
+                bestTrainerId,
+              )
             } else {
               console.warn('⚠️ No trainers available to create plan request')
             }
@@ -201,32 +199,28 @@ export async function POST(req: NextRequest) {
       data: result,
       profilePictureUploaded: !!profilePictureId,
       planRequestCreated: !!planRequestResult,
-      planRequest: planRequestResult ? {
-        id: planRequestResult.id,
-        status: planRequestResult.status,
-        trainer: planRequestResult.assignedTrainer
-      } : null
+      planRequest: planRequestResult
+        ? {
+            id: planRequestResult.id,
+            status: planRequestResult.status,
+            trainer: planRequestResult.assignedTrainer,
+          }
+        : null,
     })
   } catch (error: any) {
     console.error('Error in user-fitness API:', error)
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
 
     const { user } = await payload.auth({ headers: req.headers })
-    
+
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const result = await payload.find({
@@ -242,7 +236,7 @@ export async function GET(req: NextRequest) {
     const userData = await payload.findByID({
       collection: 'users',
       id: user.id,
-      depth: 2, 
+      depth: 2,
     })
 
     return NextResponse.json({
@@ -257,9 +251,6 @@ export async function GET(req: NextRequest) {
     })
   } catch (error: any) {
     console.error('Error fetching user-fitness:', error)
-    return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 }

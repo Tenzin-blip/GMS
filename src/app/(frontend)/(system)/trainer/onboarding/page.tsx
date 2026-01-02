@@ -95,7 +95,6 @@ export default function TrainerOnboarding() {
     setSubmitted(true)
 
     try {
-      // Convert frontend values to backend format
       const backendSpecs = selectedSpecs.map(spec => specializationMap[spec as keyof typeof specializationMap])
       const backendDays = selectedDays.map(day => dayMap[day as keyof typeof dayMap])
 

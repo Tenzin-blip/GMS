@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import crypto from 'crypto'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 
 function getPasswordResetEmailTemplate(name: string, resetUrl: string): string {
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     if (!email) {
       return NextResponse.json({ message: 'Email is required' }, { status: 400 })
     }
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     // Find user by email using local API
     const users = await payload.find({
       collection: 'users',
@@ -115,19 +115,22 @@ export async function POST(req: NextRequest) {
         },
       },
       limit: 1,
-      overrideAccess: true
+      overrideAccess: true,
     })
 
     if (!users.docs?.length) {
-      return NextResponse.json({ 
-        message: 'If an account with that email exists, we have sent a password reset link' 
-      }, { status: 200 })
+      return NextResponse.json(
+        {
+          message: 'If an account with that email exists, we have sent a password reset link',
+        },
+        { status: 200 },
+      )
     }
 
     const user = users.docs[0]
 
     const resetToken = crypto.randomBytes(32).toString('hex')
-    const resetTokenExpiry = new Date(Date.now() + 3600000) 
+    const resetTokenExpiry = new Date(Date.now() + 3600000)
 
     // Hash the token before storing
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex')
@@ -149,7 +152,8 @@ export async function POST(req: NextRequest) {
     console.log('User updated successfully:', user.id)
 
     // Create reset URL with unhashed token
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || 'http://localhost:3000'
     const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`
     // Send email
     const htmlTemplate = getPasswordResetEmailTemplate(user.name || 'Member', resetUrl)
@@ -163,15 +167,20 @@ export async function POST(req: NextRequest) {
 
     console.log('Password reset email sent to:', email)
 
-    return NextResponse.json({ 
-      message: 'Password reset email sent successfully. Please check your inbox.' 
-    }, { status: 200 })
-
+    return NextResponse.json(
+      {
+        message: 'Password reset email sent successfully. Please check your inbox.',
+      },
+      { status: 200 },
+    )
   } catch (error: any) {
     console.error('Forgot password error:', error)
     console.error('Error stack:', error.stack)
-    return NextResponse.json({ 
-      message: 'Unable to process request. Please try again later.' 
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        message: 'Unable to process request. Please try again later.',
+      },
+      { status: 500 },
+    )
   }
 }

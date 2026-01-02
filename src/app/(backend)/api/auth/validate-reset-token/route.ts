@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 import crypto from 'crypto'
 
@@ -8,15 +8,12 @@ export async function POST(req: NextRequest) {
     const { token } = await req.json()
 
     if (!token) {
-      return NextResponse.json(
-        { valid: false, message: 'Token is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ valid: false, message: 'Token is required' }, { status: 400 })
     }
 
     // Hash the token to compare with stored hash
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
 
     // Find user with matching token
     const users = await payload.find({
@@ -34,7 +31,7 @@ export async function POST(req: NextRequest) {
       console.log('No user found with this token')
       return NextResponse.json(
         { valid: false, message: 'Invalid or expired reset link' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
@@ -46,7 +43,7 @@ export async function POST(req: NextRequest) {
       console.log('No expiry date set')
       return NextResponse.json(
         { valid: false, message: 'Invalid or expired reset link' },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
@@ -61,21 +58,17 @@ export async function POST(req: NextRequest) {
       console.log('Token has expired')
       return NextResponse.json(
         { valid: false, message: 'This reset link has expired. Please request a new one.' },
-        { status: 400 }
+        { status: 400 },
       )
     }
     console.log('Token is valid')
-    return NextResponse.json(
-      { valid: true, message: 'Token is valid' },
-      { status: 200 }
-    )
-
+    return NextResponse.json({ valid: true, message: 'Token is valid' }, { status: 200 })
   } catch (error: any) {
     console.error('Validate token error:', error)
     console.error('Error stack:', error.stack)
     return NextResponse.json(
       { valid: false, message: 'Unable to validate token. Please try again.' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

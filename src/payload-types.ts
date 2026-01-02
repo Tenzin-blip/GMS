@@ -76,6 +76,12 @@ export interface Config {
     subscription: Subscription;
     transaction: Transaction;
     payments: Payment;
+    'trainer-profiles': TrainerProfile;
+    'plan-requests': PlanRequest;
+    'trainee-assignments': TraineeAssignment;
+    'plan-versions': PlanVersion;
+    'workout-plans': WorkoutPlan;
+    'meal-plans': MealPlan;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +97,12 @@ export interface Config {
     subscription: SubscriptionSelect<false> | SubscriptionSelect<true>;
     transaction: TransactionSelect<false> | TransactionSelect<true>;
     payments: PaymentsSelect<false> | PaymentsSelect<true>;
+    'trainer-profiles': TrainerProfilesSelect<false> | TrainerProfilesSelect<true>;
+    'plan-requests': PlanRequestsSelect<false> | PlanRequestsSelect<true>;
+    'trainee-assignments': TraineeAssignmentsSelect<false> | TraineeAssignmentsSelect<true>;
+    'plan-versions': PlanVersionsSelect<false> | PlanVersionsSelect<true>;
+    'workout-plans': WorkoutPlansSelect<false> | WorkoutPlansSelect<true>;
+    'meal-plans': MealPlansSelect<false> | MealPlansSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -102,11 +114,13 @@ export interface Config {
     home: Home;
     navbar: Navbar;
     reviews: Review;
+    'default-plans': DefaultPlan;
   };
   globalsSelect: {
     home: HomeSelect<false> | HomeSelect<true>;
     navbar: NavbarSelect<false> | NavbarSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    'default-plans': DefaultPlansSelect<false> | DefaultPlansSelect<true>;
   };
   locale: null;
   user: User & {
@@ -148,6 +162,7 @@ export interface User {
   gender?: ('male' | 'female' | 'other') | null;
   role: 'admin' | 'trainer' | 'user';
   plan?: ('essential' | 'premium' | 'elite') | null;
+  currentTrainer?: (string | null) | User;
   nextPaymentDate?: string | null;
   OTP?: string | null;
   email_verified?: boolean | null;
@@ -202,7 +217,7 @@ export interface Media {
 export interface UserFitness {
   id: string;
   user: string | User;
-  goal?: ('weight_loss' | 'weight_gain' | 'muscle_building' | 'toning' | 'maintenance') | null;
+  goals?: ('weight_loss' | 'muscle_building' | 'toning' | 'conditioning' | 'mobility' | 'maintenance')[] | null;
   bodyMetrics?: {
     height?: number | null;
     currentWeight?: number | null;
@@ -355,6 +370,120 @@ export interface Payment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainer-profiles".
+ */
+export interface TrainerProfile {
+  id: string;
+  user: string | User;
+  status?: ('active' | 'pending' | 'paused') | null;
+  specializations?:
+    | ('weight_loss' | 'muscle_building' | 'toning' | 'conditioning' | 'mobility' | 'maintenance')[]
+    | null;
+  workingDays: ('mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun')[];
+  workingHours: {
+    start: string;
+    end: string;
+    timezone?: string | null;
+  };
+  notes?: string | null;
+  avgResponseMinutes?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plan-requests".
+ */
+export interface PlanRequest {
+  id: string;
+  user: string | User;
+  /**
+   * Reference to user fitness profile for trainer context
+   */
+  userFitnessData?: (string | null) | UserFitness;
+  goals?: ('weight_loss' | 'muscle_building' | 'toning' | 'conditioning' | 'mobility' | 'maintenance')[] | null;
+  tier: 'premium' | 'elite';
+  /**
+   * Trainer specializations that matched user goals
+   */
+  matchedSpecializations?:
+    | {
+        specialization?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Number of goals that matched trainer specializations
+   */
+  matchScore?: number | null;
+  assignedTrainer?: (string | null) | User;
+  status?: ('pending' | 'accepted' | 'rejected') | null;
+  respondedAt?: string | null;
+  rejectionReason?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainee-assignments".
+ */
+export interface TraineeAssignment {
+  id: string;
+  user: string | User;
+  trainer: string | User;
+  status?: ('active' | 'paused' | 'ended') | null;
+  planStatus?: ('pending' | 'active' | 'revision') | null;
+  startedAt?: string | null;
+  planSentAt?: string | null;
+  endedAt?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plan-versions".
+ */
+export interface PlanVersion {
+  id: string;
+  user: string | User;
+  trainer?: (string | null) | User;
+  type: 'workout' | 'meal';
+  source?: ('generic' | 'trainer' | 'ai') | null;
+  status?: ('draft' | 'submitted' | 'active' | 'inactive') | null;
+  payload:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  activatedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workout-plans".
+ */
+export interface WorkoutPlan {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meal-plans".
+ */
+export interface MealPlan {
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -395,6 +524,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'payments';
         value: string | Payment;
+      } | null)
+    | ({
+        relationTo: 'trainer-profiles';
+        value: string | TrainerProfile;
+      } | null)
+    | ({
+        relationTo: 'plan-requests';
+        value: string | PlanRequest;
+      } | null)
+    | ({
+        relationTo: 'trainee-assignments';
+        value: string | TraineeAssignment;
+      } | null)
+    | ({
+        relationTo: 'plan-versions';
+        value: string | PlanVersion;
+      } | null)
+    | ({
+        relationTo: 'workout-plans';
+        value: string | WorkoutPlan;
+      } | null)
+    | ({
+        relationTo: 'meal-plans';
+        value: string | MealPlan;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -450,6 +603,7 @@ export interface UsersSelect<T extends boolean = true> {
   gender?: T;
   role?: T;
   plan?: T;
+  currentTrainer?: T;
   nextPaymentDate?: T;
   OTP?: T;
   email_verified?: T;
@@ -501,7 +655,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface UserFitnessSelect<T extends boolean = true> {
   user?: T;
-  goal?: T;
+  goals?: T;
   bodyMetrics?:
     | T
     | {
@@ -629,6 +783,97 @@ export interface PaymentsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainer-profiles_select".
+ */
+export interface TrainerProfilesSelect<T extends boolean = true> {
+  user?: T;
+  status?: T;
+  specializations?: T;
+  workingDays?: T;
+  workingHours?:
+    | T
+    | {
+        start?: T;
+        end?: T;
+        timezone?: T;
+      };
+  notes?: T;
+  avgResponseMinutes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plan-requests_select".
+ */
+export interface PlanRequestsSelect<T extends boolean = true> {
+  user?: T;
+  userFitnessData?: T;
+  goals?: T;
+  tier?: T;
+  matchedSpecializations?:
+    | T
+    | {
+        specialization?: T;
+        id?: T;
+      };
+  matchScore?: T;
+  assignedTrainer?: T;
+  status?: T;
+  respondedAt?: T;
+  rejectionReason?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainee-assignments_select".
+ */
+export interface TraineeAssignmentsSelect<T extends boolean = true> {
+  user?: T;
+  trainer?: T;
+  status?: T;
+  planStatus?: T;
+  startedAt?: T;
+  planSentAt?: T;
+  endedAt?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "plan-versions_select".
+ */
+export interface PlanVersionsSelect<T extends boolean = true> {
+  user?: T;
+  trainer?: T;
+  type?: T;
+  source?: T;
+  status?: T;
+  payload?: T;
+  activatedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "workout-plans_select".
+ */
+export interface WorkoutPlansSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "meal-plans_select".
+ */
+export interface MealPlansSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -728,6 +973,33 @@ export interface Review {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "default-plans".
+ */
+export interface DefaultPlan {
+  id: string;
+  defaultWorkoutPlan:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  defaultMealPlan:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
@@ -797,6 +1069,17 @@ export interface ReviewsSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "default-plans_select".
+ */
+export interface DefaultPlansSelect<T extends boolean = true> {
+  defaultWorkoutPlan?: T;
+  defaultMealPlan?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

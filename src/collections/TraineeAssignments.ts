@@ -4,7 +4,7 @@ export const TraineeAssignments: CollectionConfig = {
   slug: 'trainee-assignments',
   admin: {
     useAsTitle: 'user',
-    defaultColumns: ['user', 'trainer', 'status', 'startedAt'],
+    defaultColumns: ['user', 'trainer', 'status', 'planStatus', 'startedAt'],
   },
   access: {
     create: ({ req: { user } }) => !!user && (user.role === 'trainer' || user.role === 'admin'),
@@ -62,14 +62,34 @@ export const TraineeAssignments: CollectionConfig = {
       ],
     },
     {
+      name: 'planStatus',
+      type: 'select',
+      label: 'Plan Status',
+      defaultValue: 'pending',
+      options: [
+        { label: 'Pending to make plan', value: 'pending' },
+        { label: 'Active plan', value: 'active' },
+        { label: 'Revision Requested', value: 'revision' },
+      ],
+    },
+    {
       name: 'startedAt',
       type: 'date',
       defaultValue: () => new Date().toISOString(),
     },
     {
+      name: 'planSentAt',
+      type: 'date',
+      label: 'Plan Sent Date',
+    },
+    {
       name: 'endedAt',
       type: 'date',
     },
+    {
+      name: 'notes',
+      type: 'textarea',
+      label: 'Trainer Notes',
+    },
   ],
 }
-

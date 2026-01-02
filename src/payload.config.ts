@@ -24,6 +24,8 @@ import { TrainerProfiles } from './collections/TrainerProfiles'
 import { PlanRequests } from './collections/PlanRequests'
 import { TraineeAssignments } from './collections/TraineeAssignments'
 import { PlanVersions } from './collections/PlanVersions'
+import { WorkoutPlans } from './collections/WorkoutPlans'
+import { MealPlans } from './collections/MealPlans'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -49,6 +51,8 @@ export default buildConfig({
     PlanRequests,
     TraineeAssignments,
     PlanVersions,
+    WorkoutPlans,
+    MealPlans,
   ],
   globals: [Home, Navbar, Reviews, DefaultPlans],
   editor: lexicalEditor(),

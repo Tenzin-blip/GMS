@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo, useState, useEffect } from 'react'
-import { Users, ClipboardList, CheckCircle2, Clock4, Loader2 } from 'lucide-react'
+import { Users, ClipboardList, CheckCircle2, Clock4, Loader2, AlertTriangle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 type Request = {
@@ -23,6 +23,7 @@ type Assignment = {
     plan?: string
   }
   status: 'active' | 'paused' | 'ended'
+  planStatus: 'pending' | 'active' | 'revision'
 }
 
 const goalLabels: Record<string, string> = {
@@ -45,15 +46,13 @@ export default function TrainerDashboard() {
   const fetchData = async () => {
     try {
       setLoading(true)
-      
-      // Fetch pending requests
+
       const requestsRes = await fetch('/api/trainer/requests?status=pending')
       const requestsData = await requestsRes.json()
-      
-      // Fetch active assignments
+
       const assignmentsRes = await fetch('/api/trainer/assignments')
       const assignmentsData = await assignmentsRes.json()
-      
+
       setRequests(requestsData.data || [])
       setAssignments(assignmentsData.data || [])
     } catch (error) {
@@ -68,6 +67,7 @@ export default function TrainerDashboard() {
       const response = await fetch('/api/trainer/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ requestId, action }),
       })
 
@@ -80,10 +80,11 @@ export default function TrainerDashboard() {
   }
 
   const metrics = useMemo(() => {
-    const active = assignments.filter(a => a.status === 'active').length
-    const pending = requests.filter(r => r.status === 'pending').length
-    const elite = assignments.filter(a => a.user.plan === 'elite').length
-    return { active, pending, elite, avgResponse: '02:15' }
+    const active = assignments.filter((a) => a.status === 'active').length
+    const pending = requests.filter((r) => r.status === 'pending').length
+    const needsPlan = assignments.filter((a) => a.planStatus === 'pending').length
+    const elite = assignments.filter((a) => a.user.plan === 'elite').length
+    return { active, pending, needsPlan, elite }
   }, [assignments, requests])
 
   if (loading) {
@@ -108,7 +109,9 @@ export default function TrainerDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">Dashboard</h1>
-            <p className="text-gray-400 mt-2">Manage incoming requests, active members, and plan actions.</p>
+            <p className="text-gray-400 mt-2">
+              Manage incoming requests, active members, and plan actions.
+            </p>
           </div>
           <button
             onClick={fetchData}
@@ -119,10 +122,27 @@ export default function TrainerDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard title="Active members" value={metrics.active} icon={<Users className="w-5 h-5 text-orange-400" />} />
-          <MetricCard title="Pending requests" value={metrics.pending} icon={<ClipboardList className="w-5 h-5 text-orange-400" />} />
-          <MetricCard title="Elite tier" value={metrics.elite} icon={<CheckCircle2 className="w-5 h-5 text-orange-400" />} />
-          <MetricCard title="Avg response" value={metrics.avgResponse} icon={<Clock4 className="w-5 h-5 text-orange-400" />} />
+          <MetricCard
+            title="Active members"
+            value={metrics.active}
+            icon={<Users className="w-5 h-5 text-orange-400" />}
+          />
+          <MetricCard
+            title="Pending requests"
+            value={metrics.pending}
+            icon={<ClipboardList className="w-5 h-5 text-orange-400" />}
+          />
+          <MetricCard
+            title="Needs plan"
+            value={metrics.needsPlan}
+            icon={<AlertTriangle className="w-5 h-5 text-yellow-400" />}
+            highlight={metrics.needsPlan > 0}
+          />
+          <MetricCard
+            title="Elite tier"
+            value={metrics.elite}
+            icon={<CheckCircle2 className="w-5 h-5 text-orange-400" />}
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -157,7 +177,8 @@ export default function TrainerDashboard() {
                       <div className="flex-1">
                         <p className="font-semibold">{request.user.name}</p>
                         <p className="text-xs text-gray-400">
-                          {request.goals.map(g => goalLabels[g] || g).join(', ')} • {request.tier.toUpperCase()}
+                          {request.goals.map((g) => goalLabels[g] || g).join(', ')} •{' '}
+                          {request.tier.toUpperCase()}
                         </p>
                       </div>
                     </div>
@@ -206,19 +227,26 @@ export default function TrainerDashboard() {
                 assignments.slice(0, 3).map((assignment) => (
                   <div
                     key={assignment.id}
-                    className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 flex items-center justify-between"
+                    className="rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4"
                   >
-                    <div>
-                      <p className="font-semibold">{assignment.user.name}</p>
-                      <p className="text-xs text-gray-400">
-                        Plan: {assignment.user.plan?.toUpperCase() || 'N/A'}
-                      </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex-1">
+                        <p className="font-semibold">{assignment.user.name}</p>
+                        <p className="text-xs text-gray-400">
+                          Plan: {assignment.user.plan?.toUpperCase() || 'N/A'}
+                        </p>
+                      </div>
+                      {assignment.planStatus === 'pending' && (
+                        <span className="px-2 py-1 text-xs rounded-full bg-yellow-500/15 text-yellow-100 border border-yellow-400/30">
+                          Needs Plan
+                        </span>
+                      )}
                     </div>
                     <button
                       onClick={() => router.push(`/trainer/client-list/${assignment.user.id}`)}
-                      className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/15 text-xs hover:bg-white/15"
+                      className="w-full px-3 py-2 rounded-lg bg-white/10 text-white border border-white/15 text-xs hover:bg-white/15"
                     >
-                      View
+                      View Details
                     </button>
                   </div>
                 ))
@@ -231,14 +259,28 @@ export default function TrainerDashboard() {
   )
 }
 
-function MetricCard({ title, value, icon }: { title: string; value: string | number; icon: React.ReactNode }) {
+function MetricCard({
+  title,
+  value,
+  icon,
+  highlight = false,
+}: {
+  title: string
+  value: string | number
+  icon: React.ReactNode
+  highlight?: boolean
+}) {
   return (
     <div className="relative group">
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/15 to-orange-600/5 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300" />
+      <div
+        className={`absolute inset-0 ${highlight ? 'bg-gradient-to-br from-yellow-500/20 to-yellow-600/10' : 'bg-gradient-to-br from-orange-500/15 to-orange-600/5'} rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300`}
+      />
       <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl hover:shadow-orange-500/15 transition-all duration-300">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-gray-400 text-sm font-medium">{title}</h3>
-          <div className="p-2 bg-orange-500/10 rounded-lg">{icon}</div>
+          <div className={`p-2 ${highlight ? 'bg-yellow-500/15' : 'bg-orange-500/10'} rounded-lg`}>
+            {icon}
+          </div>
         </div>
         <p className="text-3xl font-bold text-white">{value}</p>
       </div>

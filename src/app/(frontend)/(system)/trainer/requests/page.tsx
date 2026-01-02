@@ -68,6 +68,7 @@ export default function TrainerRequests() {
       const response = await fetch('/api/trainer/requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ requestId, action }),
       })
 

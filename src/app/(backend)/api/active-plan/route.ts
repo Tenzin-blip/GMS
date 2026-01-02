@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 
 export async function GET(req: NextRequest) {
   try {
-    const payload = await getPayloadHMR({ config })
+    const payload = await getPayload({ config })
     const { user } = await payload.auth({ headers: req.headers })
 
     if (!user) {
