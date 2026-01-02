@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
               const trainerSpecs = profile.specializations
 
               // Calculate match score
-              const matches = userGoals.filter((goal: string) => trainerSpecs.includes(goal))
+              const matches = userGoals.filter((goal) => trainerSpecs.includes(goal))
 
               if (matches.length > bestMatchScore) {
                 bestMatchScore = matches.length
