@@ -1,40 +1,66 @@
-// app/api/gemini_brr/route.ts
 import { NextResponse } from 'next/server'
 
-const API_KEY = 'AIzaSyCRbn41PLttPttF9-vy38yeeAyPwRjMqNI'
-const MODEL = 'models/gemini-2.5-flash'
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error('Missing GEMINI_API_KEY environment variable')
+}
+
+const MODEL = 'gemini-2.5-flash'
 
 export async function POST(request: Request) {
   try {
-    const memberData = await request.json()
+    console.log('POST request received')
+    console.log('GEMINI_API_KEY exists:', !!process.env.GEMINI_API_KEY)
+    console.log('GEMINI_API_KEY first 10 chars:', process.env.GEMINI_API_KEY?.substring(0, 10))
+
+    let memberData
+    try {
+      memberData = await request.json()
+      console.log('Received member data:', JSON.stringify(memberData).substring(0, 200))
+    } catch (jsonError) {
+      console.error('Failed to parse JSON:', jsonError)
+      return NextResponse.json({ error: 'Invalid JSON in request body' }, { status: 400 })
+    }
 
     // Build structured prompt from member data
     const prompt = buildPrompt(memberData)
+    console.log('Built prompt, length:', prompt.length)
 
     // Call Gemini API
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/${MODEL}:generateContent?key=${API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [
+    const payload = {
+      contents: [
+        {
+          parts: [
             {
-              parts: [
-                {
-                  text: prompt,
-                },
-              ],
+              text: prompt,
             },
           ],
-        }),
+        },
+      ],
+    }
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
+
+    console.log('Calling Gemini API...')
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': process.env.GEMINI_API_KEY || '',
       },
-    )
+      body: JSON.stringify(payload),
+    })
+
+    console.log('Gemini response status:', response.status)
 
     if (!response.ok) {
-      const errorData = await response.json()
+      const errorText = await response.text()
+      console.error('Gemini API error:', errorText)
+      let errorData
+      try {
+        errorData = JSON.parse(errorText)
+      } catch {
+        errorData = { message: errorText }
+      }
       return NextResponse.json(
         { error: 'Gemini API error', details: errorData },
         { status: response.status },
@@ -42,6 +68,8 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json()
+    console.log('Gemini response received')
+
     const generatedText = data.candidates[0].content.parts[0].text
 
     // Try to parse as JSON (if Gemini returns structured data)
@@ -49,7 +77,9 @@ export async function POST(request: Request) {
     try {
       const cleaned = generatedText.replace(/```json|```/g, '').trim()
       parsedPlan = JSON.parse(cleaned)
-    } catch {
+      console.log('Successfully parsed JSON plan')
+    } catch (e) {
+      console.log('Could not parse as JSON, returning raw response')
       // If not JSON, return as raw text
       parsedPlan = { rawResponse: generatedText }
     }
@@ -60,9 +90,14 @@ export async function POST(request: Request) {
       rawResponse: generatedText,
     })
   } catch (error: any) {
-    console.error('Error generating plan:', error)
+    console.error('Error in POST handler:', error)
+    console.error('Error stack:', error.stack)
     return NextResponse.json(
-      { error: 'Failed to generate plan', details: error.message },
+      {
+        error: 'Failed to generate plan',
+        details: error.message,
+        stack: error.stack,
+      },
       { status: 500 },
     )
   }
@@ -153,4 +188,16 @@ IMPORTANT: Return ONLY a valid JSON object with the following exact structure (n
 }
 
 Generate a complete 7-day plan considering the client's goals, metrics, and preferences.`
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: 'Hello from gemini_brr!',
+    data: {
+      name: 'Test User',
+      age: 25,
+      hobbies: ['coding', 'gaming', 'fitness'],
+    },
+    timestamp: new Date().toISOString(),
+  })
 }
